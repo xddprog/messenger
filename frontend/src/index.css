@@ -1,0 +1,27 @@
+body, html {
+    background: #1e2022;
+    margin: 0
+}
+::-webkit-scrollbar { /* chrome based */
+    width: 0px;  /* ширина scrollbar'a */
+    background: transparent;  /* опционально */
+}
+
+html {
+    -ms-overflow-style: none;  /* IE 10+ */
+    scrollbar-width: none; /* Firefox */
+}
+
+a {
+  color: #dfe3e1;
+  text-decoration: none;
+}
+
+a:hover {
+    color: #82e4bb;
+}
+
+
+:where(.css-dev-only-do-not-override-x7ennh).ant-card .ant-card-meta-detail >div:not(:last-child) {
+  margin-bottom: 0px;
+}

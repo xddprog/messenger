@@ -13,6 +13,8 @@ export default function LoginForm () {
             const values = await form[0].validateFields();
             const response = await loginUser(values).then(r => r)
 
+            localStorage.setItem('user_id', response.data.id)
+
             messageApi.open({
                 type: "success",
                 content: response.data.message
@@ -20,6 +22,7 @@ export default function LoginForm () {
 
             navigate('/posts')
         } catch (error) {
+            console.log(error)
             messageApi.open({
                 type: "error",
                 content: error.response.data.detail,
@@ -93,7 +96,7 @@ export default function LoginForm () {
                         >
                             Войти
                         </Button>
-                        <a onClick={() => navigate('/')}>Зарегистрироваться</a>
+                        <a onClick={() => navigate('/register')}>Зарегистрироваться</a>
                     </div>
                 </Form.Item>
             </Form>

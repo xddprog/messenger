@@ -12,7 +12,8 @@ export default function RegisterForm () {
         try {
             const values = await form[0].validateFields();
             const response = await registerUser(values).then(r => r)
-            console.log(response)
+
+            localStorage.setItem('user_id', response.data.new_user.id)
 
             messageApi.open({
                 type: "success",
@@ -111,7 +112,7 @@ export default function RegisterForm () {
                         >
                             Зарегистрироваться
                         </Button>
-                        <a onClick={() => navigate('/')}>Войти</a>
+                        <a onClick={() => navigate('/login')}>Войти</a>
                     </div>
                 </Form.Item>
             </Form>

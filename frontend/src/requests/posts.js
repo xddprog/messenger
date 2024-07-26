@@ -8,3 +8,19 @@ export async function getAllPosts() {
         `${BASE_URL}/all`
     ).then(response => response.data)
 }
+
+export async function createPost(values) {
+    return await axios.post(
+        `${BASE_URL}/create`,
+        values,
+        {
+        headers: { 'content-type': 'multipart/form-data' }
+    }
+    ).then(response => response.data)
+}
+
+export async function likePost(postId) {
+    return await axios.patch(
+        `${BASE_URL}/${postId}/like/${localStorage.getItem('user_id')}`
+    ).then(response => response.data)
+}

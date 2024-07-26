@@ -1,5 +1,5 @@
 import { Input,} from "antd";
-import AppLogo from "../../logo/AppLogo";
+import AppLogo from "../logo/AppLogo";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { IoMusicalNotesOutline } from "react-icons/io5";
 
@@ -8,7 +8,7 @@ export default function MainPageHeader() {
 
     return (
         <div style={{background:'#17191b', borderBottomRightRadius: 10, borderBottomLeftRadius: 10, position: 'sticky'}}>
-            <div style={{padding: '10px 270px', display: 'flex', alignItems: 'center', justifyContent:'space-between'}}>
+            <div style={{padding: '10px 260px', display: 'flex', alignItems: 'center', justifyContent:'space-between'}}>
                 <div style={{display: 'flex', alignItems:'center'}}>
                     <div style={{ marginRight: '50px'}}> 
                         <AppLogo />
@@ -56,10 +56,12 @@ export default function MainPageHeader() {
                         cursor: 'pointer',
                     }}
                 >
-                    {/* <RxAvatar size='35px' color='white'/> */}
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="images/profile_example.jpg" style={{width:'35px', borderRadius: 50}}/>
-                        {/* <MdOutlineExpandMore size='20px' color="white"/> */}
+                        <img
+                            src={localStorage.getItem('avatar')}
+                            style={{width:'35px', borderRadius: 50}}
+                            alt='profile-image'
+                        />
                     </div>
                 </button>
             </div>

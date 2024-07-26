@@ -5,7 +5,6 @@ const BASE_URL = 'http://localhost:5000/api/auth';
 
 
 export async function registerUser(values) {
-    console.log(values)
     return await axios.post(
         `${BASE_URL}/register`, 
         values,
@@ -15,7 +14,6 @@ export async function registerUser(values) {
 
 
 export async function loginUser(values) {
-    console.log(values)
     return await axios.post(
         `${BASE_URL}/login`, 
         values, 
@@ -23,7 +21,7 @@ export async function loginUser(values) {
     ).then(response => response)
 }
 
-export async function getCurrntUser() {
+export async function getCurrentUser() {
     return await axios.get(
         `${BASE_URL}/current_user`,
         {withCredentials: true}

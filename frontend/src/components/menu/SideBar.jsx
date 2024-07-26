@@ -1,4 +1,12 @@
-import { BookOutlined, FolderOutlined, MessageOutlined, PauseCircleOutlined, ReadOutlined, SettingOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
+import {
+    BookOutlined,
+    FolderOutlined,
+    MessageOutlined,
+    ReadOutlined,
+    SettingOutlined,
+    TeamOutlined,
+    UserOutlined
+} from "@ant-design/icons";
 import { Menu } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -33,11 +41,6 @@ export default function SaidBar() {
             label: 'Друзья',
             key: 'friends',
             icon: <TeamOutlined />
-        },
-        {
-            label: 'Музыка',
-            key: 'music',
-            icon: <PauseCircleOutlined />
         },
         {
             label: 'Закладки',

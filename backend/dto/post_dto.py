@@ -1,20 +1,24 @@
 from datetime import datetime
+
+from fastapi import UploadFile
 from pydantic import UUID4, BaseModel, Field, field_validator, validator
+
+from dto.user_dto import BaseUserModel
 
 
 class AutorModel(BaseModel):
     id: UUID4
     username: str
+    avatar: str | None
 
 
 class PostModel(BaseModel):
-    id: int
+    id: UUID4
     author: AutorModel
     description: str
     images: list[str] | None = None
-    likes: int 
-    dislikes: int
-    created_at: datetime 
+    likes: list[BaseUserModel]
+    created_at: datetime | str
     views: int
 
     @field_validator('created_at')
@@ -25,8 +29,3 @@ class PostModel(BaseModel):
             'сентября', 'октября', 'ноября', 'декабря'
         ]
         return f'{value.day} {months[value.month - 1]}, {str(value.hour).zfill(2)}:{value.minute}'
-
-class CreatePostModel(BaseModel):
-    description: str | None = None
-    images: list[str] | None = None
-    author: UUID4

@@ -1,10 +1,11 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import UUID4
 
 from sqlalchemy import ForeignKey, ARRAY, String
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship
+
+from utils.config.constants import BASE_AVATAR_URL
 
 
 class Base(DeclarativeBase):
@@ -13,28 +14,107 @@ class Base(DeclarativeBase):
 
 class User(Base):
     __tablename__ = 'users'
-    
+
     id: Mapped[UUID4] = mapped_column(primary_key=True)
-    username: Mapped[str] = mapped_column(unique=True)
+    username: Mapped[str]
     password: Mapped[str]
     email: Mapped[str] = mapped_column(unique=True)
-    avatar: Mapped[str] = mapped_column(nullable=True)
+    avatar: Mapped[str] = mapped_column(nullable=True, default=BASE_AVATAR_URL)
 
-    posts: Mapped[list['Post']] = relationship(back_populates="author", lazy='selectin')
+    posts: Mapped[list['Post']] = relationship(
+        back_populates="author",
+        lazy='selectin'
+    )
+    chats: Mapped[list['Chat']] = relationship(
+        back_populates="users",
+        secondary='user_chats',
+        uselist=True,
+        lazy='selectin'
+    )
+    messages: Mapped[list['Message']] = relationship(
+        back_populates='user',
+        uselist=True,
+        lazy='selectin'
+    )
+    liked_posts: Mapped[list['Post']] = relationship(
+        back_populates="likes",
+        secondary='users_liked_posts',
+        uselist=True
+    )
 
 
 class Post(Base):
     __tablename__ = 'posts'
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    id: Mapped[UUID4] = mapped_column(primary_key=True)
     description: Mapped[str] = mapped_column(nullable=True)
-    images = mapped_column(ARRAY(String), default=[])
-    likes: Mapped[int] = mapped_column(default=0)
-    dislikes: Mapped[int] = mapped_column(default=0)
+    images = mapped_column(ARRAY(String), nullable=True)
     views: Mapped[int] = mapped_column(default=1)
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
 
-    author: Mapped['User'] = relationship(back_populates="posts", uselist=True, lazy='selectin')
+    author: Mapped['User'] = relationship(
+        back_populates="posts",
+        uselist=True,
+        lazy='selectin'
+    )
+    likes: Mapped[list['User']] = relationship(
+        back_populates="liked_posts",
+        secondary='users_liked_posts',
+        uselist=True,
+        lazy='selectin'
+    )
+
     author_fk: Mapped[UUID4 | None] = mapped_column(ForeignKey('users.id'), default=None)
 
-    # comments: Mapped[list['']] = relationship(back_populates="posts")
+
+class Message(Base):
+    __tablename__ = 'messages'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    message: Mapped[str]
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now())
+
+    user_fk: Mapped[UUID4 | None] = mapped_column(ForeignKey('users.id'), default=None)
+    chat_fk: Mapped[UUID4 | None] = mapped_column(ForeignKey('chats.id'), default=None)
+
+    user: Mapped['User'] = relationship(
+        back_populates="messages",
+        uselist=False,
+        lazy='selectin'
+    )
+    chat: Mapped['Chat'] = relationship(
+        back_populates="messages",
+        uselist=False
+    )
+
+
+class Chat(Base):
+    __tablename__ = 'chats'
+
+    id: Mapped[UUID4] = mapped_column(primary_key=True)
+    title: Mapped[str]
+    avatar: Mapped[str]
+
+    users: Mapped[list['User']] = relationship(
+        back_populates="chats",
+        secondary="user_chats",
+        uselist=True,
+        lazy='selectin'
+    )
+    messages: Mapped[list['Message']] = relationship(
+        back_populates='chat',
+        uselist=True,
+        lazy='selectin'
+    )
+
+
+class UserChat(Base):
+    __tablename__ = 'user_chats'
+    user_fk: Mapped[UUID4] = mapped_column(ForeignKey('users.id'), primary_key=True)
+    chat_fk: Mapped[UUID4] = mapped_column(ForeignKey('chats.id'), primary_key=True)
+
+
+class UserLikedPosts(Base):
+    __tablename__ = 'users_liked_posts'
+    user_fk: Mapped[UUID4] = mapped_column(ForeignKey('users.id'), primary_key=True, nullable=True)
+    post_fk: Mapped[UUID4] = mapped_column(ForeignKey('posts.id'), primary_key=True, nullable=True)

@@ -19,7 +19,7 @@ class BaseRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def add_item(self, form):
+    async def add_item(self, **kwargs):
         raise NotImplementedError
 
     @abstractmethod
@@ -28,6 +28,9 @@ class BaseRepository(ABC):
 
     @abstractmethod
     async def update_item(self, item_id: int | UUID4, kwargs):
+        raise NotImplementedError
+
+    def get_model(self, **kwargs):
         raise NotImplementedError
 
 
@@ -54,8 +57,8 @@ class SqlAlchemyRepository(BaseRepository):
         
         return items.scalars().all()
 
-    async def add_item(self, form):
-        item = self.model(**form)
+    async def add_item(self, **kwargs):
+        item = self.model(**kwargs)
         
         self.session.add(item)
         await self.session.commit()
@@ -72,3 +75,6 @@ class SqlAlchemyRepository(BaseRepository):
         query = update(self.model).where(self.model.id == item_id).values(update_values)
         await self.session.execute(query)
         await self.session.commit()
+
+    async def get_model(self, **kwargs):
+        return self.model(**kwargs)

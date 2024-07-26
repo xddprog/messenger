@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import routers
 from database.connection import create_tables
-from utils.dependencies import get_session
 
 
 async def lifespan(app: FastAPI):
@@ -34,6 +33,8 @@ app.add_middleware(
 
 app.include_router(routers.auth_router)
 app.include_router(routers.posts_router)
+app.include_router(routers.chats_router)
+app.include_router(routers.users_router)
 
 
 if __name__ == "__main__":

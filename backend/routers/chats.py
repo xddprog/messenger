@@ -34,8 +34,7 @@ async def create_chat(
     user_service: Annotated[UserService, Depends(get_user_service)]
 ):
     form.users = [await user_service.get_user(user_id) for user_id in form.users]
-    new_chat = await chat_service.create_chat(form)
-    return new_chat
+    return await chat_service.create_chat(form)
 
 
 @router.get('/{chat_id}/messages/{offset}')
@@ -44,8 +43,7 @@ async def get_chat_messages(
     offset: int,
     message_service: Annotated[MessageService, Depends(get_message_service)]
 ):
-    messages = await message_service.get_messages_from_chat(chat_id, offset)
-    return messages
+    return await message_service.get_messages_from_chat(chat_id, offset)
 
 
 @router.websocket("/ws/{chat_id}/{client_id}")

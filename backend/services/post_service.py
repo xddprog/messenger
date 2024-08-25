@@ -13,6 +13,7 @@ class PostService(BaseService):
 
     async def create_post(self, description: str, images: list, author: User) -> PostModel:
         post_id = uuid4()
+
         if images:
             images = await self.s3_client.upload_many_files(
                 images,

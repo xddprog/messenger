@@ -44,6 +44,7 @@ async def get_s3_client():
 #     return WebSocketManager()
 #
 
+
 async def get_auth_service(session=Depends(get_session)):
     return services.AuthService(repository=repositories.UserRepository(session=session))
 

@@ -36,7 +36,7 @@ export default function UserProfileInfo() {
                 }
                 description={
                     <Typography.Paragraph style={{ fontSize: '13px'}}>
-                        Жопа пися хуй дрочить
+                        Ещкере чивапчис
                     </Typography.Paragraph>
                 }
             >

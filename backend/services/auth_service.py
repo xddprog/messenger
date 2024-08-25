@@ -62,7 +62,6 @@ class AuthService(BaseService):
             
             return email
         except InvalidTokenError as e:
-            print(e)
             raise InvalidToken
     
     async def check_user_exist(self, email: str) -> User:

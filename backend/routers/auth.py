@@ -24,18 +24,21 @@ async def login_user(
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     response: Response
 ):
-    await auth_service.authenticate_user(form)
+    user = await auth_service.authenticate_user(form)
 
     token = await auth_service.create_access_token(form.email)
     response.set_cookie(key='token', value=token, httponly=True)
 
-    return {'message': 'Вы успешно вошли в аккаунт!'}
+    return {
+        'detail': 'Вы успешно вошли в аккаунт!',
+        'user': user
+    }
 
 
 @router.delete('/logout')
 async def logout_user(response: Response):
     response.delete_cookie(key='token')
-    return True
+    return {'detail': 'Вы успешно вышли из аккаунта'}
 
 
 @router.post('/register', status_code=201)
@@ -49,6 +52,6 @@ async def register_user(
     response.set_cookie(key='token', value=token, httponly=True)
 
     return {
-        'message': 'Вы успешно зарегистрировались!',
+        'detail': 'Вы успешно зарегистрировались!',
         'new_user': new_user
     }

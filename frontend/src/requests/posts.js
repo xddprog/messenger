@@ -14,8 +14,8 @@ export async function createPost(values) {
         `${BASE_URL}/create`,
         values,
         {
-        headers: { 'content-type': 'multipart/form-data' }
-    }
+            headers: { 'content-type': 'multipart/form-data' }
+        }
     ).then(response => response.data)
 }
 

@@ -17,7 +17,7 @@ class PostModel(BaseModel):
     author: AutorModel
     description: str
     images: list[str] | None = None
-    likes: list[BaseUserModel]
+    likes: list[BaseUserModel] | None = None
     created_at: datetime | str
     views: int
 

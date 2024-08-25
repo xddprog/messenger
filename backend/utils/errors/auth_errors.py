@@ -29,6 +29,6 @@ class InvalidLoginData(HTTPException):
 class UserAlreadyNotRegister(HTTPException):
     def __init__(self):
         super().__init__(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Пользователь с таким именем не найден!'
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Пользователь с такой почтой не найден!'
         )

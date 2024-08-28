@@ -291,7 +291,7 @@
 
 ## Users
 
-### GET /users/:user_id/chats
+### 1. GET /users/:user_id/chats
 Получение чатов пользователя
 
 Ответ 200:
@@ -313,7 +313,7 @@
 ]
 ```
 
-### 3. GET /users/:user_id/:posts
+### 2. GET /users/:user_id/:posts
 
 Получение постов пользователя
 
@@ -341,4 +341,50 @@
         "views": 0
     }
 ]
+```
+
+### 3. GET /users/friends/all
+
+Получение всех друзей пользователя
+
+Ответ:
+```json
+[
+    {
+        "id": "uuid4",
+        "username": "string",
+        "email": "string",
+        "avatar": "string"
+    }
+]
+```
+
+### 4. GET /users/:user_id/friends/:friend_id
+
+Проверка, является ли польователь другом
+
+```json
+{
+    "user_is_friend": true
+}
+```
+
+### 5. POST /users/:user_id/friends/add/:friend_id
+
+Добавление пользователя в друзья
+
+```json
+{
+  "detail": "Пользователь EXAMPLE_USER успешно добавил EXAMPLE_FRIEND в друзья"
+}
+```
+
+### 6. POST /users/:user_id/friends/remove/:friend_id
+
+Добавление пользователя в друзья
+
+```json
+{
+  "detail": "Пользователь EXAMPLE_USER успешно удалил EXAMPLE_FRIEND из друзей"
+}
 ```

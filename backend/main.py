@@ -30,11 +30,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-app.include_router(routers.auth_router)
-app.include_router(routers.posts_router)
-app.include_router(routers.chats_router)
-app.include_router(routers.users_router)
+for router in routers.routers:
+    app.include_router(router)
 
 
 if __name__ == "__main__":

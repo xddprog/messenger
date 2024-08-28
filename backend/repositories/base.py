@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from pydantic import UUID4
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import MappedColumn
 
 
 class BaseRepository(ABC):
@@ -30,6 +31,7 @@ class BaseRepository(ABC):
     async def update_item(self, item_id: int | UUID4, kwargs):
         raise NotImplementedError
 
+    @abstractmethod
     def get_model(self, **kwargs):
         raise NotImplementedError
 

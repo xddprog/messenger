@@ -30,3 +30,44 @@ async def get_user_posts(
     user_service: Annotated[UserService, Depends(get_user_service)]
 ):
     return await user_service.get_user_posts(user_id)
+
+
+@router.get('/{user_id}/friends/all')
+async def get_user_friends(
+    user_id: UUID4,
+    user_service: Annotated[UserService, Depends(get_user_service)]
+):
+    return await user_service.get_friends(user_id)
+
+
+@router.get('/{user_id}/friends/{friend_id}')
+async def get_check_is_friend_or_not(
+    user_id: UUID4,
+    friend_id: UUID4,
+    user_service: Annotated[UserService, Depends(get_user_service)]
+):
+    return await user_service.check_friend(user_id, friend_id)
+
+
+@router.post('/{user_id}/friends/add/{friend_id}')
+async def add_friend(
+    user_id: UUID4,
+    friend_id: UUID4,
+    user_service: Annotated[UserService, Depends(get_user_service)]
+) -> dict:
+    await user_service.add_friend(user_id, friend_id)
+    return {
+        'detail': f'Пользователь {user_id} успешно добавил {friend_id} в друзья'
+    }
+
+
+@router.delete('/{user_id}/friends/remove/{friend_id}')
+async def remove_friend(
+    user_id: UUID4,
+    friend_id: UUID4,
+    user_service: Annotated[UserService, Depends(get_user_service)]
+):
+    await user_service.remove_friend(user_id, friend_id)
+    return {
+        'detail': f'Пользователь {user_id} успешно удалил {friend_id} из друзей'
+    }

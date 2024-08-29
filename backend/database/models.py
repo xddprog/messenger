@@ -1,9 +1,11 @@
 from datetime import datetime
+from uuid import UUID
 
 from pydantic import UUID4
 
 from sqlalchemy import ForeignKey, ARRAY, String
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship
+from sqlalchemy.dialects.postgresql import UUID
 
 from utils.config.constants import BASE_AVATAR_URL
 
@@ -20,6 +22,7 @@ class User(Base):
     password: Mapped[str]
     email: Mapped[str] = mapped_column(unique=True)
     avatar: Mapped[str] = mapped_column(nullable=True, default=BASE_AVATAR_URL)
+    friends = mapped_column(ARRAY(UUID()), default=[])
 
     posts: Mapped[list['Post']] = relationship(
         back_populates="author",

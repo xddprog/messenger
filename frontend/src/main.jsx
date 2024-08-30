@@ -7,7 +7,6 @@ import LoginPage from './pages/authPages/LoginPage.jsx';
 import PostsPage from './pages/mainPages/sidebarPages/PostsPage.jsx';
 import ChatPage from './pages/mainPages/sidebarPages/ChatPage.jsx';
 import Profile from './pages/Profile/Profile.jsx';
-// import ProfilePage from "./pages/mainPages/sidebarPages/ProfilePage.jsx";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 	<ConfigProvider

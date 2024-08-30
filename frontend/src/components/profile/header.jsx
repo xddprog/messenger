@@ -12,7 +12,7 @@ export default function Header() {
 			<div className='profile-info flex items-center px-3'>
 				<img
 					className='profile-avatar rounded-[50%] h-[150px] w-auto border-4 border-[#181818] -top-20 relative	'
-					src='./images/ava.jpg'
+					src={localStorage.getItem('avatar') ?? ''}
 					alt='avatar'
 				/>
 				<div className='profile-wrapper flex  w-full justify-between'>

@@ -16,13 +16,10 @@ app = FastAPI(
 )
 
 
-# origins = [
-#     "http://localhost:5173",
-#     "http://127.0.0.1:5173"
-# ]
+origins = [
+    "http://178.120.68.141"
+]
 
-
-origins = ["*"]
 
 
 app.add_middleware(

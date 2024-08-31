@@ -10,7 +10,7 @@ class DatabaseConfig(BaseModel):
     db_port: str
 
 
-class JwtConfig(BaseModel):
+class JwtConfig(BaseModel): 
     jwt_secret: str
     algorithm: str
     access_token_time: int
@@ -22,6 +22,11 @@ class S3StorageConfig(BaseModel):
     secret_access_key: str
     region: str
     endpoint_url: str
+
+
+class RedisConfig(BaseModel):
+    host: str
+    port: int
 
 
 def load_database_config() -> DatabaseConfig:
@@ -55,4 +60,13 @@ def load_s3_storage_config() -> S3StorageConfig:
         secret_access_key=env.str("AWS_SECRET_ACCESS_KEY"),
         region=env.str("AWS_REGION"),
         endpoint_url=env.str("AWS_ENDPOINT_URL")
+    )
+
+
+def load_redis_config() -> RedisConfig:
+    env = Env()
+    env.read_env()
+    return RedisConfig(
+        host=env.str("REDIS_HOST"),
+        port=env.int("REDIS_PORT")
     )

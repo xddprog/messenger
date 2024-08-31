@@ -30,3 +30,4 @@ class PostRepository(SqlAlchemyRepository):
         await self.session.refresh(post)
 
         return post
+    

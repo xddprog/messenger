@@ -1,3 +1,4 @@
+from re import S, U
 from uuid import uuid4
 
 from pydantic import UUID4
@@ -41,3 +42,6 @@ class PostService(BaseService):
     async def like_post(self, post_id, user: User):
         post = await self.repository.like_post(post_id, user)
         return await self.model_dump(post, PostModel)
+
+    async def delete_post(self, post_id: UUID4):
+        await self.repository.delete_item(post_id)

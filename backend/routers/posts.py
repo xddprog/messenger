@@ -1,3 +1,5 @@
+import select
+from turtle import pos
 from typing import Annotated
 from fastapi import APIRouter, Depends, UploadFile, File, Body, Form
 
@@ -48,3 +50,12 @@ async def like_post(
 ):
     user = await user_service.get_user(user_id)
     return await post_service.like_post(post_id, user)
+
+
+@router.delete('/{post_id}')
+async def delete_post(
+    post_id: UUID4,
+    post_service: Annotated[PostService, Depends(get_post_service)]
+):
+    await post_service.delete_post(post_id)
+    return True

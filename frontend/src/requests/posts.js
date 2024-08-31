@@ -2,6 +2,10 @@ import axios from 'axios';
 
 const BASE_URL = 'https://messenger-sm6n.onrender.com/api/posts';
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> a7772bf (add delete post, add redis cache)
 export async function getAllPosts() {
 	return await axios.get(`${BASE_URL}/all`).then((response) => response.data);
 }

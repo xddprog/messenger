@@ -8,7 +8,7 @@ from dto.user_dto import BaseUserModel
 from database.models import User
 from services.base_service import BaseService
 from utils.config.config import load_jwt_config
-from utils.errors.auth_errors import (
+from errors.auth_errors import (
     InvalidLoginData, InvalidToken, 
     UserAlreadyNotRegister, UserAlreadyRegister
 )

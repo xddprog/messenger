@@ -1,7 +1,13 @@
 import { Empty, Typography } from 'antd';
+<<<<<<< HEAD
 import { useState, useEffect } from 'react';
 import Post from '../../../components/cards/Post';
 import { getAllPosts } from '../../../requests/posts';
+=======
+import { useState, useEffect} from 'react';
+import Post from '../../../components/cards/Post';
+import { getAllPosts } from "../../../requests/posts"
+>>>>>>> a7772bf (add delete post, add redis cache)
 import CreatePostModal from '../../../components/modals/CreatePostModal.jsx';
 
 export default function PostsPage() {
@@ -9,8 +15,13 @@ export default function PostsPage() {
 	const [createPostModalIsOpen, setCreatePostModalIsOpen] = useState(false);
 
 	useEffect(() => {
+<<<<<<< HEAD
 		getAllPosts().then((res) => setPosts(res));
 	}, []);
+=======
+	    getAllPosts().then(res => setPosts(res))
+	}, [])
+>>>>>>> a7772bf (add delete post, add redis cache)
 
 	function updatePost(updatablePostData) {
 		let newPosts = posts.map((post) => {

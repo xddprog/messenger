@@ -4,9 +4,10 @@ from fastapi import APIRouter, Depends
 from pydantic import UUID4
 from sqlalchemy.util import await_only
 
+from utils.redis_cache import RedisCache
 from dto.chat_dto import BaseChatModel
 from services import UserService, ChatService
-from utils.dependencies import get_user_service, get_chat_service
+from utils.dependencies import get_redis, get_user_service, get_chat_service
 
 router = APIRouter(
     prefix="/api/users",
@@ -77,7 +78,13 @@ async def remove_friend(
 @router.get('/search')
 async def search_users(
     username: str,
-    user_service: Annotated[UserService, Depends(get_user_service)]
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    redis_cache: Annotated[RedisCache, Depends(get_redis)]
 ):
-    return await user_service.search_users(username)
+    users = await redis_cache.get_item(username)
 
+    if not users:
+        users = await user_service.search_users(username)
+        await redis_cache.set_item(username, users)
+    
+    return users

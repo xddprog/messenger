@@ -19,7 +19,7 @@ class UserRepository(SqlAlchemyRepository):
         user = await self.session.get(self.model, user_id)
 
         user.friends = [friend for friend in user.friends if friend != str(friend_id)]
-
+        select()
         await self.session.commit()
 
     async def search_users(self, username: str, **kwargs: str):

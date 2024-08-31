@@ -1,9 +1,10 @@
 from typing import Annotated
 
-from fastapi import Depends, Cookie
+from fastapi import Depends, Cookie, Request
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from aiobotocore.session import AioSession
 
+from utils.redis_cache import RedisCache
 import services
 import repositories
 from database.connection import engine
@@ -23,6 +24,10 @@ async def get_session():
         await session.close()
 
 
+async def get_redis(request: Request) -> RedisCache:
+    return request.app.state.redis_cache
+
+
 async def get_s3_client():
     config = load_s3_storage_config()
     session = AioSession()
@@ -38,12 +43,7 @@ async def get_s3_client():
             bucket_name=config.bucket_name,
             endpoint_url=config.endpoint_url
         )
-
-#
-# async def get_websocket_manager():
-#     return WebSocketManager()
-#
-
+        
 
 async def get_auth_service(session=Depends(get_session)):
     return services.AuthService(repository=repositories.UserRepository(session=session))

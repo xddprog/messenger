@@ -19,7 +19,7 @@ export default function RegisterForm() {
 				content: response.data.message,
 			});
 
-			navigate('/posts');
+			navigate('/profile');
 		} catch (error) {
 			messageApi.open({
 				type: 'error',

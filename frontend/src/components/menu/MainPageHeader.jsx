@@ -11,7 +11,6 @@ export default function MainPageHeader() {
 	const handleLogout = async () => {
 		try {
 			await logoutUser();
-			localStorage.removeItem('id');
 
 			navigate('/login');
 		} catch (error) {

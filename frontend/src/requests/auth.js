@@ -16,7 +16,7 @@ export async function loginUser(values) {
 
 export async function getCurrentUser() {
 	return await axios
-		.get(`${BASE_URL}/auth_me`, { withCredentials: true })
+		.get(`${BASE_URL}/users`, { withCredentials: true })
 		.then((response) => response);
 }
 

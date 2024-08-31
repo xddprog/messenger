@@ -1,23 +1,8 @@
 import { Outlet } from 'react-router-dom';
 import SideBar from '../../components/menu/SideBar';
 import MainPageHeader from '../../components/menu/MainPageHeader';
-// import { useEffect } from 'react';
-// import { getCurrentUser } from '../../requests/auth.js';
 
 export default function MainPage() {
-	// const navigate = useNavigate();
-
-	// useEffect(() => {
-	// 	getCurrentUser()
-	// 		.then((response) => {
-	// 			const user = response.data;
-
-	// 			localStorage.setItem('user_id', user.id);
-	// 			localStorage.setItem('avatar', user.avatar);
-	// 		})
-	// 		.catch((error) => (error.status === 403 ? navigate('/login') : ''));
-	// }, []) // mokky ругается на это, позже узнаю что это;
-
 	return (
 		<div style={{ backgroundColor: '#1e2022', height: '100vh' }}>
 			<header

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 export default function Post({ post, updatePost }) {
 	const [postIsLiked, setPostIsLiked] = useState(false);
-	console.log(post);
+	const [countIsLiked, setCountIsLiked] = useState(0);
 	useEffect(() => {
 		let userId = localStorage.getItem('user_id');
 
@@ -15,12 +15,16 @@ export default function Post({ post, updatePost }) {
 		userInLikedPost ? setPostIsLiked(true) : setPostIsLiked(false);
 	}, []);
 
-	async function like() {
-		await likePost(post.id).then((res) => {
-			updatePost(res);
+	const handeLike = async () => {
+		try {
+			await likePost(post.id);
+
 			setPostIsLiked(!postIsLiked);
-		});
-	}
+			setCountIsLiked(postIsLiked ? countIsLiked - 1 : countIsLiked + 1);
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
 	return (
 		<Card
@@ -104,7 +108,7 @@ export default function Post({ post, updatePost }) {
 						cursor: 'pointer',
 					}}
 					key={'like-button'}
-					onClick={like}
+					onClick={handeLike}
 				>
 					<Space direction='horizontal' key={'post-likes'}>
 						<LikeOutlined
@@ -119,7 +123,7 @@ export default function Post({ post, updatePost }) {
 								color: postIsLiked ? '#05d77e' : '#6e7072',
 							}}
 						>
-							{post.likes.length}
+							{countIsLiked}
 						</p>
 					</Space>
 				</button>,

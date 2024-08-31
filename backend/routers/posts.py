@@ -23,6 +23,7 @@ async def create_post(
     images: list = Form(...),
 ):
     author = await user_service.get_user(author)
+    print(author)
     new_post = await post_service.create_post(
         description=description,
         images=images,

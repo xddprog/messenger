@@ -2,10 +2,11 @@ import axios from 'axios';
 
 const BASE_URL = 'https://messenger-sm6n.onrender.com/api';
 
-
-// export async function getAllPosts() {
-// 	return await axios.get(`${BASE_URL}/all`).then((response) => response.data);
-// }
+export async function getAllPosts() {
+	return await axios
+		.get(`${BASE_URL}/posts/all`)
+		.then((response) => response.data);
+}
 
 export async function createPost(values) {
 	return await axios

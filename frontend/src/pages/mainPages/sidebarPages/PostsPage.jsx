@@ -1,16 +1,16 @@
 import { Empty, Typography } from 'antd';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Post from '../../../components/cards/Post';
-// import { getAllPosts } from "../../../requests/posts"
+import { getAllPosts } from '../../../requests/posts';
 import CreatePostModal from '../../../components/modals/CreatePostModal.jsx';
 
 export default function PostsPage() {
 	const [posts, setPosts] = useState([]);
 	const [createPostModalIsOpen, setCreatePostModalIsOpen] = useState(false);
 
-	// useEffect(() => {
-	//     getAllPosts().then(res => setPosts(res))
-	// }, [])
+	useEffect(() => {
+		getAllPosts().then((res) => setPosts(res));
+	}, []);
 
 	function updatePost(updatablePostData) {
 		let newPosts = posts.map((post) => {

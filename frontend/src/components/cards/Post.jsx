@@ -6,14 +6,14 @@ import { useEffect, useState } from 'react';
 export default function Post({ post, updatePost }) {
 	const [postIsLiked, setPostIsLiked] = useState(false);
 	console.log(post);
-	// useEffect(() => {
-	// 	let userId = localStorage.getItem('user_id');
+	useEffect(() => {
+		let userId = localStorage.getItem('user_id');
 
-	// 	let userInLikedPost =
-	// 		post.likes.map((item) => item.id).indexOf(userId) !== -1;
+		let userInLikedPost =
+			post.likes.map((item) => item.id).indexOf(userId) !== -1;
 
-	// 	userInLikedPost ? setPostIsLiked(true) : setPostIsLiked(false);
-	// }, []);
+		userInLikedPost ? setPostIsLiked(true) : setPostIsLiked(false);
+	}, []);
 
 	async function like() {
 		await likePost(post.id).then((res) => {
@@ -120,7 +120,7 @@ export default function Post({ post, updatePost }) {
 								color: postIsLiked ? '#05d77e' : '#6e7072',
 							}}
 						>
-							{/* {post.likes.length} */}
+							{post.likes.length}
 						</p>
 					</Space>
 				</button>,

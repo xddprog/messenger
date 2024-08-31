@@ -13,6 +13,7 @@ export default function Post({ post, updatePost }) {
 			post.likes.map((item) => item.id).indexOf(userId) !== -1;
 
 		userInLikedPost ? setPostIsLiked(true) : setPostIsLiked(false);
+		userInLikedPost ? setCountIsLiked(1) : setCountIsLiked(0);
 	}, []);
 
 	const handeLike = async () => {

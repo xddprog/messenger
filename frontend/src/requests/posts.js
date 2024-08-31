@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const BASE_URL = 'https://messenger-sm6n.onrender.com/api';
 
+
 // export async function getAllPosts() {
 // 	return await axios.get(`${BASE_URL}/all`).then((response) => response.data);
 // }

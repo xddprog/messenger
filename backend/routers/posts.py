@@ -18,9 +18,9 @@ router = APIRouter(
 async def create_post(
     post_service: Annotated[PostService, Depends(get_post_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
-    images: list[UploadFile] = File(...),
     author: UUID4 = Form(...),
-    description: str = Form(...)
+    description: str = Form(...),
+    images: list = Form(...),
 ):
     author = await user_service.get_user(author)
     new_post = await post_service.create_post(

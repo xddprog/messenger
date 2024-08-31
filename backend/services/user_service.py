@@ -42,3 +42,7 @@ class UserService(BaseService):
     async def check_friend(self, user_id: UUID4, friend_id: UUID4):
         user = await self.repository.get_item(user_id)
         return friend_id in user.friends
+
+    async def search_users(self, username: str, **kwargs) -> list[BaseUserModel] | None:
+        users = await self.repository.search_users(username, **kwargs)
+        return await self.dump_items(users, BaseUserModel)

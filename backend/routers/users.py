@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from pydantic import UUID4
+from sqlalchemy.util import await_only
 
 from dto.chat_dto import BaseChatModel
 from services import UserService, ChatService
@@ -71,3 +72,12 @@ async def remove_friend(
     return {
         'detail': f'Пользователь {user_id} успешно удалил {friend_id} из друзей'
     }
+
+
+@router.get('/search')
+async def search_users(
+    username: str,
+    user_service: Annotated[UserService, Depends(get_user_service)]
+):
+    return await user_service.search_users(username)
+

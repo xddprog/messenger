@@ -19,7 +19,7 @@ export async function likePost(postId) {
 		.patch(`${BASE_URL}/${postId}/like/${localStorage.getItem('user_id')}`)
 		.then((response) => {
 			console.log(response.data);
-			
-			response.data
+
+			response.data;
 		});
 }

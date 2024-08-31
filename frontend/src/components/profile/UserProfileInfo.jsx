@@ -10,55 +10,23 @@ import {
 	Typography,
 } from 'antd';
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 
 export default function UserProfileInfo() {
-	// const [user, setUser] = useState({ name: '' }, { description: '' });
-	// const [isModalVisible, setIsModalVisible] = useState(false);
-	// const [name, setName] = useState('');
-	// const [description, setDescription] = useState('');
-	// const id = localStorage.getItem('user_id');
-	// const showModal = () => {
-	// 	setIsModalVisible(true);
-	// };
-	// const handleCancel = () => {
-	// 	setIsModalVisible(false);
-	// };
+	const [isModalVisible, setIsModalVisible] = useState(false);
 
-	// const handleOk = () => {
-	// 	setIsModalVisible(false);
-	// 	handleSave();
-	// };
+	const showModal = () => {
+		setIsModalVisible(true);
+	};
+	const handleCancel = () => {
+		setIsModalVisible(false);
+	};
 
-	// const handleSave = async () => {
-	// 	try {
-	// 		const response = await axios.post(
-	// 			`https://cefa0520cfadf6a0.mokky.dev/users/`,
-	// 			{
-	// 				username: name,
-	// 				description: description,
-	// 			}
-	// 		);
-	// 		console.log(response.data);
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 	}
-	// };
+	const handleOk = () => {
+		setIsModalVisible(false);
+	};
 
-	// useEffect(() => {
-	// 	async function fetchData() {
-	// 		try {
-	// 			const response = await axios.get(
-	// 				'https://cefa0520cfadf6a0.mokky.dev/users'
-	// 			);
-	// 			setUser({ name: response.data[id - 1].username });
-	// 		} catch (error) {
-	// 			console.error(error);
-	// 		}
-	// 	}
-	// 	fetchData();
-	// }, []);
 	return (
 		<div className=''>
 			<Card
@@ -99,10 +67,10 @@ export default function UserProfileInfo() {
 							</Typography.Paragraph>
 						}
 					></Card.Meta>
-					<Button>Редактировать профиль</Button>
+					<Button onClick={showModal}>Редактировать профиль</Button>
 				</div>
 			</Card>
-			{/* <Modal
+			<Modal
 				title='Edit Profile'
 				visible={isModalVisible}
 				onOk={handleOk}
@@ -112,18 +80,10 @@ export default function UserProfileInfo() {
 			>
 				<Form layout='vertical'>
 					<Form.Item label='Name'>
-						<Input
-							placeholder='Enter your name'
-							value={name}
-							onChange={(e) => setName(e.target.value)}
-						/>
+						<Input placeholder='Enter your name' />
 					</Form.Item>
 					<Form.Item label='Description'>
-						<Input
-							placeholder='Enter a description'
-							value={description}
-							onChange={(e) => setDescription(e.target.value)}
-						/>
+						<Input placeholder='Enter a description' />
 					</Form.Item>
 					<Form.Item label='Change Profile Picture'>
 						<Upload>
@@ -131,7 +91,7 @@ export default function UserProfileInfo() {
 						</Upload>
 					</Form.Item>
 				</Form>
-			</Modal> */}
+			</Modal>
 		</div>
 	);
 }

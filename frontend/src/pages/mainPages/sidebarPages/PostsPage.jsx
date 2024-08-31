@@ -37,7 +37,7 @@ export default function PostsPage() {
 				handleIsOpen={setCreatePostModalIsOpen}
 				addPostAfterCreate={addPostAfterCreate}
 			/>
-			<div style={{ marginTop: '10px', width: '100%' }}>
+			<div className='flex flex-col items-center w-full mt-3'>
 				{posts == null ? (
 					<Empty description={<Typography.Text>Нет постов</Typography.Text>} />
 				) : (

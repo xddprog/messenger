@@ -24,10 +24,7 @@ export default function Post({ post, updatePost }) {
 
 	return (
 		<Card
-			style={{
-				marginTop: '10px',
-				height: '100%',
-			}}
+			className='mt-3 h-auto w-[60%]'
 			title={
 				<div
 					style={{
@@ -90,7 +87,9 @@ export default function Post({ post, updatePost }) {
 										height: '100%',
 										objectFit: 'cover',
 									}}
-									width={`${100 / post.images.length}%`}
+									width={`${
+										post.images.length == 1 ? 100 : 100 / post.images.length
+									}%`}
 								/>
 						  ))
 						: null}

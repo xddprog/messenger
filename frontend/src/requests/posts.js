@@ -11,11 +11,15 @@ export async function createPost(values) {
 		.post(`${BASE_URL}/posts/create`, values, {
 			headers: { 'content-type': 'multipart/form-data' },
 		})
-		.then((response) => response);
+		.then((response) => response.data);
 }
 
 export async function likePost(postId) {
 	return await axios
 		.patch(`${BASE_URL}/${postId}/like/${localStorage.getItem('user_id')}`)
-		.then((response) => response.data);
+		.then((response) => {
+			console.log(response.data);
+			
+			response.data
+		});
 }

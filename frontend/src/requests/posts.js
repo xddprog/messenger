@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://cefa0520cfadf6a0.mokky.dev/posts';
+const BASE_URL = 'https://messenger-sm6n.onrender.com/api';
 
 // export async function getAllPosts() {
 // 	return await axios.get(`${BASE_URL}/all`).then((response) => response.data);
@@ -8,10 +8,10 @@ const BASE_URL = 'https://cefa0520cfadf6a0.mokky.dev/posts';
 
 export async function createPost(values) {
 	return await axios
-		.post(`${BASE_URL}`, values, {
+		.post(`${BASE_URL}/posts/create`, values, {
 			headers: { 'content-type': 'multipart/form-data' },
 		})
-		.then((response) => response.data);
+		.then((response) => response);
 }
 
 export async function likePost(postId) {

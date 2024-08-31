@@ -38,33 +38,26 @@ export default function CreatePostModal({
 	};
 
 	async function submitCreatePost() {
-		try {
-			const values = await form[0].validateFields();
-			const formData = new FormData();
+		const values = await form[0].validateFields();
+		const formData = new FormData();
 
-			if (values.images && values.images.fileList) {
-				values.images.fileList.forEach((file) => {
-					formData.append('images', file.originFileObj);
-				});
-			}
-
-			formData.append('description', descriptionValue);
-			formData.append('author', localStorage.getItem('user_id'));
-
-			const res = await createPost(formData);
-			if (res) {
-				addPostAfterCreate(res);
-				handleIsOpen(false);
-				setFileList([]);
-				setDescriptionValue('');
-				message.success('Пост успешно создан');
-			} else {
-				throw new Error('Не удалось создать пост');
-			}
-		} catch (error) {
-			console.error('Ошибка при создании поста:', error);
-			message.error('Не удалось создать пост. Пожалуйста, попробуйте еще раз.');
+		if (values.images) {
+			values.images = values.images.fileList;
+			values.images.forEach((file) => {
+				formData.append('images', file.originFileObj);
+			});
+		} else {
+			formData.append('images', [null]);
 		}
+
+		formData.append('description', descriptionValue);
+		formData.append('author', localStorage.getItem('user_id'));
+		console.log(formData.getAll('images'));
+		await createPost(formData).then((res) => addPostAfterCreate(res));
+
+		handleIsOpen(false);
+		setFileList([]);
+		setDescriptionValue('');
 	}
 
 	const onRemove = (file) => {

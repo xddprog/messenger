@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://cefa0520cfadf6a0.mokky.dev';
+const BASE_URL = 'https://messenger-sm6n.onrender.com/api/auth';
 
 export async function registerUser(values) {
 	return await axios
@@ -10,18 +10,18 @@ export async function registerUser(values) {
 
 export async function loginUser(values) {
 	return await axios
-		.post(`${BASE_URL}/auth`, values, { withCredentials: true })
+		.post(`${BASE_URL}/login`, values, { withCredentials: true })
 		.then((response) => response);
 }
 
 export async function getCurrentUser() {
 	return await axios
-		.get(`${BASE_URL}/users`, { withCredentials: true })
+		.get(`${BASE_URL}/current_user`, { withCredentials: true })
 		.then((response) => response);
 }
 
 export async function logoutUser() {
 	return await axios
-		.post(`${BASE_URL}/logout`, { withCredentials: true })
+		.delete(`${BASE_URL}/logout`, { withCredentials: true })
 		.then((response) => response);
 }

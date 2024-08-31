@@ -9,7 +9,8 @@ export default function AccountChecker() {
 		getCurrentUser()
 			.then((response) => {
 				const user = response.data[0];
-				if (user.length == 0) {
+				const userArr = response.data;
+				if (userArr.length === 0) {
 					navigate('/register');
 				} else {
 					localStorage.setItem('user_id', user.id);

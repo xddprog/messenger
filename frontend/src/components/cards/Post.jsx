@@ -1,11 +1,11 @@
 import { CommentOutlined, EyeOutlined, LikeOutlined } from '@ant-design/icons';
 import { Card, Image, Space } from 'antd';
 import { likePost } from '../../requests/posts.js';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Post({ post, updatePost }) {
 	const [postIsLiked, setPostIsLiked] = useState(false);
-
+	console.log(post);
 	// useEffect(() => {
 	// 	let userId = localStorage.getItem('user_id');
 
@@ -49,7 +49,7 @@ export default function Post({ post, updatePost }) {
 							}}
 							alt='author-profile-photo'
 						/>
-						{/* <div>
+						<div>
 							<a style={{ fontSize: 16 }}>{post.author.username}</a>
 							<p
 								style={{
@@ -61,7 +61,7 @@ export default function Post({ post, updatePost }) {
 							>
 								{post.created_at}
 							</p>
-						</div> */}
+						</div>
 					</div>
 					<div style={{ display: 'flex', alignItems: 'center' }}>
 						<EyeOutlined style={{ color: '#6e7072', marginRight: '5px' }} />
@@ -112,7 +112,7 @@ export default function Post({ post, updatePost }) {
 							key={'post-likes-icon'}
 							style={{ color: postIsLiked ? '#05d77e' : '#6e7072' }}
 						/>
-						{/* <p
+						<p
 							style={{
 								margin: 0,
 								fontSize: 14,
@@ -120,8 +120,8 @@ export default function Post({ post, updatePost }) {
 								color: postIsLiked ? '#05d77e' : '#6e7072',
 							}}
 						>
-							{post.likes.length}
-						</p> */}
+							{/* {post.likes.length} */}
+						</p>
 					</Space>
 				</button>,
 				<CommentOutlined key={3} width={40} />,

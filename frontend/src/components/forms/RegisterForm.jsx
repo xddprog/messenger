@@ -1,5 +1,4 @@
-import { Button, Form, Input, message, Typography } from 'antd';
-import { LockOutlined, MailOutlined } from '@ant-design/icons';
+import { Button, Form, Input, message, Typography, DatePicker } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../../requests/auth.js';
 
@@ -7,6 +6,15 @@ export default function RegisterForm() {
 	const form = Form.useForm();
 	const navigate = useNavigate();
 	const [messageApi, contextHolder] = message.useMessage();
+	const config = {
+		rules: [
+			{
+				type: 'object',
+				required: true,
+				message: 'Please select time!',
+			},
+		],
+	};
 
 	async function registerSubmit() {
 		try {
@@ -17,7 +25,7 @@ export default function RegisterForm() {
 				type: 'success',
 				content: response.data.message,
 			});
-			navigate('/setting');
+			navigate('/profile');
 		} catch (error) {
 			messageApi.open({
 				type: 'error',
@@ -52,12 +60,7 @@ export default function RegisterForm() {
 						},
 					]}
 				>
-					<Input
-						prefix={<MailOutlined className='site-form-item-icon' />}
-						type='email'
-						placeholder='Почта'
-						size={'large'}
-					/>
+					<Input type='email' placeholder='Почта' size={'large'} />
 				</Form.Item>
 				<Form.Item
 					name='password'
@@ -69,12 +72,61 @@ export default function RegisterForm() {
 						},
 					]}
 				>
-					<Input
-						prefix={<LockOutlined className='site-form-item-icon' />}
-						type='password'
-						placeholder='Пароль'
-						size={'large'}
+					<Input type='password' placeholder='Пароль' size={'large'} />
+				</Form.Item>
+
+				<Form.Item
+					name='username'
+					hasFeedback
+					rules={[
+						{
+							required: true,
+							message: 'Пожалуйста, введите свое имя!',
+							whitespace: true,
+						},
+					]}
+				>
+					<Input placeholder='Имя пользователя' size={'large'} />
+				</Form.Item>
+				<Form.Item
+					rules={[
+						{
+							required: true,
+							message: 'Please input your id!',
+							whitespace: true,
+						},
+					]}
+				>
+					<Input placeholder='Уникальный id ' size={'large'} />
+				</Form.Item>
+				<Form.Item
+					rules={[
+						{
+							required: true,
+							message: 'Please input Intro',
+						},
+					]}
+				>
+					<Input.TextArea
+						placeholder='Расскажите о себе'
+						showCount
+						maxLength={100}
 					/>
+				</Form.Item>
+				<Form.Item
+					rules={[
+						{
+							required: true,
+							message: 'Please input your city!',
+							whitespace: true,
+						},
+					]}
+				>
+					<Input placeholder='Родной город ' size={'large'} />
+				</Form.Item>
+
+				<Form.Item className='w-full' name='date-picker' label='' {...config}>
+					<DatePicker placeholder='Дата рождения' />
 				</Form.Item>
 				<Form.Item>
 					<div

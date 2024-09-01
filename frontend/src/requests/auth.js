@@ -5,7 +5,7 @@ const BASE_URL = 'https://messenger-sm6n.onrender.com/api/auth';
 export async function registerUser(values) {
 	return await axios
 		.post(`${BASE_URL}/register`, values, { withCredentials: true })
-		.then((response) => response);
+		.then((response) => console.log(response));
 }
 
 export async function loginUser(values) {

@@ -9,7 +9,6 @@ import {
 	Image,
 	Typography,
 } from 'antd';
-import axios from 'axios';
 import { useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 

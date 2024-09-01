@@ -7,7 +7,6 @@ import LoginPage from './pages/authPages/LoginPage.jsx';
 import PostsPage from './pages/mainPages/sidebarPages/PostsPage.jsx';
 import ChatPage from './pages/mainPages/sidebarPages/ChatPage.jsx';
 import Profile from './pages/Profile/Profile.jsx';
-import SettingPage from './pages/authPages/SettingPage.jsx';
 // import AccountChecker from './components/auth/AccountChecker.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -23,7 +22,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 		<BrowserRouter>
 			<Routes>
 				<Route path='/register' element={<RegisterPage />} />
-				<Route path='/setting' element={<SettingPage />} />
 				<Route path='/login' element={<LoginPage />} />
 				<Route path='/*' element={<MainPage />}>
 					<Route path='posts' element={<PostsPage />} />

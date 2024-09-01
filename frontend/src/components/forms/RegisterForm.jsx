@@ -1,5 +1,5 @@
 import { Button, Form, Input, message, Typography } from 'antd';
-import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../../requests/auth.js';
 
@@ -13,13 +13,11 @@ export default function RegisterForm() {
 			const values = await form[0].validateFields();
 			const response = await registerUser(values).then((r) => r);
 			localStorage.setItem('user_id', response.data.new_user.id);
-
 			messageApi.open({
 				type: 'success',
 				content: response.data.message,
 			});
-
-			navigate('/profile');
+			navigate('/setting');
 		} catch (error) {
 			messageApi.open({
 				type: 'error',
@@ -43,22 +41,6 @@ export default function RegisterForm() {
 				Регистрация
 			</Typography.Title>
 			<Form form={form[0]}>
-				<Form.Item
-					name='username'
-					hasFeedback
-					rules={[
-						{
-							required: true,
-							message: 'Пожалуйста, введите свое имя!',
-						},
-					]}
-				>
-					<Input
-						prefix={<UserOutlined />}
-						placeholder='Имя пользователя'
-						size={'large'}
-					/>
-				</Form.Item>
 				<Form.Item
 					name='email'
 					hasFeedback
@@ -115,6 +97,7 @@ export default function RegisterForm() {
 						>
 							Зарегистрироваться
 						</Button>
+
 						<a onClick={() => navigate('/login')}>Войти</a>
 					</div>
 				</Form.Item>

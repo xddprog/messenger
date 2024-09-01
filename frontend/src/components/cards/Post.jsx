@@ -82,22 +82,21 @@ export default function Post({ post }) {
 			}
 			cover={
 				<div style={{ display: 'flex' }}>
-					{post.images
-						? post.images.map((image) => (
-								<Image
-									src={image}
-									key={image}
-									style={{
-										borderRadius: 0,
-										height: '100%',
-										objectFit: 'cover',
-									}}
-									width={`${
-										post.images.length == 1 ? 100 : 100 / post.images.length
-									}%`}
-								/>
-						  ))
-						: null}
+					{!!post.images &&
+						post.images.map((image) => (
+							<Image
+								src={image}
+								key={image}
+								style={{
+									borderRadius: 0,
+									height: '100%',
+									objectFit: 'cover',
+								}}
+								width={`${
+									post.images.length == 1 ? 100 : 100 / post.images.length
+								}%`}
+							/>
+						))}
 				</div>
 			}
 			actions={[

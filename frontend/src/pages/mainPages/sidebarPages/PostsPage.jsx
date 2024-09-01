@@ -12,16 +12,20 @@ export default function PostsPage() {
 		getAllPosts().then((res) => setPosts(res));
 	}, []);
 
-	function updatePost(updatablePostData) {
-		let newPosts = posts.map((post) => {
-			if (post.id === updatablePostData.id) {
-				return updatablePostData;
-			} else {
-				return post;
-			}
-		});
-		console.log(newPosts.map((item) => item.likes));
-		setPosts(newPosts);
+	// function updatePost(updatablePostData) {
+	// 	let newPosts = posts.map((post) => {
+	// 		if (post.id === updatablePostData.id) {
+	// 			return updatablePostData;
+	// 		} else {
+	// 			return post;
+	// 		}
+	// 	});
+	// 	console.log(newPosts.map((item) => item.likes));
+	// 	setPosts(newPosts);
+	// }
+
+	function updatePost(postId) {
+		setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
 	}
 
 	function addPostAfterCreate(post) {

@@ -44,4 +44,4 @@ class PostService(BaseService):
         return await self.model_dump(post, PostModel)
 
     async def delete_post(self, post_id: UUID4):
-        await self.repository.delete_item(post_id)
+       return await self.repository.delete_item(post_id)

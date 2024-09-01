@@ -18,8 +18,12 @@ export async function likePost(postId) {
 	return await axios
 		.patch(`${BASE_URL}/${postId}/like/${localStorage.getItem('user_id')}`)
 		.then((response) => {
-			console.log(response.data);
-
 			response.data;
 		});
+}
+
+export async function deletePost(postId) {
+	return await axios
+		.delete(`${BASE_URL}/${postId}`)
+		.then((response) => response.data);
 }

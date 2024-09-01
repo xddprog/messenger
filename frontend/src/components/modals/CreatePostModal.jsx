@@ -38,26 +38,27 @@ export default function CreatePostModal({
 	};
 
 	async function submitCreatePost() {
-		const values = await form[0].validateFields();
-		const formData = new FormData();
+		try {
+			const formData = new FormData();
+			if (fileList.length > 0) {
+				fileList.forEach((file) => {
+					formData.append('images', file.originFileObj);
+				});
+			} else {
+				formData.append('images', [null]);
+			}
 
-		if (values.images) {
-			values.images = values.images.fileList;
-			values.images.forEach((file) => {
-				formData.append('images', file.originFileObj);
-			});
-		} else {
-			formData.append('images', [null]);
+			formData.append('description', descriptionValue);
+			formData.append('author', localStorage.getItem('user_id'));
+			// formData.getAll('images');
+			await createPost(formData).then((res) => addPostAfterCreate(res));
+
+			setFileList([]);
+			handleIsOpen(false);
+			setDescriptionValue('');
+		} catch (error) {
+			console.error(error);
 		}
-
-		formData.append('description', descriptionValue);
-		formData.append('author', localStorage.getItem('user_id'));
-		console.log(formData.getAll('images'));
-		await createPost(formData).then((res) => addPostAfterCreate(res));
-
-		handleIsOpen(false);
-		setFileList([]);
-		setDescriptionValue('');
 	}
 
 	const onRemove = (file) => {

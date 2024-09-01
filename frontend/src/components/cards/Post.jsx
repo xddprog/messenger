@@ -1,9 +1,14 @@
-import { CommentOutlined, EyeOutlined, LikeOutlined } from '@ant-design/icons';
+import {
+	CommentOutlined,
+	EyeOutlined,
+	LikeOutlined,
+	DeleteOutlined,
+} from '@ant-design/icons';
 import { Card, Image, Space } from 'antd';
-import { likePost } from '../../requests/posts.js';
+import { likePost, deletePost } from '../../requests/posts.js';
 import { useEffect, useState } from 'react';
 
-export default function Post({ post }) {
+export default function Post({ post, updatePost }) {
 	const [postIsLiked, setPostIsLiked] = useState(false);
 	const [countIsLiked, setCountIsLiked] = useState(0);
 	useEffect(() => {
@@ -15,6 +20,15 @@ export default function Post({ post }) {
 		userInLikedPost ? setPostIsLiked(true) : setPostIsLiked(false);
 		userInLikedPost ? setCountIsLiked(1) : setCountIsLiked(0);
 	}, []);
+
+	const handeDelete = async () => {
+		try {
+			await deletePost(post.id);
+			updatePost(post.id);
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
 	const handeLike = async () => {
 		try {
@@ -113,14 +127,14 @@ export default function Post({ post }) {
 					<Space direction='horizontal' key={'post-likes'}>
 						<LikeOutlined
 							key={'post-likes-icon'}
-							style={{ color: postIsLiked ? '#05d77e' : '#6e7072' }}
+							style={{ color: postIsLiked ? '#07BA6E' : '#6e7072' }}
 						/>
 						<p
 							style={{
 								margin: 0,
 								fontSize: 14,
 								fontWeight: 500,
-								color: postIsLiked ? '#05d77e' : '#6e7072',
+								color: postIsLiked ? '#07BA6E' : '#6e7072',
 							}}
 						>
 							{countIsLiked}
@@ -128,6 +142,7 @@ export default function Post({ post }) {
 					</Space>
 				</button>,
 				<CommentOutlined key={3} width={40} />,
+				<DeleteOutlined onClick={handeDelete} key={4} width={40} />,
 			]}
 		>
 			<p style={{ margin: 0 }}>{post.description}</p>

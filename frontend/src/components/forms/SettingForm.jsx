@@ -1,5 +1,5 @@
-import { Button, Form, Input, Typography, Upload, DatePicker } from 'antd';
-import { UserOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Typography, DatePicker } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 
 export default function SettingFormUser() {
 	const form = Form.useForm();
@@ -69,29 +69,7 @@ export default function SettingFormUser() {
 				>
 					<Input placeholder='Родной город ' size={'large'} />
 				</Form.Item>
-				<Form.Item className='flex flex-col ' valuePropName='fileList'>
-					<Typography.Title level={4}>
-						Загрузите свою фотографию
-					</Typography.Title>
-					<Upload listType='picture-card'>
-						<button
-							style={{
-								border: 0,
-								background: 'none',
-							}}
-							type='button'
-						>
-							<PlusOutlined />
-							<div
-								style={{
-									marginTop: 8,
-								}}
-							>
-								Upload
-							</div>
-						</button>
-					</Upload>
-				</Form.Item>
+
 				<Form.Item className='w-full' name='date-picker' label='' {...config}>
 					<DatePicker placeholder='Дата рождения' />
 				</Form.Item>

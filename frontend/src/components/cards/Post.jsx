@@ -3,7 +3,7 @@ import { Card, Image, Space } from 'antd';
 import { likePost } from '../../requests/posts.js';
 import { useEffect, useState } from 'react';
 
-export default function Post({ post, updatePost }) {
+export default function Post({ post }) {
 	const [postIsLiked, setPostIsLiked] = useState(false);
 	const [countIsLiked, setCountIsLiked] = useState(0);
 	useEffect(() => {

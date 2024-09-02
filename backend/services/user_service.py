@@ -10,6 +10,9 @@ from services import BaseService
 class UserService(BaseService):
     repository: UserRepository
 
+    async def get_all_users(self):
+        return await self.repository.get_all_items()
+
     async def get_user(self, user_id: UUID4) -> User:
         user = await self.repository.get_item(user_id)
         return user

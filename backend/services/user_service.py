@@ -45,4 +45,9 @@ class UserService(BaseService):
 
     async def search_users(self, username: str, **kwargs) -> list[BaseUserModel] | None:
         users = await self.repository.search_users(username, **kwargs)
-        return await self.dump_items(users, BaseUserModel)
+        return await self.dump_items(users, BaseUserModel) if users else []
+
+    async def update_set_profile_data(self, user_id: UUID4, form: BaseUserModel) -> BaseUserModel:
+        user = await self.repository.update_item(**form.model_dump())
+        return user
+    

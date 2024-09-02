@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import UUID4
 
-from sqlalchemy import ForeignKey, ARRAY, String
+from sqlalchemy import DateTime, ForeignKey, ARRAY, String
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -16,12 +16,15 @@ class Base(DeclarativeBase):
 
 class User(Base):
     __tablename__ = 'users'
-
-    id: Mapped[UUID4] = mapped_column(primary_key=True)
+    
+    id: Mapped[str] = mapped_column(primary_key=True)
     username: Mapped[str]
     password: Mapped[str]
     email: Mapped[str] = mapped_column(unique=True)
     avatar: Mapped[str] = mapped_column(nullable=True, default=BASE_AVATAR_URL)
+    city: Mapped[str] 
+    birthday: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    description: Mapped[str]
     friends = mapped_column(ARRAY(UUID()), default=[])
 
     posts: Mapped[list['Post']] = relationship(

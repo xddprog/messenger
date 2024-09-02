@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import uuid4
 from pydantic import UUID4, BaseModel, Field
 
@@ -12,6 +13,9 @@ class RegisterForm(BaseModel):
     username: str
     password: str
     email: str
+    description: str
+    city: str
+    birthday: datetime
 
 
 class LoginForm(BaseModel):

@@ -1,3 +1,4 @@
+import re
 from environs import Env
 from pydantic import BaseModel
 
@@ -70,3 +71,9 @@ def load_redis_config() -> RedisConfig:
         host=env.str("REDIS_HOST"),
         port=env.int("REDIS_PORT")
     )
+
+
+async def load_here_geocoding_api_key() -> str:
+    env = Env()
+    env.read_env()
+    return env.str('HERE_GEOCODING_API_KEY')

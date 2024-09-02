@@ -2,12 +2,13 @@ from datetime import datetime, timedelta
 
 from jwt import InvalidTokenError, encode, decode
 from passlib.context import CryptContext
+from requests import get
 
 from dto.auth_dto import LoginForm, RegisterForm
 from dto.user_dto import BaseUserModel
 from database.models import User
 from services.base_service import BaseService
-from utils.config.config import load_jwt_config
+from utils.config.config import load_here_geocoding_api_key, load_jwt_config
 from errors.auth_errors import (
     InvalidLoginData, InvalidToken, 
     UserAlreadyNotRegister, UserAlreadyRegister
@@ -82,3 +83,22 @@ class AuthService(BaseService):
         new_user = await self.repository.add_item(**form.model_dump())
 
         return await self.model_dump(new_user, BaseUserModel)
+    
+    async def search_cities(self, city: str) -> list:
+        url = (f'https://autocomplete.search.hereapi.com/v1/autocomplete')
+        params = {
+            'apiKey': await load_here_geocoding_api_key(),
+            'q': city,
+            'types': 'city',
+            'lang': 'ru-RU',
+            'limit': 20
+        }
+        response = get(url, params).json()
+
+        if response:
+            return [
+                city['address']['label'] 
+                for city in response['items']
+            ]
+                
+        return []

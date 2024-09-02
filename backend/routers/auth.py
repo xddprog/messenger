@@ -55,3 +55,11 @@ async def register_user(
         'detail': 'Вы успешно зарегистрировались!',
         'new_user': new_user
     }
+
+
+@router.get('/cities/search')
+async def autocomplete_city(
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
+    city: str
+):
+    return await auth_service.search_cities(city)

@@ -1,13 +1,16 @@
+import json
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from pydantic import UUID4
 from sqlalchemy.util import await_only
 
+from dto.user_dto import BaseUserModel
 from utils.redis_cache import RedisCache
 from dto.chat_dto import BaseChatModel
 from services import UserService, ChatService
 from utils.dependencies import get_redis, get_user_service, get_chat_service
+
 
 router = APIRouter(
     prefix="/api/users",
@@ -85,6 +88,21 @@ async def search_users(
 
     if not users:
         users = await user_service.search_users(username)
-        await redis_cache.set_item(username, users)
-    
+        await redis_cache.set_item(
+            username, 
+            json.dumps(
+                [user.model_dump() for user in users]
+            )
+        )
+    else:
+        users = json.loads(users)
     return users
+
+
+@router.post('/{user_id}/profile/set')
+async def update_user_profile(
+    user_id: UUID4,
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    form: BaseUserModel
+):
+    return await user_service.update_set_profile_data(user_id, form)

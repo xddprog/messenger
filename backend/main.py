@@ -12,7 +12,7 @@ async def lifespan(app: FastAPI):
     app.state.redis_cache = RedisCache(config=load_redis_config())
     await create_tables()
     yield
-    app.state.cache.close()
+    # app.state.redis_cache.close()
 
 
 app = FastAPI(

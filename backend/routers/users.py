@@ -18,6 +18,13 @@ router = APIRouter(
 )
 
 
+@router.get('/all')
+async def get_all_users(
+    user_service: Annotated[UserService, Depends(get_user_service)]
+):
+    return await user_service.get_all_users()
+
+
 @router.get('/{user_id}/chats')
 async def get_user_chats(
     user_id: UUID4,

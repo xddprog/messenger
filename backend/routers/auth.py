@@ -14,7 +14,9 @@ router = APIRouter(
 
 
 @router.get('/current_user')
-async def get_current_user(current_user: BaseUserModel = Depends(get_current_user_dependency)):
+async def get_current_user(
+    current_user: BaseUserModel = Depends(get_current_user_dependency)
+):
     return current_user
 
 
@@ -50,7 +52,7 @@ async def register_user(
     new_user = await auth_service.register_user(form)
     token = await auth_service.create_access_token(new_user.username)
     response.set_cookie(key='token', value=token, httponly=True)
-
+    
     return {
         'detail': 'Вы успешно зарегистрировались!',
         'new_user': new_user

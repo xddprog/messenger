@@ -6,7 +6,7 @@ from utils.s3_client import S3Client
 
 
 class BaseService:
-    def __init__(self, repository: BaseRepository, s3_client: S3Client = None):
+    def __init__(self, repository: BaseRepository, s3_client: S3Client):
         self.repository = repository
         self.s3_client = s3_client
 

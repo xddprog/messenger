@@ -106,10 +106,10 @@ async def search_users(
     return users
 
 
-@router.post('/{user_id}/profile/set')
+@router.put('/{user_id}/profile/update')
 async def update_user_profile(
     user_id: UUID4,
     user_service: Annotated[UserService, Depends(get_user_service)],
     form: BaseUserModel
 ):
-    return await user_service.update_set_profile_data(user_id, form)
+    return await user_service.update_user_profile(user_id, form)

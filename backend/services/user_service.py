@@ -1,4 +1,6 @@
+from uuid import uuid4
 from pydantic import UUID4
+
 from database.models import Post, User
 from dto.chat_dto import BaseChatModel
 from dto.post_dto import PostModel
@@ -10,8 +12,13 @@ from services import BaseService
 class UserService(BaseService):
     repository: UserRepository
 
+    @staticmethod
+    async def get_profile_avatar_url(user_id: str) -> str:
+        return f'users/{user_id}/images/{uuid4()}'
+
     async def get_all_users(self):
-        return await self.repository.get_all_items()
+        users = await self.repository.get_all_items()
+        return await self.dump_items(users, BaseUserModel)
 
     async def get_user(self, user_id: UUID4) -> User:
         user = await self.repository.get_item(user_id)
@@ -50,7 +57,13 @@ class UserService(BaseService):
         users = await self.repository.search_users(username, **kwargs)
         return await self.dump_items(users, BaseUserModel) if users else []
 
-    async def update_set_profile_data(self, user_id: UUID4, form: BaseUserModel) -> BaseUserModel:
-        user = await self.repository.update_item(**form.model_dump())
+    async def update_user_profile(self, user_id: UUID4, form: BaseUserModel) -> BaseUserModel:
+        if form.avatar:
+            form.avatar = await self.s3_client.upload_one_file(
+                file=form.avatar,
+                path=await self.get_profile_avatar_url(user_id)
+            )
+
+        user = await self.repository.update_item(**form.model_dump(exclude_none=True))
         return user
     

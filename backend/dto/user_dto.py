@@ -15,3 +15,18 @@ class BaseUserModel(BaseModel):
     @field_validator('birthday')
     def validate_birthday(data):
         return data.strftime('%Y-%m-%dT%H:%M:%SZ')
+    
+
+class UpdateUserModel():
+    id: str | None
+    username: str | None
+    email: str | None
+    avatar: str | None
+    city: str | None
+    description: str | None
+    city: str | None
+    birthday: datetime | str | None
+
+    @field_validator('birthday')
+    def validate_birthday(data):
+        return data.strftime('%Y-%m-%dT%H:%M:%SZ')

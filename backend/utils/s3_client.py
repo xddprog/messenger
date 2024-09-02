@@ -8,7 +8,7 @@ class S3Client:
         self.client = client
         self.bucket_name = bucket_name
         self.endpoint_url = endpoint_url
-
+        
     async def upload_one_file(self, file: UploadFile, path: str):
         file_id = uuid4()
         path = f'{path}/{file_id}.{file.content_type.split("/")[1]}'

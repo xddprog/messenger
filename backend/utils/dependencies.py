@@ -45,8 +45,11 @@ async def get_s3_client():
         )
         
 
-async def get_auth_service(session=Depends(get_session)):
-    return services.AuthService(repository=repositories.UserRepository(session=session))
+async def get_auth_service(session=Depends(get_session), s3_client=Depends(get_s3_client)):
+    return services.AuthService(
+        repository=repositories.UserRepository(session=session),
+        s3_client=s3_client
+    )
 
 
 async def get_current_user_dependency(
@@ -64,13 +67,23 @@ async def get_post_service(session=Depends(get_session), s3_client=Depends(get_s
     )
 
 
-async def get_user_service(session=Depends(get_session)):
-    return services.UserService(repository=repositories.UserRepository(session=session))
+async def get_user_service(session=Depends(get_session), s3_client=Depends(get_s3_client)):
+    return services.UserService(
+        repository=repositories.UserRepository(session=session),
+        s3_client=s3_client
+    )
 
 
-async def get_chat_service(session=Depends(get_session)):
-    return services.ChatService(repository=repositories.ChatRepository(session=session))
+async def get_chat_service(session=Depends(get_session), s3_client=Depends(get_s3_client)):
+    return services.ChatService(
+        repository=repositories.ChatRepository(session=session),
+        s3_client=s3_client
+    )
 
 
-async def get_message_service(session=Depends(get_session)):
-    return services.MessageService(repository=repositories.MessageRepository(session=session))
+async def get_message_service(session=Depends(get_session), s3_client=Depends(get_s3_client)):
+    return services.MessageService(
+        repository=repositories.MessageRepository(session=session),
+        s3_client=s3_client
+    )
+    

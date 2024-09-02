@@ -20,25 +20,25 @@ class UserService(BaseService):
         users = await self.repository.get_all_items()
         return await self.dump_items(users, BaseUserModel)
 
-    async def get_user(self, user_id: UUID4) -> User:
+    async def get_user(self, user_id: str) -> User:
         user = await self.repository.get_item(user_id)
         return user
 
-    async def get_user_chats(self, user_id: UUID4) -> list[UUID4]:
+    async def get_user_chats(self, user_id: str) -> list[UUID4]:
         user = await self.repository.get_item(user_id)
         return [chat.id for chat in user.chats]
 
-    async def get_user_posts(self, user_id: UUID4) -> list[PostModel]:
+    async def get_user_posts(self, user_id: str) -> list[PostModel]:
         user = await self.repository.get_item(user_id)
         return await self.dump_items(user.posts, PostModel)
 
-    async def add_friend(self, user_id: UUID4, friend_id: UUID4):
+    async def add_friend(self, user_id: str, friend_id: str):
         await self.repository.add_friend(user_id, friend_id)
 
-    async def remove_friend(self, user_id: UUID4, friend_id: UUID4):
+    async def remove_friend(self, user_id: str, friend_id: str):
         await self.repository.remove_friend(user_id, friend_id)
 
-    async def get_friends(self, user_id: UUID4):
+    async def get_friends(self, user_id: str):
         user = await self.repository.get_item(user_id)
         friends = [
             await self.model_dump(
@@ -49,7 +49,7 @@ class UserService(BaseService):
         ]
         return friends
 
-    async def check_friend(self, user_id: UUID4, friend_id: UUID4):
+    async def check_friend(self, user_id: str, friend_id: str):
         user = await self.repository.get_item(user_id)
         return friend_id in user.friends
 
@@ -57,13 +57,13 @@ class UserService(BaseService):
         users = await self.repository.search_users(username, **kwargs)
         return await self.dump_items(users, BaseUserModel) if users else []
 
-    async def update_user_profile(self, user_id: UUID4, form: BaseUserModel) -> BaseUserModel:
+    async def update_user_profile(self, user_id: str, form: BaseUserModel) -> BaseUserModel:
         if form.avatar:
             form.avatar = await self.s3_client.upload_one_file(
                 file=form.avatar,
                 path=await self.get_profile_avatar_url(user_id)
             )
 
-        user = await self.repository.update_item(**form.model_dump(exclude_none=True))
+        user = await self.repository.update_item(user_id, **form.model_dump(exclude_none=True))
         return user
     

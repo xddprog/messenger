@@ -57,12 +57,13 @@ class AuthService(BaseService):
         try:
             payload = decode(token, self.config.jwt_secret, algorithms=[self.config.algorithm])
             email = payload.get('sub')
-            
+            print(payload)
             if email is None:
                 raise InvalidToken
             
             return email
         except InvalidTokenError as e:
+            print(e)
             raise InvalidToken
     
     async def check_user_exist(self, email: str) -> User:

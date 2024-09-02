@@ -8,7 +8,7 @@ from sqlalchemy.orm import MappedColumn
 
 class BaseRepository(ABC):
     @abstractmethod
-    async def get_item(self, item_id: int | UUID4):
+    async def get_item(self, item_id: int | UUID4 | str):
         raise NotImplementedError
 
     @abstractmethod
@@ -24,11 +24,11 @@ class BaseRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def delete_item(self, item_id: int | UUID4):
+    async def delete_item(self, item_id: int | str):
         raise NotImplementedError
 
     @abstractmethod
-    async def update_item(self, item_id: int | UUID4, **update_values):
+    async def update_item(self, item_id: int | str, **update_values):
         raise NotImplementedError
 
     @abstractmethod
@@ -73,11 +73,11 @@ class SqlAlchemyRepository(BaseRepository):
         await self.session.delete(deleting_item)
         await self.session.commit()
 
-    async def update_item(self, item_id: int, **update_values):
+    async def update_item(self, id: int| str, **update_values):
         query = update(
                 self.model
             ).where(
-                self.model.id == item_id
+                self.model.id == id
             ).values(
                 **update_values
             ).returning(

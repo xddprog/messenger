@@ -1,11 +1,12 @@
 import json
+from tkinter import N
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Form, UploadFile
 from pydantic import UUID4
 from sqlalchemy.util import await_only
 
-from dto.user_dto import BaseUserModel
+from dto.user_dto import BaseUserModel, UpdateUserModel
 from utils.redis_cache import RedisCache
 from dto.chat_dto import BaseChatModel
 from services import UserService, ChatService
@@ -27,7 +28,7 @@ async def get_all_users(
 
 @router.get('/{user_id}/chats')
 async def get_user_chats(
-    user_id: UUID4,
+    user_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)],
     chats_service: Annotated[ChatService, Depends(get_chat_service)]
 ):
@@ -38,7 +39,7 @@ async def get_user_chats(
 
 @router.get('/{user_id}/posts')
 async def get_user_posts(
-    user_id: UUID4,
+    user_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)]
 ):
     return await user_service.get_user_posts(user_id)
@@ -46,7 +47,7 @@ async def get_user_posts(
 
 @router.get('/{user_id}/friends/all')
 async def get_user_friends(
-    user_id: UUID4,
+    user_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)]
 ):
     return await user_service.get_friends(user_id)
@@ -54,8 +55,8 @@ async def get_user_friends(
 
 @router.get('/{user_id}/friends/{friend_id}')
 async def get_check_is_friend_or_not(
-    user_id: UUID4,
-    friend_id: UUID4,
+    user_id: str,
+    friend_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)]
 ):
     return await user_service.check_friend(user_id, friend_id)
@@ -63,8 +64,8 @@ async def get_check_is_friend_or_not(
 
 @router.post('/{user_id}/friends/add/{friend_id}')
 async def add_friend(
-    user_id: UUID4,
-    friend_id: UUID4,
+    user_id: str,
+    friend_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)]
 ) -> dict:
     await user_service.add_friend(user_id, friend_id)
@@ -75,8 +76,8 @@ async def add_friend(
 
 @router.delete('/{user_id}/friends/remove/{friend_id}')
 async def remove_friend(
-    user_id: UUID4,
-    friend_id: UUID4,
+    user_id: str,
+    friend_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)]
 ):
     await user_service.remove_friend(user_id, friend_id)
@@ -108,8 +109,8 @@ async def search_users(
 
 @router.put('/{user_id}/profile/update')
 async def update_user_profile(
-    user_id: UUID4,
+    user_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)],
-    form: BaseUserModel
+    form: UpdateUserModel,
 ):
     return await user_service.update_user_profile(user_id, form)

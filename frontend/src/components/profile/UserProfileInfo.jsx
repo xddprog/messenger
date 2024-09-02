@@ -11,7 +11,6 @@ import {
 } from 'antd';
 import { useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
-
 export default function UserProfileInfo() {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 

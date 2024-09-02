@@ -19,7 +19,7 @@ export default function RegisterForm() {
 	async function registerSubmit() {
 		try {
 			const values = await form[0].validateFields();
-			const response = await registerUser(values).then((r) => r);
+			const response = await registerUser(values);
 			localStorage.setItem('user_id', response.data.new_user.id);
 			messageApi.open({
 				type: 'success',
@@ -89,6 +89,7 @@ export default function RegisterForm() {
 					<Input placeholder='Имя пользователя' size={'large'} />
 				</Form.Item>
 				<Form.Item
+					name='id'
 					rules={[
 						{
 							required: true,
@@ -100,6 +101,7 @@ export default function RegisterForm() {
 					<Input placeholder='Уникальный id ' size={'large'} />
 				</Form.Item>
 				<Form.Item
+					name='description'
 					rules={[
 						{
 							required: true,
@@ -114,6 +116,7 @@ export default function RegisterForm() {
 					/>
 				</Form.Item>
 				<Form.Item
+					name='city'
 					rules={[
 						{
 							required: true,
@@ -125,7 +128,7 @@ export default function RegisterForm() {
 					<Input placeholder='Родной город ' size={'large'} />
 				</Form.Item>
 
-				<Form.Item className='w-full' name='date-picker' label='' {...config}>
+				<Form.Item className='w-full' name='birthday' label='' {...config}>
 					<DatePicker placeholder='Дата рождения' />
 				</Form.Item>
 				<Form.Item>

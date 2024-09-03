@@ -47,7 +47,10 @@ async def register_user(
     auth_service: Annotated[AuthService, Depends(get_auth_service)]
 ):
     new_user = await auth_service.register_user(form)
-    token = await auth_service.create_access_token(new_user.username)
+    token = await auth_service.create_access_token(
+        new_user.username, 
+        form.email
+    )
     
     return {
         'detail': 'Вы успешно зарегистрировались!',

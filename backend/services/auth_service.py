@@ -46,9 +46,9 @@ class AuthService(BaseService):
         
         return await self.dump_user(user)
     
-    async def create_access_token(self, username: str) -> str:
+    async def create_access_token(self, username: str, email: str) -> str:
         expire = datetime.now() + timedelta(minutes=self.config.access_token_time)
-        data = {'sub': username, 'exp': expire}
+        data = {'sub': username, 'exp': expire, 'email': email}
         token = encode(data, self.config.jwt_secret, algorithm=self.config.algorithm)
         
         return token.decode()

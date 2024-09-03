@@ -6,8 +6,11 @@ from utils.dependencies import get_current_user_dependency
 from utils.websocket_manager import WebSocketManager
 from utils.redis_cache import RedisCache
 from utils.config.config import load_redis_config
-import routers
 from database.connection import create_tables
+from routers import (
+    auth_router, posts_router, users_router,
+    chats_router
+)
 
 
 async def lifespan(app: FastAPI):
@@ -40,8 +43,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-for router in routers.routers:
-    app.include_router(router, dependencies=[PROTECTED])
+
+app.include_router(auth_router)
+app.include_router(users_router, dependencies=[PROTECTED])
+app.include_router(chats_router, dependencies=[PROTECTED])
+app.include_router(posts_router, dependencies=[PROTECTED])
 
 
 if __name__ == "__main__":

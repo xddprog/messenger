@@ -1,6 +1,8 @@
 from typing import Annotated
 
 from fastapi import Depends, Cookie, Request
+from fastapi import security
+from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from aiobotocore.session import AioSession
 
@@ -16,6 +18,11 @@ from utils.s3_client import S3Client
 from utils.websocket_manager import WebSocketManager
 
 
+security = HTTPBearer(
+    auto_error=False
+)
+
+
 async def get_session():
     session = AsyncSession(bind=engine)
     try:
@@ -26,6 +33,10 @@ async def get_session():
 
 async def get_redis(request: Request) -> RedisCache:
     return request.app.state.redis_cache
+
+
+async def get_websocket_manager(request: Request) -> WebSocketManager:
+    return request.app.state.websocket_manager
 
 
 async def get_s3_client():
@@ -54,9 +65,8 @@ async def get_auth_service(session=Depends(get_session), s3_client=Depends(get_s
 
 async def get_current_user_dependency(
         auth_service: Annotated[AuthService, Depends(get_auth_service)],
-        token=Cookie(default=None)
+        token=Depends(security)
 ) -> BaseUserModel:
-    print(token)
     username = await auth_service.verify_token(token)
     return await auth_service.check_user_exist(username)
 

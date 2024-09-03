@@ -2,6 +2,8 @@ import uvicorn
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
+from backend.utils.dependencies import get_current_user_dependency
+from backend.utils.websocket_manager import WebSocketManager
 from utils.redis_cache import RedisCache
 from utils.config.config import load_redis_config
 import routers
@@ -10,6 +12,7 @@ from database.connection import create_tables
 
 async def lifespan(app: FastAPI):
     app.state.redis_cache = RedisCache(config=load_redis_config())
+    app.state.websocket_manager = WebSocketManager()
     await create_tables()
     yield
     # app.state.redis_cache.close()
@@ -18,6 +21,9 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     lifespan=lifespan
 )
+
+
+PROTECTED = Depends(get_current_user_dependency)
 
 
 origins = [
@@ -35,7 +41,7 @@ app.add_middleware(
 )
 
 for router in routers.routers:
-    app.include_router(router)
+    app.include_router(router, dependencies=[PROTECTED])
 
 
 if __name__ == "__main__":

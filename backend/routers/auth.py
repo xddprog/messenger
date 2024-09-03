@@ -26,7 +26,6 @@ async def login_user(
     response: Response
 ):
     user = await auth_service.authenticate_user(form)
-
     token = await auth_service.create_access_token(form.email)
 
     return {
@@ -45,8 +44,7 @@ async def logout_user(response: Response):
 @router.post('/register', status_code=201)
 async def register_user(
     form: RegisterForm,
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    response: Response
+    auth_service: Annotated[AuthService, Depends(get_auth_service)]
 ):
     new_user = await auth_service.register_user(form)
     token = await auth_service.create_access_token(new_user.username)

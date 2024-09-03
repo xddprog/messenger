@@ -28,11 +28,11 @@ async def login_user(
     user = await auth_service.authenticate_user(form)
 
     token = await auth_service.create_access_token(form.email)
-    response.set_cookie(key='token', value=token, httponly=True)
 
     return {
         'detail': 'Вы успешно вошли в аккаунт!',
-        'user': user
+        'user': user,
+        'token': token
     }
 
 
@@ -50,11 +50,11 @@ async def register_user(
 ):
     new_user = await auth_service.register_user(form)
     token = await auth_service.create_access_token(new_user.username)
-    response.set_cookie(key='token', value=token, httponly=True)
     
     return {
         'detail': 'Вы успешно зарегистрировались!',
-        'new_user': new_user
+        'new_user': new_user,
+        'token': token
     }
 
 

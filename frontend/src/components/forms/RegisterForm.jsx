@@ -1,7 +1,6 @@
 import { Button, Form, Input, message, Typography, DatePicker } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../../requests/auth.js';
-
 export default function RegisterForm() {
 	const form = Form.useForm();
 	const navigate = useNavigate();
@@ -21,6 +20,7 @@ export default function RegisterForm() {
 			const values = await form[0].validateFields();
 			const response = await registerUser(values);
 			localStorage.setItem('user_id', response.data.new_user.id);
+			localStorage.setItem('token', response.data.token);
 			messageApi.open({
 				type: 'success',
 				content: response.data.message,

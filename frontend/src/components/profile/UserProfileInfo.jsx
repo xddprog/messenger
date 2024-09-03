@@ -9,9 +9,11 @@ import {
 	Image,
 	Typography,
 } from 'antd';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
+import { getCurrentUser } from '../../requests/auth';
 export default function UserProfileInfo() {
+	const [user, setUser] = useState({});
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const showModal = () => {
@@ -24,6 +26,19 @@ export default function UserProfileInfo() {
 	const handleOk = () => {
 		setIsModalVisible(false);
 	};
+
+	useEffect(() => {
+		async function currentInf() {
+			try {
+				const response = await getCurrentUser();
+				console.log(response);
+				setUser(response.data);
+			} catch (error) {
+				console.error(error);
+			}
+		}
+		currentInf();
+	});
 
 	return (
 		<div className=''>
@@ -55,7 +70,7 @@ export default function UserProfileInfo() {
 						title={
 							<div>
 								<Typography.Title level={3} style={{ margin: 0, padding: 0 }}>
-									Магомед
+									{user.username}
 								</Typography.Title>
 							</div>
 						}

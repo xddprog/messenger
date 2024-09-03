@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://messenger-sm6n.onrender.com/api/auth';
+const BASE_URL = 'https://messenger-oe3m.onrender.com/api/auth';
 
 export async function registerUser(values) {
 	return await axios
@@ -16,7 +16,11 @@ export async function loginUser(values) {
 
 export async function getCurrentUser() {
 	return await axios
-		.get(`${BASE_URL}/current_user`, { withCredentials: true })
+		.get(`${BASE_URL}/current_user`, {
+			headers: {
+				Authorization: 'Bearer ' + localStorage.getItem('token'),
+			},
+		})
 		.then((response) => response);
 }
 

@@ -1,5 +1,4 @@
 from datetime import datetime
-from tkinter import N, NO
 from fastapi import Form, UploadFile
 from pydantic import UUID4, BaseModel, field_validator
 

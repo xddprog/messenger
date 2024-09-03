@@ -46,9 +46,9 @@ class AuthService(BaseService):
         
         return await self.dump_user(user)
     
-    async def create_access_token(self, username: str, email: str) -> str:
+    async def create_access_token(self, email: str) -> str:
         expire = datetime.now() + timedelta(minutes=self.config.access_token_time)
-        data = {'sub': username, 'exp': expire, 'email': email}
+        data = {'sub': email, 'exp': expire}
         token = encode(data, self.config.jwt_secret, algorithm=self.config.algorithm)
         
         return token.decode()
@@ -63,7 +63,6 @@ class AuthService(BaseService):
             
             return email
         except InvalidTokenError as e:
-            print(e)
             raise InvalidToken
     
     async def check_user_exist(self, email: str) -> User:

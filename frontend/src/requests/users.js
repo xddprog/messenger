@@ -24,3 +24,14 @@ export async function getAllUsers() {
 		})
 		.then((response) => console.log(response));
 }
+
+export async function searchUser(value) {
+	return await axios
+		.get(`${BASE_URL}/search`, {
+			headers: {
+				Authorization: 'Bearer ' + localStorage.getItem('token'),
+			},
+			params: { username: value },
+		})
+		.then((response) => response);
+}

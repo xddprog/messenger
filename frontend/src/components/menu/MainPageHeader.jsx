@@ -1,12 +1,16 @@
-import { Input } from 'antd';
+import { Input, List, Typography } from 'antd';
 import AppLogo from '../logo/AppLogo';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { IoMusicalNotesOutline } from 'react-icons/io5';
 import { logoutUser } from '../../requests/auth';
 import { useNavigate } from 'react-router-dom';
+import { searchUser } from '../../requests/users';
+import { useState } from 'react';
 
 export default function MainPageHeader() {
 	const navigate = useNavigate();
+	const [searchValue, setSearchValue] = useState('');
+	const [users, setUsers] = useState([]);
 
 	const handleLogout = async () => {
 		try {
@@ -17,6 +21,24 @@ export default function MainPageHeader() {
 			console.error('Logout error:', error);
 		}
 	};
+
+	const handleSearchUser = async (e) => {
+		const value = e.target.value;
+		setSearchValue(value);
+		console.log(value);
+		if (value) {
+			try {
+				const response = await searchUser(value);
+				setUsers(response.data);
+				// console.log(response.data[1].username);
+			} catch (err) {
+				console.error(err);
+			}
+		} else {
+			setUsers([]);
+		}
+	};
+
 	return (
 		<div
 			style={{
@@ -39,11 +61,44 @@ export default function MainPageHeader() {
 						<AppLogo />
 					</div>
 					<div style={{ display: 'flex', alignItems: 'center' }}>
-						<Input
-							placeholder='Поиск'
-							style={{ width: '250px', backgroundColor: '#1e2022' }}
-							size={'middle'}
-						/>
+						<div className=''>
+							<Input
+								value={searchValue}
+								placeholder='Поиск'
+								style={{ width: '250px', backgroundColor: '#1e2022' }}
+								size={'middle'}
+								onChange={handleSearchUser}
+								allowClear
+							/>
+							{!users.length ? (
+								<Typography.Text type='secondary'>
+									Нет результатов для поиска.
+								</Typography.Text>
+							) : (
+								<List
+									bordered
+									dataSource={users}
+									className='h-[400px] overflow-auto absolute top-[70px] z-10 bg-slate-600 '
+									renderItem={(user) => (
+										<List.Item className='cursor-pointer hover:bg-slate-400 transition-colors'>
+											<div>
+												<img
+													src={user.avatar}
+													alt={user.username}
+													style={{
+														width: '30px',
+														borderRadius: '50%',
+														marginRight: '10px',
+													}}
+												/>
+												{user.username} (ID: {user.id})
+											</div>
+										</List.Item>
+									)}
+								/>
+							)}
+						</div>
+
 						<div style={{ display: 'flex', alignItems: 'center' }}>
 							<button
 								style={{

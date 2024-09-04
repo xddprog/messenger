@@ -27,19 +27,16 @@ export default function UserProfileInfo() {
 		setIsModalVisible(false);
 	};
 
-	useEffect(() => {
-		async function currentInf() {
-			try {
-				const response = await getCurrentUser();
-				console.log(response);
-				setUser(response.data);
-			} catch (error) {
-				console.error(error);
-			}
-		}
-		currentInf();
-	});
-
+	// useEffect(() => {
+	// 	getCurrentUser()
+	// 		.then((response) => {
+	// 			console.log(response);
+	// 			setUser(response.data);
+	// 		})
+	// 		.catch((error) => {
+	// 			console.error(error);
+	// 		});
+	// });
 	return (
 		<div className=''>
 			<Card
@@ -63,21 +60,22 @@ export default function UserProfileInfo() {
 									border: '5px solid #17191b',
 								}}
 								size={160}
-								src='./images/ava.jpg'
+								src=''
 								alt='profile-avatar'
 							/>
 						}
 						title={
 							<div>
-								<Typography.Title level={3} style={{ margin: 0, padding: 0 }}>
-									{user.username}
-								</Typography.Title>
+								<Typography.Title
+									level={3}
+									style={{ margin: 0, padding: 0 }}
+								></Typography.Title>
 							</div>
 						}
 						description={
-							<Typography.Paragraph style={{ fontSize: '13px' }}>
-								Сила
-							</Typography.Paragraph>
+							<Typography.Paragraph
+								style={{ fontSize: '13px' }}
+							></Typography.Paragraph>
 						}
 					></Card.Meta>
 					<Button onClick={showModal}>Редактировать профиль</Button>

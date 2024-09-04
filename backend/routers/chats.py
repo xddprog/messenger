@@ -50,7 +50,7 @@ async def get_chat_messages(
 @router.websocket("/ws/{chat_id}/{client_id}")
 async def websocket_endpoint(
     websocket: WebSocket,
-    client_id: UUID4,
+    client_id: str,
     chat_id: UUID4,
     chat_service: Annotated[ChatService, Depends(get_chat_service)],
     message_service: Annotated[MessageService, Depends(get_message_service)],

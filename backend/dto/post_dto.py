@@ -6,15 +6,15 @@ from pydantic import UUID4, BaseModel, Field, field_validator, validator
 from dto.user_dto import BaseUserModel
 
 
-class AutorModel(BaseModel):
-    id: UUID4
+class AuthorModel(BaseModel):
+    id: str
     username: str
     avatar: str | None
 
 
 class PostModel(BaseModel):
     id: UUID4
-    author: AutorModel
+    author: AuthorModel
     description: str
     images: list[str] | None = None
     likes: list[BaseUserModel] | None = None

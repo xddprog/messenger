@@ -112,4 +112,4 @@ async def update_user_profile(
     user_service: Annotated[UserService, Depends(get_user_service)],
     form: UpdateUserModel,
 ):
-    return await user_service.update_user_profile(user_id, form)
+    return await user_service.updadgdfrgrr    te_user_profile(user_id, form)

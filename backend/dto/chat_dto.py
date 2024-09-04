@@ -14,4 +14,4 @@ class BaseChatModel(BaseModel):
 
 class CreateChatForm(BaseChatModel):
     id: UUID4 = Field(default_factory=lambda: uuid4())
-    users: list[UUID4]
+    users: list[str]

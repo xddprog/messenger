@@ -18,12 +18,11 @@ router = APIRouter(
 async def create_post(
     post_service: Annotated[PostService, Depends(get_post_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
-    author: UUID4 = Form(...),
+    author: str = Form(...),
     description: str = Form(...),
     images: list = Form(...),
 ):
     author = await user_service.get_user(author)
-    print(author)
     new_post = await post_service.create_post(
         description=description,
         images=images,
@@ -42,7 +41,7 @@ async def get_all_posts(
 @router.patch('/{post_id}/like/{user_id}')
 async def like_post(
     post_id: UUID4,
-    user_id: UUID4,
+    user_id: str,
     post_service: Annotated[PostService, Depends(get_post_service)],
     user_service: Annotated[UserService, Depends(get_user_service)]
 ):

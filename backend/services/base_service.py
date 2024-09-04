@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from pydantic import BaseModel
 from sqlalchemy import Table
 
@@ -9,6 +10,11 @@ class BaseService:
     def __init__(self, repository: BaseRepository, s3_client: S3Client):
         self.repository = repository
         self.s3_client = s3_client
+
+    @staticmethod
+    async def check_item(self, item, error: HTTPException):
+        if not item:
+            raise error
 
     @staticmethod
     async def model_dump(db_model: Table, dto_model: BaseModel) -> BaseModel:

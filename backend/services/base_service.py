@@ -12,7 +12,7 @@ class BaseService:
         self.s3_client = s3_client
 
     @staticmethod
-    async def check_item(self, item, error: HTTPException):
+    async def check_item(item, error: HTTPException):
         if not item:
             raise error
 

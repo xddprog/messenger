@@ -29,4 +29,6 @@ class UpdateUserModel(BaseModel):
 
     @field_validator('birthday')
     def validate_birthday(data: str):
-        return datetime.strptime(data, '%Y-%m-%dT%H:%M:%SZ')
+        if data:
+            return datetime.strptime(data, '%Y-%m-%dT%H:%M:%SZ')
+        return data

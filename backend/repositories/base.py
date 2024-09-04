@@ -79,7 +79,7 @@ class SqlAlchemyRepository(BaseRepository):
             ).where(
                 self.model.id == item_id
             ).values(
-                **update_values
+                update_values
             ).returning(
                 self.model
             )

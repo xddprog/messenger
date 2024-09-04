@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 from typing import Annotated
 
@@ -110,6 +111,23 @@ async def search_users(
 async def update_user_profile(
     user_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)],
-    form: UpdateUserModel,
+    id: str | None = Form(default=None),
+    username: str | None = Form(default=None),
+    email: str | None = Form(default=None),
+    avatar: UploadFile| None = Form(default=None),
+    city: str | None = Form(default=None),
+    description: str | None = Form(default=None),
+    birthday: datetime | None = Form(default=None),
 ):
-    return await user_service.update_user_profile(user_id, form)
+    return await user_service.update_user_profile(
+        user_id, 
+        UpdateUserModel(
+            id=id,
+            username=username,
+            email=email,
+            avatar=avatar,
+            city=city,
+            description=description,
+            birthday=birthday
+        )
+    )

@@ -22,7 +22,7 @@ class UpdateUserModel(BaseModel):
     id: str | None
     username: str | None
     email: str | None
-    avatar: None = None
+    avatar: UploadFile | None = None
     city: str | None
     description: str | None
     birthday: datetime | str | None

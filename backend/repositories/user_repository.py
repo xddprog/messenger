@@ -51,7 +51,7 @@ class UserRepository(SqlAlchemyRepository):
         user: User = user.scalars().all()[0]
 
         if update_values.get('avatar'):
-            user.images.append(update_values.get('avatar'))
+            user.images = [*user.images, update_values.get('avatar')]
         
         await self.session.commit()
 

@@ -1,7 +1,7 @@
 from datetime import datetime
-from tkinter import N
 from fastapi import Form, UploadFile
-from pydantic import UUID4, BaseModel, field_validator
+from pydantic import BaseModel, field_validator
+
 
 
 class BaseUserModel(BaseModel):
@@ -9,6 +9,7 @@ class BaseUserModel(BaseModel):
     username: str
     email: str
     avatar: str
+    images: list
     city: str
     description: str
     birthday: datetime | str

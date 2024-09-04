@@ -23,6 +23,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(unique=True)
     avatar: Mapped[str] = mapped_column(nullable=True, default=BASE_AVATAR_URL)
     city: Mapped[str] 
+    images = mapped_column(ARRAY(String), default=[])
     birthday: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     description: Mapped[str]
     friends = mapped_column(ARRAY(UUID()), default=[])

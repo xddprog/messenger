@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from fastapi.security import HTTPBearer
 from jwt import InvalidTokenError, encode, decode
 from passlib.context import CryptContext
 from requests import get
@@ -53,16 +54,16 @@ class AuthService(BaseService):
         
         return token.decode()
     
-    async def verify_token(self, token: str) -> dict:
+    async def verify_token(self, token: HTTPBearer) -> dict:
         try:
-            payload = decode(token, self.config.jwt_secret, algorithms=[self.config.algorithm])
+            payload = decode(token.credentials, self.config.jwt_secret, algorithms=[self.config.algorithm])
             email = payload.get('sub')
-            print(payload)
+
             if email is None:
                 raise InvalidToken
             
             return email
-        except InvalidTokenError as e:
+        except (InvalidTokenError, AttributeError) as e:
             raise InvalidToken
     
     async def check_user_exist(self, email: str) -> User:

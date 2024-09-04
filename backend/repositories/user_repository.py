@@ -1,5 +1,5 @@
 from pydantic import UUID4
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from database.models import Post, User
 from repositories.base import SqlAlchemyRepository
@@ -35,3 +35,25 @@ class UserRepository(SqlAlchemyRepository):
         users = users.scalars().all()
 
         return users
+    
+    async def update_item(self, item_id: int| str, **update_values):
+        query = update(
+                self.model
+            ).where(
+                self.model.id == item_id
+            ).values(
+                update_values
+            ).returning(
+                self.model
+            )
+
+        user = await self.session.execute(query)
+        user: User = user.scalars().all()[0]
+
+        if update_values.get('avatar'):
+            user.images.append(update_values.get('avatar'))
+        
+        await self.session.commit()
+
+        return user
+

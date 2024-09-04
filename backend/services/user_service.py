@@ -88,7 +88,7 @@ class UserService(BaseService):
                 file=form.avatar,
                 path=await self.get_profile_avatar_url(user_id)
             )
-
+        
         return await self.repository.update_item(
             user_id,
             **form.model_dump(exclude_none=True)

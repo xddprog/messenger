@@ -67,8 +67,7 @@ async def get_current_user_dependency(
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     token: Annotated[HTTPBearer, Depends(security)]
 ) -> BaseUserModel:
-    print(token)
-    username = await auth_service.verify_token(token.credentials)
+    username = await auth_service.verify_token(token)
     return await auth_service.check_user_exist(username)
 
 

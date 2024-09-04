@@ -9,20 +9,8 @@ export default function PostsPage() {
 	const [createPostModalIsOpen, setCreatePostModalIsOpen] = useState(false);
 
 	useEffect(() => {
-		getAllPosts().then((res) => setPosts(res));
+		getAllPosts().then((res) => setPosts(res.reverse()));
 	}, []);
-
-	// function updatePost(updatablePostData) {
-	// 	let newPosts = posts.map((post) => {
-	// 		if (post.id === updatablePostData.id) {
-	// 			return updatablePostData;
-	// 		} else {
-	// 			return post;
-	// 		}
-	// 	});
-	// 	console.log(newPosts.map((item) => item.likes));
-	// 	setPosts(newPosts);
-	// }
 
 	function updatePost(postId) {
 		setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));

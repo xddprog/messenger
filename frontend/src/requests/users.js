@@ -35,3 +35,18 @@ export async function searchUser(value) {
 		})
 		.then((response) => response);
 }
+
+export async function updateUserProfile(value) {
+	return await axios
+		.put(
+			`${BASE_URL}/${localStorage.getItem('user_id')}/profile/update`,
+			value,
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('token'),
+					'Content-Type': 'multipart/form-data',
+				},
+			}
+		)
+		.then((response) => response.data);
+}

@@ -12,10 +12,15 @@ import {
 import { useState, useEffect } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import { getCurrentUser } from '../../requests/auth';
+import { updateUserProfile } from '../../requests/users';
 export default function UserProfileInfo() {
 	const [user, setUser] = useState({});
 	const [isModalVisible, setIsModalVisible] = useState(false);
-
+	const [form] = Form.useForm();
+	const [fileList, setFileList] = useState([]);
+	const handleUploadChange = ({ fileList }) => {
+		setFileList(fileList);
+	};
 	const showModal = () => {
 		setIsModalVisible(true);
 	};
@@ -23,20 +28,34 @@ export default function UserProfileInfo() {
 		setIsModalVisible(false);
 	};
 
-	const handleOk = () => {
+	const handleOk = async () => {
+		try {
+			const values = await form.validateFields();
+			const formData = new FormData();
+			formData.append('username', values.username);
+			formData.append('description', values.description);
+
+			if (fileList.length > 0) {
+				formData.append('avatar', fileList[0].originFileObj);
+				console.log(true);
+			}
+
+			await updateUserProfile(formData);
+		} catch (err) {
+			console.error(err);
+		}
 		setIsModalVisible(false);
 	};
 
-	// useEffect(() => {
-	// 	getCurrentUser()
-	// 		.then((response) => {
-	// 			console.log(response);
-	// 			setUser(response.data);
-	// 		})
-	// 		.catch((error) => {
-	// 			console.error(error);
-	// 		});
-	// });
+	useEffect(() => {
+		getCurrentUser()
+			.then((response) => {
+				setUser(response.data);
+			})
+			.catch((error) => {
+				console.error(error);
+			});
+	});
 	return (
 		<div className=''>
 			<Card
@@ -60,22 +79,21 @@ export default function UserProfileInfo() {
 									border: '5px solid #17191b',
 								}}
 								size={160}
-								src=''
+								src={user.avatar}
 								alt='profile-avatar'
 							/>
 						}
 						title={
 							<div>
-								<Typography.Title
-									level={3}
-									style={{ margin: 0, padding: 0 }}
-								></Typography.Title>
+								<Typography.Title level={3} style={{ margin: 0, padding: 0 }}>
+									{user.username}
+								</Typography.Title>
 							</div>
 						}
 						description={
-							<Typography.Paragraph
-								style={{ fontSize: '13px' }}
-							></Typography.Paragraph>
+							<Typography.Paragraph style={{ fontSize: '13px' }}>
+								{user.description}
+							</Typography.Paragraph>
 						}
 					></Card.Meta>
 					<Button onClick={showModal}>Редактировать профиль</Button>
@@ -89,15 +107,15 @@ export default function UserProfileInfo() {
 				okText='Save'
 				cancelText='Cancel'
 			>
-				<Form layout='vertical'>
-					<Form.Item label='Name'>
+				<Form form={form} layout='vertical'>
+					<Form.Item label='Name' name='username'>
 						<Input placeholder='Enter your name' />
 					</Form.Item>
-					<Form.Item label='Description'>
+					<Form.Item label='Description' name='description'>
 						<Input placeholder='Enter a description' />
 					</Form.Item>
 					<Form.Item label='Change Profile Picture'>
-						<Upload>
+						<Upload onChange={handleUploadChange} fileList={fileList}>
 							<Button icon={<UploadOutlined />}>Upload New Picture</Button>
 						</Upload>
 					</Form.Item>

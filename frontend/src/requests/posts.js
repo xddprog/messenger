@@ -3,7 +3,11 @@ import axios from 'axios';
 const BASE_URL = 'https://messenger-oe3m.onrender.com/api/posts';
 
 export async function getAllPosts() {
-	return await axios.get(`${BASE_URL}/all`).then((response) => response.data);
+	return await axios
+		.get(`${BASE_URL}/all`, {
+			headers: { Authorization: 'Bearer ' + localStorage.getItem('token') },
+		})
+		.then((response) => response.data);
 }
 
 export async function createPost(values) {
@@ -19,9 +23,13 @@ export async function createPost(values) {
 
 export async function likePost(postId) {
 	return await axios
-		.patch(`${BASE_URL}/${postId}/like/${localStorage.getItem('user_id')}`, {
-			headers: { Authorization: 'Bearer ' + localStorage.getItem('token') },
-		})
+		.patch(
+			`${BASE_URL}/${postId}/like/${localStorage.getItem('user_id')}`,
+			{},
+			{
+				headers: { Authorization: 'Bearer ' + localStorage.getItem('token') },
+			}
+		)
 		.then((response) => {
 			response.data;
 		});

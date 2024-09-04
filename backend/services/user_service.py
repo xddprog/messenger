@@ -1,7 +1,7 @@
 from uuid import uuid4
 from pydantic import UUID4
 
-from backend.errors.user_errors import UserFriendNotFound, UserNotFound
+from errors.user_errors import UserFriendNotFound, UserNotFound
 from database.models import Post, User
 from dto.chat_dto import BaseChatModel
 from dto.post_dto import PostModel

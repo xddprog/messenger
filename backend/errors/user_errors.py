@@ -16,3 +16,11 @@ class UserFriendNotFound(HTTPException):
             status_code=status.HTTP_404_NOT_FOUND,
             detail='У пользователя нет такого друга'
         )
+
+
+class UserAlreadyHaveThisFriend(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            detail='Пользователь уже находится в друзьях'
+        )

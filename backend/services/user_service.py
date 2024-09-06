@@ -1,13 +1,14 @@
+from tabnanny import check
 from uuid import uuid4
 from pydantic import UUID4
 
-from errors.user_errors import UserFriendNotFound, UserNotFound
-from database.models import Post, User
-from dto.chat_dto import BaseChatModel
-from dto.post_dto import PostModel
-from dto.user_dto import BaseUserModel
-from repositories import UserRepository
-from services import BaseService
+from backend.errors.user_errors import UserAlreadyHaveThisFriend, UserFriendNotFound, UserNotFound
+from backend.database.models import Post, User
+from backend.dto.chat_dto import BaseChatModel
+from backend.dto.post_dto import PostModel
+from backend.dto.user_dto import BaseUserModel
+from backend.repositories import UserRepository
+from backend.services import BaseService
 
 
 class UserService(BaseService):
@@ -39,22 +40,24 @@ class UserService(BaseService):
         user = await self.repository.get_item(user_id)
         
         await self.check_item(user, UserNotFound)
-
-        return await self.dump_items(user.posts, PostModel)
+        
+        return [post.id for post in user.posts]
 
     async def add_friend(self, user_id: str, friend_id: str):
-        friend = await self.check_friend(user_id, friend_id)
+        user = await self.repository.get_item(user_id)
+        friend = await self.repository.get_item(friend_id)
 
-        await self.check_item(friend, UserFriendNotFound)
+        await self.check_item(user, UserNotFound)
+        await self.check_item(friend, UserNotFound)
 
+        if friend_id in user.friends:
+            raise UserAlreadyHaveThisFriend
+        
         await self.repository.add_friend(user_id, friend_id)
 
     async def remove_friend(self, user_id: str, friend_id: str):
-        friend = await self.repository.get_item(friend_id)
-        
-        await self.check_item(friend, UserFriendNotFound)
-
-        await self.repository.remove_friend(user_id, friend_id)
+        await self.check_friend(user_id, friend_id)
+        await self.repository.add_friend(user_id, friend_id)
 
     async def get_friends(self, user_id: str):
         user = await self.repository.get_item(user_id)
@@ -72,7 +75,15 @@ class UserService(BaseService):
 
     async def check_friend(self, user_id: str, friend_id: str):
         user = await self.repository.get_item(user_id)
-        return friend_id in user.friends
+        friend = await self.repository.get_item(friend_id)
+
+        await self.check_item(user, UserNotFound)
+        await self.check_item(friend, UserNotFound)
+        
+        if friend_id in user.friends:
+            return True
+        
+        raise UserFriendNotFound 
 
     async def search_users(self, username: str, **kwargs) -> list[BaseUserModel] | None:
         users = await self.repository.search_users(username, **kwargs)

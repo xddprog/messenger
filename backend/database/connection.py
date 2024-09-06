@@ -1,11 +1,12 @@
+from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from database.models import Base
-from utils.config.config import load_database_config
+from backend.database.models import Base
+from backend.utils.config.config import load_database_config
 
 config = load_database_config()
 url = f'postgresql+asyncpg://{config.db_user}:{config.db_pass}@{config.db_host}:{config.db_port}/{config.db_name}'
-engine = create_async_engine(url)
+engine = create_async_engine(url, poolclass=NullPool)
 
 
 async def create_tables():

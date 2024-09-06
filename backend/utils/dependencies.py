@@ -6,16 +6,15 @@ from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from aiobotocore.session import AioSession
 
-from utils.redis_cache import RedisCache
-import services
-import repositories
-from database.connection import engine
-from dto.user_dto import BaseUserModel
-from services import AuthService
-
-from utils.config.config import load_s3_storage_config
-from utils.s3_client import S3Client
-from utils.websocket_manager import WebSocketManager
+import backend.services as services
+import backend.repositories as repositories
+from backend.utils.redis_cache import RedisCache
+from backend.database.connection import engine
+from backend.dto.user_dto import BaseUserModel
+from backend.services import AuthService
+from backend.utils.config.config import load_s3_storage_config
+from backend.utils.s3_client import S3Client
+from backend.utils.websocket_manager import WebSocketManager
 
 
 security = HTTPBearer(

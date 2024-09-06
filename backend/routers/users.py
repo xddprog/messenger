@@ -6,11 +6,12 @@ from fastapi import APIRouter, Depends, Form, UploadFile
 from pydantic import UUID4
 from sqlalchemy.util import await_only
 
-from dto.user_dto import BaseUserModel, UpdateUserModel
-from utils.redis_cache import RedisCache
-from dto.chat_dto import BaseChatModel
-from services import UserService, ChatService
-from utils.dependencies import get_redis, get_user_service, get_chat_service
+from backend.dto.user_dto import BaseUserModel, UpdateUserModel
+from backend.services.post_service import PostService
+from backend.utils.redis_cache import RedisCache
+from backend.dto.chat_dto import BaseChatModel
+from backend.services import UserService, ChatService
+from backend.utils.dependencies import get_post_service, get_redis, get_user_service, get_chat_service
 
 
 router = APIRouter(
@@ -24,6 +25,15 @@ async def get_all_users(
     user_service: Annotated[UserService, Depends(get_user_service)]
 ):
     return await user_service.get_all_users()
+
+
+@router.get('/{user_id}')
+async def get_user(
+    user_id: str,
+    user_service: Annotated[UserService, Depends(get_user_service)],
+):
+    user = await user_service.get_user(user_id)
+    return await user_service.model_dump(user, BaseUserModel)
 
 
 @router.get('/{user_id}/chats')
@@ -40,9 +50,11 @@ async def get_user_chats(
 @router.get('/{user_id}/posts')
 async def get_user_posts(
     user_id: str,
-    user_service: Annotated[UserService, Depends(get_user_service)]
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    post_service: Annotated[PostService, Depends(get_post_service)]
 ):
-    return await user_service.get_user_posts(user_id)
+    posts = await user_service.get_user_posts(user_id)
+    return [await post_service.get_one_post(post_id) for post_id in posts]
 
 
 @router.get('/{user_id}/friends/all')

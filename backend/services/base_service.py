@@ -2,8 +2,8 @@ from fastapi import HTTPException
 from pydantic import BaseModel
 from sqlalchemy import Table
 
-from repositories import BaseRepository
-from utils.s3_client import S3Client
+from backend.repositories import BaseRepository
+from backend.utils.s3_client import S3Client
 
 
 class BaseService:

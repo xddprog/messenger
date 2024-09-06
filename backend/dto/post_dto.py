@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import UUID4, BaseModel, Field, field_validator, validator
 
-from dto.user_dto import BaseUserModel
+from backend.dto.user_dto import BaseUserModel
 
 
 class AuthorModel(BaseModel):

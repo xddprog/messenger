@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from pydantic import BaseModel, UUID4, Field
 
-from dto.user_dto import BaseUserModel
+from backend.dto.user_dto import BaseUserModel
 
 
 class BaseChatModel(BaseModel):

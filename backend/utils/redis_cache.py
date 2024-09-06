@@ -2,7 +2,7 @@ from typing import Any
 
 from redis import Redis
 
-from utils.config.config import RedisConfig
+from backend.utils.config.config import RedisConfig
 
 
 class RedisCache:

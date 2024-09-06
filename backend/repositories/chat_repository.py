@@ -1,5 +1,5 @@
-from database.models import Chat
-from repositories.base import SqlAlchemyRepository
+from backend.database.models import Chat
+from backend.repositories.base import SqlAlchemyRepository
 
 
 class ChatRepository(SqlAlchemyRepository):

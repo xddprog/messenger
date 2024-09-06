@@ -1,6 +1,6 @@
 from fastapi.websockets import WebSocket
 
-from dto.message_dto import MessageModel
+from backend.dto.message_dto import MessageModel
 
 
 class WebSocketManager:

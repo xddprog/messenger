@@ -5,10 +5,10 @@ from pydantic import UUID4
 from starlette.responses import Response
 from starlette.websockets import WebSocketDisconnect, WebSocket
 
-from dto.chat_dto import CreateChatForm
-from services import ChatService, MessageService, UserService
-from utils.dependencies import get_chat_service, get_message_service, get_user_service, get_websocket_manager
-from utils.websocket_manager import WebSocketManager
+from backend.dto.chat_dto import CreateChatForm
+from backend.services import ChatService, MessageService, UserService
+from backend.utils.dependencies import get_chat_service, get_message_service, get_user_service, get_websocket_manager
+from backend.utils.websocket_manager import WebSocketManager
 
 #
 # async def lifespan(router: APIRouter, websocket_manager: Depends(get_websocket_manager)):
@@ -28,7 +28,7 @@ router = APIRouter(
 manager = WebSocketManager()
 
 
-@router.post('/create')
+@router.post('/create', status_code=201)
 async def create_chat(
     form: CreateChatForm,
     chat_service: Annotated[ChatService, Depends(get_chat_service)],

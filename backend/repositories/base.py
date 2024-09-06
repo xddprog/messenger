@@ -5,6 +5,8 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import MappedColumn
 
+from backend.database.models import Post
+
 
 class BaseRepository(ABC):
     @abstractmethod
@@ -68,9 +70,8 @@ class SqlAlchemyRepository(BaseRepository):
         
         return item
 
-    async def delete_item(self, item_id: int | UUID4):
-        deleting_item = await self.session.get(self.model, item_id)
-        await self.session.delete(deleting_item)
+    async def delete_item(self, post: Post):
+        await self.session.delete(post)
         await self.session.commit()
 
     async def update_item(self, item_id: int| str, **update_values):

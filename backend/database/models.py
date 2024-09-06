@@ -7,7 +7,7 @@ from sqlalchemy import DateTime, ForeignKey, ARRAY, String
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship
 from sqlalchemy.dialects.postgresql import UUID
 
-from utils.config.constants import BASE_AVATAR_URL
+from backend.utils.config.constants import BASE_AVATAR_URL
 
 
 class Base(DeclarativeBase):
@@ -26,7 +26,7 @@ class User(Base):
     images = mapped_column(ARRAY(String), default=[])
     birthday: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     description: Mapped[str]
-    friends = mapped_column(ARRAY(UUID()), default=[])
+    friends = mapped_column(ARRAY(String), default=[])
 
     posts: Mapped[list['Post']] = relationship(
         back_populates="author",
@@ -46,7 +46,8 @@ class User(Base):
     liked_posts: Mapped[list['Post']] = relationship(
         back_populates="likes",
         secondary='users_liked_posts',
-        uselist=True
+        uselist=True,
+        lazy='selectin'
     )
 
 

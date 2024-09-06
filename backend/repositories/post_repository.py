@@ -1,7 +1,8 @@
 from pydantic import UUID4
+from sqlalchemy import select
 
-from database.models import Post, User
-from repositories.base import SqlAlchemyRepository
+from backend.database.models import Post, User
+from backend.repositories.base import SqlAlchemyRepository
 
 
 class PostRepository(SqlAlchemyRepository):
@@ -17,10 +18,9 @@ class PostRepository(SqlAlchemyRepository):
 
         return post
 
-    async def like_post(self, post_id: UUID4, user: User) -> None:
-        post = await self.session.get(Post, post_id)
+    async def like_post(self, post: Post, user: User) -> None:
         await self.session.refresh(post)
-
+        
         if user in post.likes:
             post.likes.remove(user)
         else:

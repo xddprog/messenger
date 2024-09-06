@@ -1,8 +1,8 @@
 from pydantic import UUID4
 from sqlalchemy import select
 
-from database.models import Message, User, Chat
-from repositories.base import SqlAlchemyRepository
+from backend.database.models import Message, User, Chat
+from backend.repositories.base import SqlAlchemyRepository
 
 
 class MessageRepository(SqlAlchemyRepository):

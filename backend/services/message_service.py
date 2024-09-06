@@ -1,9 +1,9 @@
 from pydantic import UUID4
 
-from database.models import Message, User, Chat
-from dto.message_dto import MessageModel
-from repositories import MessageRepository
-from services import BaseService
+from backend.database.models import Message, User, Chat
+from backend.dto.message_dto import MessageModel
+from backend.repositories import MessageRepository
+from backend.services import BaseService
 
 
 class MessageService(BaseService):

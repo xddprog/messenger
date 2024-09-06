@@ -5,12 +5,12 @@ from jwt import InvalidTokenError, encode, decode
 from passlib.context import CryptContext
 from requests import get
 
-from dto.auth_dto import LoginForm, RegisterForm
-from dto.user_dto import BaseUserModel
-from database.models import User
-from services.base_service import BaseService
-from utils.config.config import load_here_geocoding_api_key, load_jwt_config
-from errors.auth_errors import (
+from backend.dto.auth_dto import LoginForm, RegisterForm
+from backend.dto.user_dto import BaseUserModel
+from backend.database.models import User
+from backend.services.base_service import BaseService
+from backend.utils.config.config import load_here_geocoding_api_key, load_jwt_config
+from backend.errors.auth_errors import (
     InvalidLoginData, InvalidToken, 
     UserAlreadyNotRegister, UserAlreadyRegister
 )
@@ -22,10 +22,6 @@ class AuthService(BaseService):
 
         self.config = load_jwt_config()
         self.context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-        
-    @staticmethod
-    async def dump_user(user: User) -> BaseUserModel:
-        return BaseUserModel.model_validate(user, from_attributes=True)
     
     async def get_user_by_email(self, email: str) -> User | None:
         user = await self.repository.get_by_attribute(self.repository.model.email, email)
@@ -45,7 +41,7 @@ class AuthService(BaseService):
         if not await self.verify_password(form.password, user.password):
             raise InvalidLoginData
         
-        return await self.dump_user(user)
+        return await self.model_dump(user, BaseUserModel)
     
     async def create_access_token(self, email: str) -> str:
         expire = datetime.now() + timedelta(minutes=self.config.access_token_time)
@@ -72,7 +68,7 @@ class AuthService(BaseService):
         if user is None:
             raise InvalidToken
         
-        return await self.dump_user(user)
+        return await self.model_dump(user, BaseUserModel)
     
     async def register_user(self, form: RegisterForm) -> User:
         user = await self.get_user_by_email(form.email)      

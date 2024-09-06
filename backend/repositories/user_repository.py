@@ -1,8 +1,10 @@
+from unittest import result
 from pydantic import UUID4
 from sqlalchemy import select, update
+from sqlalchemy.orm import selectinload
 
-from database.models import Post, User
-from repositories.base import SqlAlchemyRepository
+from backend.database.models import Post, User
+from backend.repositories.base import SqlAlchemyRepository
 
 
 class UserRepository(SqlAlchemyRepository):
@@ -56,4 +58,4 @@ class UserRepository(SqlAlchemyRepository):
         await self.session.commit()
 
         return user
-
+    

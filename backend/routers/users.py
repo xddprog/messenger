@@ -27,6 +27,27 @@ async def get_all_users(
     return await user_service.get_all_users()
 
 
+@router.get('/search')
+async def search_users(
+    username: str,
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    redis_cache: Annotated[RedisCache, Depends(get_redis)]
+):
+    users = await redis_cache.get_item(username)
+
+    if not users:
+        users = await user_service.search_users(username)
+        await redis_cache.set_item(
+            username, 
+            json.dumps(
+                [user.model_dump() for user in users]
+            )
+        )
+    else:
+        users = json.loads(users)
+    return users
+
+
 @router.get('/{user_id}')
 async def get_user(
     user_id: str,
@@ -96,27 +117,6 @@ async def remove_friend(
     return {
         'detail': f'Пользователь {user_id} успешно удалил {friend_id} из друзей'
     }
-
-
-@router.get('/search')
-async def search_users(
-    username: str,
-    user_service: Annotated[UserService, Depends(get_user_service)],
-    redis_cache: Annotated[RedisCache, Depends(get_redis)]
-):
-    users = await redis_cache.get_item(username)
-
-    if not users:
-        users = await user_service.search_users(username)
-        await redis_cache.set_item(
-            username, 
-            json.dumps(
-                [user.model_dump() for user in users]
-            )
-        )
-    else:
-        users = json.loads(users)
-    return users
 
 
 @router.put('/{user_id}/profile/update')

@@ -4,7 +4,14 @@ const BASE_URL = 'https://messenger-oe3m.onrender.com/api/users';
 
 export async function getUserChats() {
 	return await axios
-		.get(`${BASE_URL}/${localStorage.getItem('user_id')}/chats`)
+		.get(
+			`${BASE_URL}/${localStorage.getItem('user_id')}/chats`,
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('token'),
+				},
+			}
+		)
 		.then((response) => response);
 }
 

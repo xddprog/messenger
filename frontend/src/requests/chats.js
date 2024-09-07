@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const BASE_URL = 'http://127.0.0.1:5000/api/chats'
+const BASE_URL = 'https://messenger-oe3m.onrender.com/api/chats'
 
 
 export async function getChatMessages(chatId) {

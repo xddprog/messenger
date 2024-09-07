@@ -1,13 +1,12 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends
 from pydantic import UUID4
-from starlette.responses import Response
 from starlette.websockets import WebSocketDisconnect, WebSocket
 
 from backend.dto.chat_dto import CreateChatForm
 from backend.services import ChatService, MessageService, UserService
-from backend.utils.dependencies import get_chat_service, get_message_service, get_user_service, get_websocket_manager
+from backend.utils.dependencies import get_chat_service, get_message_service, get_user_service
 from backend.utils.websocket_manager import WebSocketManager
 
 #
@@ -55,14 +54,13 @@ async def websocket_endpoint(
     chat_service: Annotated[ChatService, Depends(get_chat_service)],
     message_service: Annotated[MessageService, Depends(get_message_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
-    manager: Annotated[WebSocketManager, Depends(get_websocket_manager)]
 ):
 
     await manager.connect(websocket)
 
     user = await user_service.get_user(client_id)
     chat = await chat_service.get_chat(chat_id)
-
+    
     try:
         while True:
             data = await websocket.receive_text()

@@ -34,10 +34,6 @@ async def get_redis(request: Request) -> RedisCache:
     return request.app.state.redis_cache
 
 
-async def get_websocket_manager(request: Request) -> WebSocketManager:
-    return request.app.state.websocket_manager
-
-
 async def get_s3_client():
     config = load_s3_storage_config()
     session = AioSession()

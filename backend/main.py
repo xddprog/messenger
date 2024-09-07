@@ -48,7 +48,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(users_router, dependencies=[PROTECTED])
-app.include_router(chats_router, dependencies=[PROTECTED])
+app.include_router(chats_router)
 app.include_router(posts_router, dependencies=[PROTECTED])
 
 

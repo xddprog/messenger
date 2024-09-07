@@ -30,7 +30,6 @@ export default function MainPageHeader() {
 			try {
 				const response = await searchUser(value);
 				setUsers(response.data);
-				// console.log(response.data[1].username);
 			} catch (err) {
 				console.error(err);
 			}

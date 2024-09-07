@@ -48,14 +48,18 @@ export default function UserProfileInfo() {
 	};
 
 	useEffect(() => {
-		getCurrentUser()
-			.then((response) => {
+		const fetchUser = async () => {
+			try {
+				const response = await getCurrentUser();
 				setUser(response.data);
-			})
-			.catch((error) => {
+				console.log(setUser);
+			} catch (error) {
 				console.error(error);
-			});
-	});
+			}
+		};
+
+		fetchUser();
+	}, [isModalVisible]);
 	return (
 		<div className=''>
 			<Card

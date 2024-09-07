@@ -109,7 +109,7 @@ export default function ChatPage() {
         let user_id = localStorage.getItem("user_id");
         setOpenedChat(chat)
         setWs(
-            new WebSocket(`ws://localhost:5000/api/chats/ws/${chat.id}/${user_id}`)
+            new WebSocket(`ws://messenger-oe3m.onrender.com/api/chats/ws/${chat.id}/${user_id}`)
         )
     }
 

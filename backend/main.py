@@ -2,10 +2,10 @@ import uvicorn
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
-from utils.dependencies import get_current_user_dependency
-from utils.websocket_manager import WebSocketManager
-from utils.redis_cache import RedisCache
-from utils.config.config import load_redis_config
+from backend.utils.dependencies import get_current_user_dependency
+from backend.utils.websocket_manager import WebSocketManager
+from backend.utils.redis_cache import RedisCache
+from backend.utils.config.config import load_redis_config
 from database.connection import create_tables
 from routers import (
     auth_router, posts_router, users_router,

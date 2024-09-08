@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import uuid4
 from fastapi import UploadFile
 from pydantic import UUID4
 from backend.database.models import Comment, Post, User
@@ -12,6 +13,7 @@ class CommentService(BaseService):
 
     async def add_comment(
         self,
+        post_id: UUID4,
         text: str ,
         created_at: datetime,
         author: User,
@@ -20,6 +22,13 @@ class CommentService(BaseService):
     ) -> Comment:
         if parent:
             parent = await self.repository.get_item(parent)
+        
+        if images:
+            images = await self.s3_client.upload_many_files(
+                images,
+                f'posts/{post_id}/comments/{author.id}/{uuid4()}'
+            )
+
         return await self.repository.add_item(
             text=text,
             created_at=created_at,

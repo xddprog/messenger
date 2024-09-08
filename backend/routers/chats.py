@@ -1,6 +1,7 @@
+from email.policy import default
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Form, UploadFile
 from pydantic import UUID4
 from starlette.websockets import WebSocketDisconnect, WebSocket
 
@@ -64,7 +65,38 @@ async def websocket_endpoint(
     try:
         while True:
             data = await websocket.receive_text()
-            message = await message_service.create_message(data, user, chat)
+            images = await websocket.receive_bytes(data)
+            message = await message_service.create_message(data, images, user, chat)
             await manager.broadcast(message)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
+
+
+@router.delete('/messages/{message_id}')
+async def delete_message(
+    message_id: int,
+    message_service: Annotated[MessageService, Depends(get_message_service)]
+) -> MessageModel:
+    await message_service.delete_message(message_id)
+    return  {
+        'detail': 'Сообщение удалено'
+    }
+
+@router.put('/messages/{message_id}')
+async def edit_message(
+    message_id: int,
+    message_service: Annotated[MessageService, Depends(get_message_service)],
+    message: str | None = Form(default=None),
+    new_images: list[UploadFile] | None = Form(default=None),
+    deleted_images: list[str] | None = Form(default=None),
+    user_id: str = Form(default=None),
+    chat_id: str = Form(default=None)
+) -> MessageModel:
+    return await message_service.edit_message(
+        user_id=user_id,
+        chat_id=chat_id,
+        message_id=message_id, 
+        message=message, 
+        new_images=new_images,
+        delete_images=deleted_images
+    )

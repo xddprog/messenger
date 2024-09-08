@@ -125,6 +125,7 @@ class Message(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     message: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
+    images: Mapped[list[str]] = mapped_column(ARRAY(String), default=[])
 
     user_fk: Mapped[UUID4 | None] = mapped_column(ForeignKey('users.id'), default=None)
     chat_fk: Mapped[UUID4 | None] = mapped_column(ForeignKey('chats.id'), default=None)

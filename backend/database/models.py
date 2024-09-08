@@ -71,7 +71,6 @@ class Comment(Base):
         lazy='selectin'
     )
     parent: Mapped['Comment'] = relationship(
-        back_populates='main_comment',
         remote_side=[id],
         lazy='selectin'
     )

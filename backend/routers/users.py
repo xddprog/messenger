@@ -88,7 +88,7 @@ async def get_user_friends(
 
 
 @router.get('/{user_id}/friends/{friend_id}')
-async def get_check_is_friend_or_not(
+async def check_is_friend_or_not(
     user_id: str,
     friend_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)]

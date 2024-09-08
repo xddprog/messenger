@@ -2,9 +2,8 @@ from tabnanny import check
 from uuid import uuid4
 from pydantic import UUID4
 
-from backend.errors.user_errors import UserAlreadyHaveThisFriend, UserFriendNotFound, UserNotFound
-from backend.database.models import Post, User
-from backend.dto.chat_dto import BaseChatModel
+from backend.errors.user_errors import UserAlreadyHaveThisFriend, UserNotFound
+from backend.database.models import User
 from backend.dto.post_dto import PostModel
 from backend.dto.user_dto import BaseUserModel
 from backend.repositories import UserRepository
@@ -80,10 +79,8 @@ class UserService(BaseService):
         await self.check_item(user, UserNotFound)
         await self.check_item(friend, UserNotFound)
         
-        if friend_id in user.friends:
-            return True
-        
-        raise UserFriendNotFound 
+        return friend_id in user.friends
+
 
     async def search_users(self, username: str, **kwargs) -> list[BaseUserModel] | None:
         users = await self.repository.search_users(username, **kwargs)

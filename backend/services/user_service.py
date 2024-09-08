@@ -57,7 +57,7 @@ class UserService(BaseService):
 
     async def remove_friend(self, user_id: str, friend_id: str):
         await self.check_friend(user_id, friend_id)
-        await self.repository.add_friend(user_id, friend_id)
+        await self.repository.remove_friend(user_id, friend_id)
 
     async def get_friends(self, user_id: str):
         user = await self.repository.get_item(user_id)

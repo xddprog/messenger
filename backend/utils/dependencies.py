@@ -58,6 +58,13 @@ async def get_auth_service(session=Depends(get_session), s3_client=Depends(get_s
     )
 
 
+async def get_comment_service(session=Depends(get_session), s3_client=Depends(get_s3_client)):
+    return services.CommentService(
+        repository=repositories.CommentRepository(session=session),
+        s3_client=s3_client
+    )
+
+
 async def get_current_user_dependency(
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     token: Annotated[HTTPBearer, Depends(security)]

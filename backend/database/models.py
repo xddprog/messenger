@@ -1,4 +1,5 @@
 from datetime import datetime
+from re import T
 from uuid import UUID
 
 from pydantic import UUID4
@@ -49,6 +50,39 @@ class User(Base):
         uselist=True,
         lazy='selectin'
     )
+    comments: Mapped[list['Comment']] = relationship(
+        back_populates='author',
+        uselist=True,
+        lazy='selectin'
+    )
+
+
+class Comment(Base):
+    __tablename__ = 'comments'
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    text: Mapped[str] 
+    images: Mapped[str] = mapped_column(ARRAY(String), default=[])
+    created_at: Mapped[datetime]
+
+    author: Mapped['User'] = relationship(
+        back_populates="comments",
+        uselist=False,
+        lazy='selectin'
+    )
+    parent: Mapped['Comment'] = relationship(
+        back_populates='main_comment',
+        remote_side=[id],
+        lazy='selectin'
+    )
+    
+    post: Mapped['Post'] = relationship(
+        back_populates='comments',
+        uselist=False
+    )
+    author_fk: Mapped[str] = mapped_column(ForeignKey('users.id'))
+    post_fk: Mapped[UUID4] = mapped_column(ForeignKey('posts.id'))
+    parent_id: Mapped[int] = mapped_column(ForeignKey('comments.id'), nullable=True)
 
 
 class Post(Base):
@@ -68,6 +102,11 @@ class Post(Base):
     likes: Mapped[list['User']] = relationship(
         back_populates="liked_posts",
         secondary='users_liked_posts',
+        uselist=True,
+        lazy='selectin'
+    )
+    comments: Mapped[list['Comment']] = relationship(
+        back_populates='post',
         uselist=True,
         lazy='selectin'
     )

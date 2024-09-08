@@ -2,11 +2,8 @@ from datetime import datetime
 from uuid import uuid4
 from pydantic import UUID4, BaseModel, Field
 
+from backend.dto.user_dto import BaseUserModel
 
-class TokenModel(BaseModel):
-    access_token: str
-    user_id: UUID4
-    
 
 class RegisterForm(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()))
@@ -21,3 +18,15 @@ class RegisterForm(BaseModel):
 class LoginForm(BaseModel):
     email: str
     password: str
+
+
+class RegisterResponse(BaseModel):
+    detail: str
+    new_user: BaseUserModel
+    token: str
+
+
+class LoginResponse(BaseModel):
+    detail: str
+    user: BaseUserModel
+    token: str

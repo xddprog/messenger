@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends
 from pydantic import UUID4
 from starlette.websockets import WebSocketDisconnect, WebSocket
 
-from backend.dto.chat_dto import CreateChatForm
+from backend.dto.chat_dto import BaseChatModel, CreateChatForm
+from backend.dto.message_dto import MessageModel
 from backend.services import ChatService, MessageService, UserService
 from backend.utils.dependencies import get_chat_service, get_message_service, get_user_service
 from backend.utils.websocket_manager import WebSocketManager
@@ -32,7 +33,7 @@ async def create_chat(
     form: CreateChatForm,
     chat_service: Annotated[ChatService, Depends(get_chat_service)],
     user_service: Annotated[UserService, Depends(get_user_service)]
-):
+) -> BaseChatModel:
     form.users = [await user_service.get_user(user_id) for user_id in form.users]
     return await chat_service.create_chat(form)
 
@@ -42,7 +43,7 @@ async def get_chat_messages(
     chat_id: UUID4,
     offset: int,
     message_service: Annotated[MessageService, Depends(get_message_service)]
-):
+) -> list[MessageModel]:
     return await message_service.get_messages_from_chat(chat_id, offset)
 
 
@@ -55,7 +56,6 @@ async def websocket_endpoint(
     message_service: Annotated[MessageService, Depends(get_message_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
 ):
-
     await manager.connect(websocket)
 
     user = await user_service.get_user(client_id)

@@ -3,7 +3,8 @@ from uuid import uuid4
 
 from pydantic import UUID4
 
-from backend.database.models import User
+from backend.database.models import Comment, User
+from backend.dto.comment_dto import CommentModel
 from backend.dto.post_dto import PostModel
 from backend.errors.post_errors import PostNotFound
 from backend.repositories import PostRepository
@@ -62,3 +63,17 @@ class PostService(BaseService):
 
         return await self.repository.delete_item(post)
     
+    async def get_comments(self, post_id: UUID4):
+        post = await self.repository.get_item(post_id)
+
+        await self.check_item(post, PostNotFound)
+        
+        return await self.dump_items(post.comments, CommentModel)
+    
+    async def add_comment(self, post_id: UUID4, comment: Comment):
+        post = await self.repository.get_item(post_id)
+
+        await self.check_item(post, PostNotFound)
+        comment = await self.repository.add_comment(post, comment)  
+
+        return await self.model_dump(comment, CommentModel) 

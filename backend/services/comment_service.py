@@ -1,7 +1,8 @@
 from datetime import datetime
 from fastapi import UploadFile
 from pydantic import UUID4
-from backend.database.models import Comment, User
+from backend.database.models import Comment, Post, User
+from backend.dto.comment_dto import CommentModel
 from backend.repositories import CommentRepository
 from backend.services.base_service import BaseService
 
@@ -27,3 +28,8 @@ class CommentService(BaseService):
             parent=parent
         )
     
+    async def get_post_comments(self, post_id: UUID4) -> list[CommentModel]:
+        comments = await self.repository.get_post_comments(post_id)
+        comments = [comment for comment in comments if comment.parent is None]
+        
+        return await self.dump_items(comments, CommentModel)

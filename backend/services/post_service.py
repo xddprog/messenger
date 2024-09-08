@@ -63,13 +63,10 @@ class PostService(BaseService):
 
         return await self.repository.delete_item(post)
     
-    async def get_comments(self, post_id: UUID4):
+    async def check_post_exist(self, post_id: UUID4):
         post = await self.repository.get_item(post_id)
-
         await self.check_item(post, PostNotFound)
-        
-        return await self.dump_items(post.comments, CommentModel)
-    
+            
     async def add_comment(self, post_id: UUID4, comment: Comment):
         post = await self.repository.get_item(post_id)
 

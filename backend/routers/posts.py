@@ -75,9 +75,11 @@ async def delete_post(
 @router.get('/{post_id}/comments')
 async def get_post_comments(
     post_id: UUID4,
-    post_service: Annotated[PostService, Depends(get_post_service)]
+    post_service: Annotated[PostService, Depends(get_post_service)],
+    comment_service: Annotated[CommentService, Depends(get_comment_service)]
 ) -> list[CommentModel]:
-    return await post_service.get_comments(post_id)
+    await post_service.check_post_exist(post_id)
+    return await comment_service.get_post_comments(post_id)
 
 
 @router.post('{post_id}/comments/add')
@@ -91,7 +93,7 @@ async def add_comment_to_post(
     author: str = Form(),
     images: list[UploadFile] = Form(default=[""]),
     parent: int | None = Form(default=None)
-):
+) -> list[CommentModel]:
     comment = await comment_service.add_comment(
         text=text,
         created_at=created_at,

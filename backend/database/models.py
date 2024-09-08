@@ -65,20 +65,26 @@ class Comment(Base):
     images: Mapped[str] = mapped_column(ARRAY(String), default=[])
     created_at: Mapped[datetime]
 
+    replies: Mapped[list['Comment']] = relationship(
+        back_populates='parent',
+        lazy='selectin'
+    )
+    parent: Mapped['Comment'] = relationship(
+        back_populates='replies',
+        remote_side=[id],
+        lazy='selectin'
+    )
     author: Mapped['User'] = relationship(
         back_populates="comments",
         uselist=False,
         lazy='selectin'
     )
-    parent: Mapped['Comment'] = relationship(
-        remote_side=[id],
-        lazy='selectin'
-    )
-    
     post: Mapped['Post'] = relationship(
         back_populates='comments',
-        uselist=False
+        uselist=False,
+        lazy='selectin'
     )
+
     author_fk: Mapped[str] = mapped_column(ForeignKey('users.id'))
     post_fk: Mapped[UUID4] = mapped_column(ForeignKey('posts.id'))
     parent_id: Mapped[int] = mapped_column(ForeignKey('comments.id'), nullable=True)

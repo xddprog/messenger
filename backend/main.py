@@ -10,8 +10,10 @@ from backend.utils.redis_cache import RedisCache
 from backend.utils.config.config import load_redis_config
 from backend.database.connection import create_tables
 from backend.routers import (
-    auth_router, posts_router, users_router,
-    chats_router
+    auth_router,
+    posts_router,
+    users_router,
+    chats_router,
 )
 
 
@@ -23,18 +25,13 @@ async def lifespan(app: FastAPI):
     # app.state.redis_cache.close()
 
 
-app = FastAPI(
-    lifespan=lifespan
-)
+app = FastAPI(lifespan=lifespan)
 
 
 PROTECTED = Depends(get_current_user_dependency)
 
 
-origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1"
-]
+origins = ["http://localhost:5173", "http://127.0.0.1"]
 
 
 app.add_middleware(
@@ -54,8 +51,7 @@ app.include_router(posts_router, dependencies=[PROTECTED])
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(
-    request: Request, 
-    exc: RequestValidationError
+    request: Request, exc: RequestValidationError
 ):
     try:
         errors = []
@@ -67,26 +63,21 @@ async def validation_exception_handler(
 
             if isinstance(input, dict):
                 input = input.get(field[-1])
-            
+
             errors.append(
                 {
-                    "location": ' -> ' .join(field), 
+                    "location": " -> ".join(field),
                     "detail": message,
-                    "input": input
-                }   
+                    "input": input,
+                }
             )
 
+        return JSONResponse(content=errors, status_code=422)
+    except TypeError:
         return JSONResponse(
-            content=errors,
-            status_code=422
+            status_code=422, content={"detail": "invalid json"}
         )
-    except:
-        return JSONResponse(
-            status_code=422,
-            content={
-                "detail": "invalid json"
-            }
-        )
+
 
 if __name__ == "__main__":
     uvicorn.run(app, port=5000)

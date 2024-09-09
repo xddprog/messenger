@@ -20,5 +20,7 @@ class BaseService:
     async def model_dump(db_model: Table, dto_model: BaseModel) -> BaseModel:
         return dto_model.model_validate(db_model, from_attributes=True)
 
-    async def dump_items(self, db_models: list[Table], dto_model: BaseModel) -> list[BaseModel] | None:
+    async def dump_items(
+        self, db_models: list[Table], dto_model: BaseModel
+    ) -> list[BaseModel] | None:
         return [await self.model_dump(model, dto_model) for model in db_models]

@@ -10,11 +10,15 @@ class CommentRepository(SqlAlchemyRepository):
 
     async def add_item(self, **kwargs):
         return Comment(**kwargs)
-    
+
     async def get_post_comments(self, post_id: UUID4) -> list[Comment]:
-        query = select(self.model).where(self.model.post_fk == post_id).options(selectinload(self.model.replies))
+        query = (
+            select(self.model)
+            .where(self.model.post_fk == post_id)
+            .options(selectinload(self.model.replies))
+        )
 
         comments = await self.session.execute(query)
         comments = comments.scalars().all()
-            
+
         return comments

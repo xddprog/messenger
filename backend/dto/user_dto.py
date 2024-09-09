@@ -1,7 +1,6 @@
 from datetime import datetime
-from fastapi import Form, UploadFile
+from fastapi import UploadFile
 from pydantic import BaseModel, field_validator
-
 
 
 class BaseUserModel(BaseModel):
@@ -14,10 +13,10 @@ class BaseUserModel(BaseModel):
     description: str
     birthday: datetime | str
 
-    @field_validator('birthday')
+    @field_validator("birthday")
     def validate_birthday(data):
-        return data.strftime('%Y-%m-%dT%H:%M:%SZ')
-    
+        return data.strftime("%Y-%m-%dT%H:%M:%SZ")
+
 
 class UpdateUserModel(BaseModel):
     id: str | None
@@ -28,8 +27,8 @@ class UpdateUserModel(BaseModel):
     description: str | None
     birthday: datetime | str | None
 
-    @field_validator('birthday')
+    @field_validator("birthday")
     def validate_birthday(data: str):
         if data:
-            return datetime.strptime(data, '%Y-%m-%dT%H:%M:%SZ')
+            return datetime.strptime(data, "%Y-%m-%dT%H:%M:%SZ")
         return data

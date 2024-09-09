@@ -1,4 +1,3 @@
-from re import S, U
 from uuid import uuid4
 
 from pydantic import UUID4
@@ -16,30 +15,28 @@ class PostService(BaseService):
 
     @staticmethod
     async def create_image_url(author_id: UUID4, post_id: UUID4):
-        return f'posts/{author_id}/{post_id}'
-    
-    async def create_post(self, description: str, images: list, author: User) -> PostModel:
+        return f"posts/{author_id}/{post_id}"
+
+    async def create_post(
+        self, description: str, images: list, author: User
+    ) -> PostModel:
         post_id = uuid4()
 
         if images and not isinstance(images[0], str):
             images = await self.s3_client.upload_many_files(
-                images,
-                await self.create_image_url(author.id, post_id)
+                images, await self.create_image_url(author.id, post_id)
             )
         else:
             images = []
 
         post = await self.repository.add_item(
-            id=post_id,
-            description=description,
-            images=images,
-            author=author
+            id=post_id, description=description, images=images, author=author
         )
         return await self.model_dump(post, PostModel)
-    
+
     async def get_one_post(self, post_id: UUID4) -> PostModel:
         post = await self.repository.get_item(post_id)
-        
+
         await self.check_item(post, PostNotFound)
 
         return await self.model_dump(post, PostModel)
@@ -62,15 +59,15 @@ class PostService(BaseService):
         await self.check_item(post, PostNotFound)
 
         return await self.repository.delete_item(post)
-    
+
     async def check_post_exist(self, post_id: UUID4):
         post = await self.repository.get_item(post_id)
         await self.check_item(post, PostNotFound)
-            
+
     async def add_comment(self, post_id: UUID4, comment: Comment):
         post = await self.repository.get_item(post_id)
 
         await self.check_item(post, PostNotFound)
-        comment = await self.repository.add_comment(post, comment)  
+        comment = await self.repository.add_comment(post, comment)
 
-        return await self.model_dump(comment, CommentModel) 
+        return await self.model_dump(comment, CommentModel)

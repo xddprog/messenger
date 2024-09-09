@@ -1,4 +1,3 @@
-import re
 from environs import Env
 from pydantic import BaseModel
 
@@ -11,7 +10,7 @@ class DatabaseConfig(BaseModel):
     db_port: str
 
 
-class JwtConfig(BaseModel): 
+class JwtConfig(BaseModel):
     jwt_secret: str
     algorithm: str
     access_token_time: int
@@ -38,7 +37,7 @@ def load_database_config() -> DatabaseConfig:
         db_user=env.str("DB_USER"),
         db_pass=env.str("DB_PASS"),
         db_host=env.str("DB_HOST"),
-        db_port=env.str("DB_PORT")
+        db_port=env.str("DB_PORT"),
     )
 
 
@@ -60,20 +59,17 @@ def load_s3_storage_config() -> S3StorageConfig:
         access_key_id=env.str("AWS_ACCESS_KEY_ID"),
         secret_access_key=env.str("AWS_SECRET_ACCESS_KEY"),
         region=env.str("AWS_REGION"),
-        endpoint_url=env.str("AWS_ENDPOINT_URL")
+        endpoint_url=env.str("AWS_ENDPOINT_URL"),
     )
 
 
 def load_redis_config() -> RedisConfig:
     env = Env()
     env.read_env()
-    return RedisConfig(
-        host=env.str("REDIS_HOST"),
-        port=env.int("REDIS_PORT")
-    )
+    return RedisConfig(host=env.str("REDIS_HOST"), port=env.int("REDIS_PORT"))
 
 
 async def load_here_geocoding_api_key() -> str:
     env = Env()
     env.read_env()
-    return env.str('HERE_GEOCODING_API_KEY')
+    return env.str("HERE_GEOCODING_API_KEY")

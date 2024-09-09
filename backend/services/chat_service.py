@@ -2,14 +2,13 @@ from pydantic import UUID4
 
 from backend.database.models import Chat
 from backend.dto.chat_dto import BaseChatModel, CreateChatForm
-from backend.dto.message_dto import MessageModel
 from backend.services import BaseService
 from backend.repositories import ChatRepository
 
 
 class ChatService(BaseService):
     repository: ChatRepository
-    
+
     async def get_chat(self, chat_id: UUID4) -> Chat:
         return await self.repository.get_item(chat_id)
 

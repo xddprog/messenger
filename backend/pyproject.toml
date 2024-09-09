@@ -1,0 +1,7 @@
+[tool.ruff]
+extend-exclude = ["database/models.py", "**/__init__.py"]
+fix = true
+indent-width = 4
+line-length = 79
+show-fixes = true
+target-version="py311"

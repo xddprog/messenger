@@ -1,4 +1,3 @@
-from tabnanny import check
 from uuid import uuid4
 from pydantic import UUID4
 
@@ -15,7 +14,7 @@ class UserService(BaseService):
 
     @staticmethod
     async def get_profile_avatar_url(user_id: str) -> str:
-        return f'users/{user_id}/images/{uuid4()}'
+        return f"users/{user_id}/images/{uuid4()}"
 
     async def get_all_users(self):
         users = await self.repository.get_all_items()
@@ -37,9 +36,9 @@ class UserService(BaseService):
 
     async def get_user_posts(self, user_id: str) -> list[PostModel]:
         user = await self.repository.get_item(user_id)
-        
+
         await self.check_item(user, UserNotFound)
-        
+
         return [post.id for post in user.posts]
 
     async def add_friend(self, user_id: str, friend_id: str):
@@ -51,7 +50,7 @@ class UserService(BaseService):
 
         if friend_id in user.friends:
             raise UserAlreadyHaveThisFriend
-        
+
         await self.repository.add_friend(user_id, friend_id)
 
     async def remove_friend(self, user_id: str, friend_id: str):
@@ -66,7 +65,7 @@ class UserService(BaseService):
         friends = [
             await self.model_dump(
                 db_model=await self.repository.get_item(friend_id),
-                dto_model=BaseUserModel
+                dto_model=BaseUserModel,
             )
             for friend_id in user.friends
         ]
@@ -78,15 +77,18 @@ class UserService(BaseService):
 
         await self.check_item(user, UserNotFound)
         await self.check_item(friend, UserNotFound)
-        
+
         return friend_id in user.friends
 
-
-    async def search_users(self, username: str, **kwargs) -> list[BaseUserModel] | None:
+    async def search_users(
+        self, username: str, **kwargs
+    ) -> list[BaseUserModel] | None:
         users = await self.repository.search_users(username, **kwargs)
         return await self.dump_items(users, BaseUserModel) if users else []
 
-    async def update_user_profile(self, user_id: str, form: BaseUserModel) -> BaseUserModel:
+    async def update_user_profile(
+        self, user_id: str, form: BaseUserModel
+    ) -> BaseUserModel:
         user = await self.repository.get_item(user_id)
 
         await self.check_item(user, UserNotFound)
@@ -94,11 +96,9 @@ class UserService(BaseService):
         if form.avatar:
             form.avatar = await self.s3_client.upload_one_file(
                 file=form.avatar,
-                path=await self.get_profile_avatar_url(user_id)
+                path=await self.get_profile_avatar_url(user_id),
             )
-        
+
         return await self.repository.update_item(
-            user_id,
-            **form.model_dump(exclude_none=True)
+            user_id, **form.model_dump(exclude_none=True)
         )
-    

@@ -15,7 +15,7 @@ class RedisCache:
 
     async def get_item(self, key: str) -> Any:
         return self.redis.get(key)
-    
+
     async def delete_item(self, key: str) -> None:
         self.redis.delete(key)
 

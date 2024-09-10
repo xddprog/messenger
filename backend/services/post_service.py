@@ -14,7 +14,7 @@ class PostService(BaseService):
     repository: PostRepository
 
     @staticmethod
-    async def create_image_url(author_id: UUID4, post_id: UUID4):
+    async def create_image_url(author_id: UUID4, post_id: UUID4) -> str:
         return f"posts/{author_id}/{post_id}"
 
     async def create_post(
@@ -45,7 +45,7 @@ class PostService(BaseService):
         posts = await self.repository.get_all_items()
         return await self.dump_items(posts, PostModel)
 
-    async def like_post(self, post_id, user: User):
+    async def like_post(self, post_id: UUID4, user: User) -> PostModel:
         post = await self.repository.get_item(post_id)
         await self.check_item(post, PostNotFound)
 
@@ -53,18 +53,20 @@ class PostService(BaseService):
 
         return await self.model_dump(post, PostModel)
 
-    async def delete_post(self, post_id: UUID4):
+    async def delete_post(self, post_id: UUID4) -> None:
         post = await self.repository.get_item(post_id)
 
         await self.check_item(post, PostNotFound)
 
         return await self.repository.delete_item(post)
 
-    async def check_post_exist(self, post_id: UUID4):
+    async def check_post_exist(self, post_id: UUID4) -> None:
         post = await self.repository.get_item(post_id)
         await self.check_item(post, PostNotFound)
 
-    async def add_comment(self, post_id: UUID4, comment: Comment):
+    async def add_comment(
+        self, post_id: UUID4, comment: Comment
+    ) -> CommentModel:
         post = await self.repository.get_item(post_id)
 
         await self.check_item(post, PostNotFound)

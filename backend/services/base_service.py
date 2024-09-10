@@ -12,7 +12,7 @@ class BaseService:
         self.s3_client = s3_client
 
     @staticmethod
-    async def check_item(item, error: HTTPException):
+    async def check_item(item, error: HTTPException) -> None:
         if not item:
             raise error
 
@@ -22,5 +22,5 @@ class BaseService:
 
     async def dump_items(
         self, db_models: list[Table], dto_model: BaseModel
-    ) -> list[BaseModel] | None:
+    ) -> list[BaseModel] | list:
         return [await self.model_dump(model, dto_model) for model in db_models]

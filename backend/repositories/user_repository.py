@@ -8,14 +8,14 @@ from backend.repositories.base import SqlAlchemyRepository
 class UserRepository(SqlAlchemyRepository):
     model = User
 
-    async def add_friend(self, user_id: UUID4, friend_id: UUID4):
+    async def add_friend(self, user_id: UUID4, friend_id: UUID4) -> None:
         user = await self.session.get(self.model, user_id)
 
         user.friends = [*user.friends, friend_id]
 
         await self.session.commit()
 
-    async def remove_friend(self, user_id: UUID4, friend_id: UUID4):
+    async def remove_friend(self, user_id: UUID4, friend_id: UUID4) -> None:
         user = await self.session.get(self.model, user_id)
 
         user.friends = [
@@ -24,7 +24,7 @@ class UserRepository(SqlAlchemyRepository):
         select()
         await self.session.commit()
 
-    async def search_users(self, username: str, **kwargs: str):
+    async def search_users(self, username: str, **kwargs: str) -> list[User]:
         query = (
             select(self.model)
             .where(self.model.username.contains(username))
@@ -36,7 +36,7 @@ class UserRepository(SqlAlchemyRepository):
 
         return users
 
-    async def update_item(self, item_id: int | str, **update_values):
+    async def update_item(self, item_id: int | str, **update_values) -> User:
         query = (
             update(self.model)
             .where(self.model.id == item_id)

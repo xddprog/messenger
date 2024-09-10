@@ -63,7 +63,7 @@ class AuthService(BaseService):
 
         return token.decode()
 
-    async def verify_token(self, token: HTTPBearer) -> dict:
+    async def verify_token(self, token: HTTPBearer) -> dict[str, str]:
         try:
             payload = decode(
                 token.credentials,
@@ -98,7 +98,7 @@ class AuthService(BaseService):
 
         return await self.model_dump(new_user, BaseUserModel)
 
-    async def search_cities(self, city: str) -> list:
+    async def search_cities(self, city: str) -> list[str]:
         url = "https://autocomplete.search.hereapi.com/v1/autocomplete"
         params = {
             "apiKey": await load_here_geocoding_api_key(),
@@ -109,7 +109,4 @@ class AuthService(BaseService):
         }
         response = get(url, params).json()
 
-        if response:
-            return [city["address"]["label"] for city in response["items"]]
-
-        return []
+        return [city["address"]["label"] for city in response.get("items")]

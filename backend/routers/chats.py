@@ -82,7 +82,7 @@ async def websocket_endpoint(
 async def delete_message(
     message_id: int,
     message_service: Annotated[MessageService, Depends(get_message_service)],
-) -> MessageModel:
+) -> dict[str, str]:
     await message_service.delete_message(message_id)
     return {"detail": "Сообщение удалено"}
 

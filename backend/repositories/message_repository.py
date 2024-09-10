@@ -24,7 +24,7 @@ class MessageRepository(SqlAlchemyRepository):
         message: str | None,
         new_images: list[str] | None,
         deleted_images: list[str] | None,
-    ):
+    ) -> Message:
         getted_message = await self.session.get(message_id)
 
         if message:

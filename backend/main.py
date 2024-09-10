@@ -1,6 +1,5 @@
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-import uvicorn
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -77,7 +76,3 @@ async def validation_exception_handler(
         return JSONResponse(
             status_code=422, content={"detail": "invalid json"}
         )
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, port=5000)

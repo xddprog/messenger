@@ -1,7 +1,6 @@
 from typing import Annotated
 
 from fastapi import Depends, Request
-from fastapi import security
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from aiobotocore.session import AioSession
@@ -16,7 +15,7 @@ from backend.utils.config.config import load_s3_storage_config
 from backend.utils.s3_client import S3Client
 
 
-security = HTTPBearer(auto_error=False)
+bearer = HTTPBearer(auto_error=False)
 
 
 async def get_session():
@@ -68,7 +67,7 @@ async def get_comment_service(
 
 async def get_current_user_dependency(
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    token: Annotated[HTTPBearer, Depends(security)],
+    token: Annotated[HTTPBearer, Depends(bearer)],
 ) -> BaseUserModel:
     username = await auth_service.verify_token(token)
     return await auth_service.check_user_exist(username)

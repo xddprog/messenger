@@ -6,7 +6,6 @@ from fastapi import APIRouter, Depends, UploadFile, Form
 
 from backend.dto.comment_dto import CommentModel
 from backend.dto.post_dto import PostModel
-from starlette.requests import Request
 from backend.services.comment_service import CommentService
 from backend.utils.dependencies import (
     get_comment_service,
@@ -26,7 +25,6 @@ router = APIRouter(
 async def create_post(
     post_service: Annotated[PostService, Depends(get_post_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
-    request: Request,
     author: str = Form(...),
     description: str = Form(...),
     images: list = Form(default=[""]),
@@ -68,9 +66,9 @@ async def like_post(
 async def delete_post(
     post_id: UUID4,
     post_service: Annotated[PostService, Depends(get_post_service)],
-) -> bool:
+) -> dict[str, str]:
     await post_service.delete_post(post_id)
-    return True
+    return {"detail": "Пост удален"}
 
 
 @router.get("/{post_id}/comments")
@@ -92,9 +90,9 @@ async def add_comment_to_post(
     text: str = Form(),
     created_at: datetime = Form(default=datetime.now()),
     author: str = Form(),
-    images: list[UploadFile] = Form(default=[""]),
+    images: list[UploadFile] | list = Form(default=[]),
     parent: int | None = Form(default=None),
-) -> list[CommentModel]:
+) -> CommentModel:
     comment = await comment_service.add_comment(
         post_id=post_id,
         text=text,

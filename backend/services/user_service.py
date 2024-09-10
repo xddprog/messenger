@@ -16,7 +16,7 @@ class UserService(BaseService):
     async def get_profile_avatar_url(user_id: str) -> str:
         return f"users/{user_id}/images/{uuid4()}"
 
-    async def get_all_users(self):
+    async def get_all_users(self) -> list[BaseUserModel]:
         users = await self.repository.get_all_items()
         return await self.dump_items(users, BaseUserModel)
 
@@ -41,7 +41,7 @@ class UserService(BaseService):
 
         return [post.id for post in user.posts]
 
-    async def add_friend(self, user_id: str, friend_id: str):
+    async def add_friend(self, user_id: str, friend_id: str) -> None:
         user = await self.repository.get_item(user_id)
         friend = await self.repository.get_item(friend_id)
 
@@ -53,11 +53,11 @@ class UserService(BaseService):
 
         await self.repository.add_friend(user_id, friend_id)
 
-    async def remove_friend(self, user_id: str, friend_id: str):
+    async def remove_friend(self, user_id: str, friend_id: str) -> None:
         await self.check_friend(user_id, friend_id)
         await self.repository.remove_friend(user_id, friend_id)
 
-    async def get_friends(self, user_id: str):
+    async def get_friends(self, user_id: str) -> list[BaseUserModel]:
         user = await self.repository.get_item(user_id)
 
         await self.check_item(user, UserNotFound)
@@ -71,7 +71,7 @@ class UserService(BaseService):
         ]
         return friends
 
-    async def check_friend(self, user_id: str, friend_id: str):
+    async def check_friend(self, user_id: str, friend_id: str) -> bool:
         user = await self.repository.get_item(user_id)
         friend = await self.repository.get_item(friend_id)
 

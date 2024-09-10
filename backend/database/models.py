@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Type
 
 from pydantic import UUID4
 
@@ -143,3 +144,6 @@ class UserLikedPosts(Base):
     post_fk: Mapped[UUID4] = mapped_column(
         ForeignKey("posts.id"), primary_key=True, nullable=True
     )
+
+
+ModelType = Type[User | Post | Message | Chat | Comment]

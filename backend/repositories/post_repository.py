@@ -15,7 +15,7 @@ class PostRepository(SqlAlchemyRepository):
 
         return post
 
-    async def like_post(self, post: Post, user: User) -> None:
+    async def like_post(self, post: Post, user: User) -> Post:
         await self.session.refresh(post)
 
         if user in post.likes:

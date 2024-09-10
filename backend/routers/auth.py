@@ -38,7 +38,7 @@ async def login_user(
 
 
 @router.delete("/logout")
-async def logout_user(response: Response):
+async def logout_user(response: Response) -> dict[str, str]:
     response.delete_cookie(key="token")
     return {"detail": "Вы успешно вышли из аккаунта"}
 

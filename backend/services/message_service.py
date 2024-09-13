@@ -64,7 +64,7 @@ class MessageService(BaseService):
             )
 
         if deleted_images:
-            await self.s3_client.delete_files(deleted_images)
+            await self.s3_client.delete_many_files(deleted_images)
 
         message = await self.repository.update_item(
             message_id,

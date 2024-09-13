@@ -37,3 +37,10 @@ class PostRepository(SqlAlchemyRepository):
         await self.session.refresh(comment)
 
         return comment
+
+    async def delete_item(self, item: Post) -> None:
+        for comment in item.comments:
+            await self.session.delete(comment)
+        
+        await self.session.delete(item)
+        await self.session.commit()

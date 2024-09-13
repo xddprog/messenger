@@ -54,7 +54,7 @@ class Comment(Base):
     created_at: Mapped[datetime]
 
     replies: Mapped[list["Comment"]] = relationship(
-        back_populates="parent", lazy="selectin"
+        back_populates="parent", lazy="selectin", cascade="all, delete-orphan"
     )
     parent: Mapped["Comment"] = relationship(
         back_populates="replies", remote_side=[id], lazy="selectin"

@@ -90,7 +90,7 @@ async def add_comment_to_post(
     text: str = Form(),
     created_at: datetime = Form(default=datetime.now()),
     author: str = Form(),
-    images: list[UploadFile] | list = Form(default=[]),
+    images: list[UploadFile] = Form(default=[]),
     parent: int | None = Form(default=None),
 ) -> CommentModel:
     comment = await comment_service.add_comment(
@@ -102,3 +102,13 @@ async def add_comment_to_post(
         parent=parent,
     )
     return await post_service.add_comment(post_id, comment)
+
+@router.post("/comments/{comment_id}/delete")
+async def delete_post_comment(
+    comment_id: int,
+    comment_service: Annotated[CommentService, Depends(get_comment_service)],
+) -> dict:
+    await comment_service.delete_post_comment(comment_id)
+    return {
+        'detail': 'Комментарий удален'
+    }

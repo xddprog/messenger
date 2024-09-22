@@ -76,4 +76,5 @@ class CommentService(BaseService):
             images=new_images,
             deleted_images=deleted_images
         )
+
         return await self.model_dump(comment, CommentModel)

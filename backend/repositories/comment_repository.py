@@ -33,7 +33,7 @@ class CommentRepository(SqlAlchemyRepository):
         comment = await self.session.get(self.model, comment_id)
 
         if text:
-            comment.message = text
+            comment.text = text
 
         if deleted_images:
             comment.images = [
@@ -44,6 +44,7 @@ class CommentRepository(SqlAlchemyRepository):
 
         if images:
             comment.images = [*comment.images, images]
+
 
         await self.session.commit()
         await self.session.refresh(comment)

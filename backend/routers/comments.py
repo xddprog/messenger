@@ -12,7 +12,7 @@ router = APIRouter(
     prefix='/comments'
 )
 
-@router.post("/comments/{comment_id}/delete")
+@router.post("/{comment_id}/delete")
 async def delete_post_comment(
     comment_id: int,
     comment_service: Annotated[CommentService, Depends(get_comment_service)],
@@ -23,12 +23,12 @@ async def delete_post_comment(
     }
 
 
-@router.post("/comments/{comment_id}/like/{user_id}")
+@router.post("/{comment_id}/like/{user_id}")
 async def like_comment():
     pass
 
 
-@router.post('/comments/{comment_id}/update')
+@router.post('/{comment_id}/update')
 async def update_comment(
     comment_id: int,
     comment_service: Annotated[CommentService, Depends(get_comment_service)],

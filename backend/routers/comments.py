@@ -12,7 +12,7 @@ router = APIRouter(
     prefix='/comments'
 )
 
-@router.post("/{comment_id}/delete")
+@router.delete("/{comment_id}/delete")
 async def delete_post_comment(
     comment_id: int,
     comment_service: Annotated[CommentService, Depends(get_comment_service)],

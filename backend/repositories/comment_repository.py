@@ -22,13 +22,13 @@ class CommentRepository(SqlAlchemyRepository):
         comments = comments.scalars().all()
 
         return comments
-    
+
     async def update_item(
-        self, 
+        self,
         comment_id: int,
-        text: str, 
+        text: str,
         images: list[str] | None,
-        deleted_images: list[str] | None
+        deleted_images: list[str] | None,
     ):
         comment = await self.session.get(self.model, comment_id)
 
@@ -44,7 +44,6 @@ class CommentRepository(SqlAlchemyRepository):
 
         if images:
             comment.images = [*comment.images, images]
-
 
         await self.session.commit()
         await self.session.refresh(comment)

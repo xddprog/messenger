@@ -18,10 +18,8 @@ class PostService(BaseService):
         return f"posts/{author_id}/{post_id}"
 
     async def create_post(
-        self, description: str, images: list, author: User
+        self, post_id: UUID4, description: str, images: list, author: User
     ) -> PostModel:
-        post_id = uuid4()
-
         if images and not isinstance(images[0], str):
             images = await self.s3_client.upload_many_files(
                 images, await self.create_image_url(author.id, post_id)

@@ -21,6 +21,7 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 async def get_current_user(
     current_user: BaseUserModel = Depends(get_current_user_dependency),
 ) -> BaseUserModel:
+    print("route")
     return current_user
 
 

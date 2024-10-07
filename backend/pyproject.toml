@@ -1,5 +1,5 @@
 [tool.ruff]
-extend-exclude = ["database/models.py", "**/__init__.py"]
+extend-exclude = ["**/__init__.py"]
 fix = true
 indent-width = 4
 line-length = 79

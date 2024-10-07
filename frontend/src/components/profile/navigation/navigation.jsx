@@ -41,7 +41,7 @@ export default function Navigation() {
 	};
 
 	return (
-		<div className='border-2 border-[#383838] rounded-2xl bg-[#141414] text-[#d7d7d9]'>
+		<div className='border-[#383838] rounded-xl bg-[#17191b] text-white mt-2'>
 			<div className='navigation-content p-3 flex flex-col gap-3'>
 				<div className='navigation-tabs flex items-center justify-center gap-4 text-base'>
 					{tabs.map((tab) => (

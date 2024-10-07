@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, AsyncGenerator
 
 from fastapi import Depends, Request
 from fastapi.security import HTTPBearer
@@ -8,7 +8,6 @@ from aiobotocore.session import AioSession
 import backend.services as services
 import backend.repositories as repositories
 from backend.utils.redis_cache import RedisCache
-from backend.database.connection import engine
 from backend.dto.user_dto import BaseUserModel
 from backend.services import AuthService
 from backend.utils.config.config import load_s3_storage_config
@@ -18,8 +17,8 @@ from backend.utils.s3_client import S3Client
 bearer = HTTPBearer(auto_error=False)
 
 
-async def get_session():
-    session = AsyncSession(bind=engine)
+async def get_session(request: Request) -> AsyncGenerator[AsyncSession, None]:
+    session = await request.app.state.db_connection.get_session()
     try:
         yield session
     finally:
@@ -69,8 +68,8 @@ async def get_current_user_dependency(
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     token: Annotated[HTTPBearer, Depends(bearer)],
 ) -> BaseUserModel:
-    username = await auth_service.verify_token(token)
-    return await auth_service.check_user_exist(username)
+    email = await auth_service.verify_token(token)
+    return await auth_service.check_user_exist(email)
 
 
 async def get_post_service(
@@ -105,5 +104,14 @@ async def get_message_service(
 ):
     return services.MessageService(
         repository=repositories.MessageRepository(session=session),
+        s3_client=s3_client,
+    )
+
+
+async def get_group_service(
+    session=Depends(get_session), s3_client=Depends(get_s3_client)
+):
+    return services.GroupService(
+        repository=repositories.GroupRepository(session=session),
         s3_client=s3_client,
     )

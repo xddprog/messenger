@@ -17,6 +17,7 @@ export default function CreatePostModal({
 	function closeModal() {
 		setDescriptionValue('');
 		setFileList([]);
+		form[0].resetFields()
 		handleIsOpen(false);
 	}
 
@@ -50,12 +51,12 @@ export default function CreatePostModal({
 
 			formData.append('description', descriptionValue);
 			formData.append('author', localStorage.getItem('user_id'));
-			// formData.getAll('images');
-			await createPost(formData).then((res) => addPostAfterCreate(res));
+			await createPost(formData).then((res) => {
+				addPostAfterCreate(res)
+				closeModal()
+			});
 
-			setFileList([]);
-			handleIsOpen(false);
-			setDescriptionValue('');
+			
 		} catch (error) {
 			console.error(error);
 		}
@@ -110,7 +111,7 @@ export default function CreatePostModal({
 							onChange={(file) => setFileList(file.fileList)}
 						>
 							<Button icon={<UploadOutlined />}>
-								Upload (Максимум 4 фото)
+								Загрузить (Максимум 4 фото)
 							</Button>
 						</Upload>
 					</Form.Item>

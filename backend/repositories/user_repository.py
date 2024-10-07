@@ -8,20 +8,26 @@ from backend.repositories.base import SqlAlchemyRepository
 class UserRepository(SqlAlchemyRepository):
     model = User
 
-    async def add_friend(self, user_id: UUID4, friend_id: UUID4) -> None:
+    async def add_friend(self, user_id: str, friend_id: str) -> None:
         user = await self.session.get(self.model, user_id)
+        friend = await self.session.get(self.model, friend_id)
 
         user.friends = [*user.friends, friend_id]
+        friend.friends = [*friend.friends, user_id]
 
         await self.session.commit()
 
-    async def remove_friend(self, user_id: UUID4, friend_id: UUID4) -> None:
+    async def remove_friend(self, user_id: str, friend_id: str) -> None:
         user = await self.session.get(self.model, user_id)
+        friend = await self.session.get(self.model, friend_id)
 
         user.friends = [
             friend for friend in user.friends if friend != str(friend_id)
         ]
-        select()
+        friend.friends = [
+            user for user in friend.friends if user != str(user_id)
+        ]
+
         await self.session.commit()
 
     async def search_users(self, username: str, **kwargs: str) -> list[User]:

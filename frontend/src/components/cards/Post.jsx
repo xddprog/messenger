@@ -43,7 +43,7 @@ export default function Post({ post, updatePost }) {
 
 	return (
 		<Card
-			className='mt-3 h-auto w-[60%]'
+			className='mt-3 h-auto w-[80%] border-none'
 			title={
 				<div
 					style={{

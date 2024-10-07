@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://messenger-oe3m.onrender.com/api/auth';
+const BASE_URL = 'http://localhost:8000/api/auth';
 
 export async function registerUser(values) {
 	return await axios

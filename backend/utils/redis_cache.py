@@ -8,7 +8,6 @@ from backend.utils.config.config import RedisConfig
 class RedisCache:
     def __init__(self, config: RedisConfig) -> None:
         self.redis: Redis = Redis(host=config.host, port=config.port)
-        self.redis.lpush
 
     async def set_item(self, key: str, value: Any) -> None:
         self.redis.set(key, value)

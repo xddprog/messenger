@@ -11,7 +11,7 @@ export default function PhotosTab() {
 		getCurrentUser().then((res) => {
 			setCurrentPhoto(res.data.images);
 		});
-	});
+	}, []);
 	return (
 		<div className='flex flex-col gap-3'>
 			<Swiper

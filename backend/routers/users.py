@@ -4,6 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, UploadFile
 
+from backend.dto.group_dto import BaseGroupModel
 from backend.dto.post_dto import PostModel
 from backend.dto.user_dto import BaseUserModel, UpdateUserModel
 from backend.services.post_service import PostService
@@ -11,6 +12,7 @@ from backend.utils.redis_cache import RedisCache
 from backend.dto.chat_dto import BaseChatModel
 from backend.services import UserService, ChatService
 from backend.utils.dependencies import (
+    get_current_user_dependency,
     get_post_service,
     get_redis,
     get_user_service,
@@ -18,14 +20,7 @@ from backend.utils.dependencies import (
 )
 
 
-router = APIRouter(prefix="/api/users", tags=["users"])
-
-
-@router.get("/all")
-async def get_all_users(
-    user_service: Annotated[UserService, Depends(get_user_service)],
-) -> list[BaseUserModel]:
-    return await user_service.get_all_users()
+router = APIRouter(prefix="/api/user", tags=["users"])
 
 
 @router.get("/search")
@@ -46,6 +41,38 @@ async def search_users(
     return users
 
 
+@router.get("/groups")
+async def get_user_groups(
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    user: BaseUserModel = Depends(get_current_user_dependency),
+    user_admined_groups: bool = False,
+) -> list[BaseGroupModel]:
+    if user_admined_groups:
+        return await user_service.get_user_admined_groups(user.id)
+    return await user_service.get_user_groups(user.id)
+
+
+@router.get("/chats")
+async def get_user_chats(
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    chats_service: Annotated[ChatService, Depends(get_chat_service)],
+    user: Annotated[BaseUserModel, Depends(get_current_user_dependency)],
+) -> list[BaseChatModel]:
+    chats = await user_service.get_user_chats(user.id)
+    chats_models = [await chats_service.get_chat(chat_id) for chat_id in chats]
+    return await chats_service.dump_items(chats_models, BaseChatModel)
+
+
+@router.get("/posts")
+async def get_user_posts(
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    post_service: Annotated[PostService, Depends(get_post_service)],
+    user: BaseUserModel = Depends(get_current_user_dependency),
+) -> list[PostModel]:
+    posts = await user_service.get_user_posts(user.id)
+    return [await post_service.get_one_post(post_id) for post_id in posts]
+
+
 @router.get("/{user_id}")
 async def get_user(
     user_id: str,
@@ -55,71 +82,49 @@ async def get_user(
     return await user_service.model_dump(user, BaseUserModel)
 
 
-@router.get("/{user_id}/chats")
-async def get_user_chats(
-    user_id: str,
-    user_service: Annotated[UserService, Depends(get_user_service)],
-    chats_service: Annotated[ChatService, Depends(get_chat_service)],
-) -> list[BaseChatModel]:
-    chats = await user_service.get_user_chats(user_id)
-    chats_models = [await chats_service.get_chat(chat_id) for chat_id in chats]
-    return await chats_service.dump_items(chats_models, BaseChatModel)
-
-
-@router.get("/{user_id}/posts")
-async def get_user_posts(
-    user_id: str,
-    user_service: Annotated[UserService, Depends(get_user_service)],
-    post_service: Annotated[PostService, Depends(get_post_service)],
-) -> list[PostModel]:
-    posts = await user_service.get_user_posts(user_id)
-    return [await post_service.get_one_post(post_id) for post_id in posts]
-
-
-@router.get("/{user_id}/friends/all")
+@router.get("/friends/all")
 async def get_user_friends(
-    user_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)],
+    user: BaseUserModel = Depends(get_current_user_dependency),
 ) -> list[BaseUserModel]:
-    return await user_service.get_friends(user_id)
+    return await user_service.get_friends(user.id)
 
 
-@router.get("/{user_id}/friends/{friend_id}")
+@router.get("/friends/{friend_id}")
 async def check_is_friend_or_not(
-    user_id: str,
     friend_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)],
+    user: BaseUserModel = Depends(get_current_user_dependency),
 ) -> bool:
-    return await user_service.check_friend(user_id, friend_id)
+    return await user_service.check_friend(user.id, friend_id)
 
 
-@router.post("/{user_id}/friends/add/{friend_id}")
+@router.post("/friends/add/{friend_id}")
 async def add_friend(
-    user_id: str,
     friend_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)],
+    user: BaseUserModel = Depends(get_current_user_dependency),
 ) -> dict[str, str]:
-    await user_service.add_friend(user_id, friend_id)
+    await user_service.add_friend(user.id, friend_id)
     return {
-        "detail": f"Пользователь {user_id} успешно добавил {friend_id} в друзья"
+        "detail": f"Пользователь {user.id} успешно добавил {friend_id} в друзья"
     }
 
 
-@router.delete("/{user_id}/friends/remove/{friend_id}")
+@router.delete("/friends/remove/{friend_id}")
 async def remove_friend(
-    user_id: str,
     friend_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)],
+    user: BaseUserModel = Depends(get_current_user_dependency),
 ) -> dict[str, str]:
-    await user_service.remove_friend(user_id, friend_id)
+    await user_service.remove_friend(user.id, friend_id)
     return {
-        "detail": f"Пользователь {user_id} успешно удалил {friend_id} из друзей"
+        "detail": f"Пользователь {user.id} успешно удалил {friend_id} из друзей"
     }
 
 
-@router.put("/{user_id}/profile/update")
+@router.put("/")
 async def update_user_profile(
-    user_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)],
     id: str | None = Form(default=None),
     username: str | None = Form(default=None),
@@ -128,9 +133,10 @@ async def update_user_profile(
     city: str | None = Form(default=None),
     description: str | None = Form(default=None),
     birthday: datetime | None = Form(default=None),
+    user: BaseUserModel = Depends(get_current_user_dependency),
 ) -> BaseUserModel:
     return await user_service.update_user_profile(
-        user_id,
+        user.id,
         UpdateUserModel(
             id=id,
             username=username,

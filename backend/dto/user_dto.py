@@ -8,6 +8,7 @@ class BaseUserModel(BaseModel):
     username: str
     email: str
     avatar: str
+    cover: str
     images: list
     city: str
     description: str

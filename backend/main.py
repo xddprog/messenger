@@ -6,23 +6,26 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.utils.dependencies import get_current_user_dependency
 from backend.utils.websocket_manager import WebSocketManager
 from backend.utils.redis_cache import RedisCache
-from backend.utils.config.config import load_redis_config
-from backend.database.connection import create_tables
+from backend.utils.config.config import load_database_config, load_redis_config
+from backend.database.connection import DatabaseConnection
 from backend.routers import (
     auth_router,
     posts_router,
     users_router,
     chats_router,
-    comment_router
+    comment_router,
+    group_router,
 )
 
 
 async def lifespan(app: FastAPI):
     app.state.redis_cache = RedisCache(config=load_redis_config())
     app.state.websocket_manager = WebSocketManager()
-    await create_tables()
+    app.state.db_connection = await DatabaseConnection(
+        load_database_config()
+    )()
+
     yield
-    # app.state.redis_cache.close()
 
 
 app = FastAPI(lifespan=lifespan)
@@ -48,6 +51,7 @@ app.include_router(users_router, dependencies=[PROTECTED])
 app.include_router(chats_router)
 app.include_router(posts_router, dependencies=[PROTECTED])
 app.include_router(comment_router, dependencies=[PROTECTED])
+app.include_router(group_router, dependencies=[PROTECTED])
 
 
 @app.exception_handler(RequestValidationError)

@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import UUID4, BaseModel, field_validator
 
+from backend.dto.group_dto import GroupModel
 from backend.dto.user_dto import BaseUserModel
 
 
@@ -19,6 +20,7 @@ class PostModel(BaseModel):
     likes: list[BaseUserModel] | None = None
     created_at: datetime | str
     views: int
+    group: GroupModel | None = None
 
     @field_validator("created_at")
     def format_created_at(cls, value: datetime) -> str:

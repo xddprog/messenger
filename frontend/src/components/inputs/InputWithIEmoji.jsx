@@ -16,7 +16,8 @@ export default function InputWithIEmoji({fieldValue, setFieldValue, minRows} ) {
                 onChange={(e) => {
                     setFieldValue(e.target.value)
                 }}
-                size={'large'}
+                size={'middle'}
+                placeholder="Введите..."
             />
             <Popover content={<EmojiPicker onEmojiClick={addEmojiToFieldValue}/>}>
                 <SmileOutlined

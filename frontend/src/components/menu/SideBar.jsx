@@ -61,7 +61,7 @@ export default function SaidBar() {
 
     return (
         <Menu
-            style={{ borderRadius: 10 }}
+            style={{ borderRadius: 10, border: 'none'}}
             items={menuItems}
             onClick={clickMenuItem}
             selectedKeys={[seelectedKey]}

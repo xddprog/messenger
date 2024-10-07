@@ -37,7 +37,7 @@ export default function FollowingList() {
 	const displayedFollow = followingData.slice(0, 5);
 
 	return (
-		<div className='border-2 border-[#383838] rounded-2xl bg-[#141414] text-[#d7d7d9] p-4 flex flex-col gap-3'>
+		<div className='border-[#383838] rounded-xl bg-[#17191b] text-white mt-2 ml-2 p-4'>
 			<h3>Following {followingData.length}</h3>
 			{displayedFollow.map((item, index) => (
 				<FollowingItem

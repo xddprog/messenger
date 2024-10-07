@@ -1,6 +1,7 @@
 from uuid import uuid4
 from pydantic import UUID4
 
+from backend.dto.group_dto import BaseGroupModel
 from backend.errors.user_errors import UserAlreadyHaveThisFriend, UserNotFound
 from backend.database.models import User
 from backend.dto.post_dto import PostModel
@@ -40,6 +41,28 @@ class UserService(BaseService):
         await self.check_item(user, UserNotFound)
 
         return [post.id for post in user.posts]
+
+    async def get_user_groups(self, user_id: str) -> list[BaseGroupModel]:
+        user = await self.repository.get_item(user_id)
+
+        await self.check_item(user, UserNotFound)
+
+        return [
+            await self.model_dump(group, BaseGroupModel)
+            for group in user.groups
+        ]
+
+    async def get_user_admined_groups(
+        self, user_id: str
+    ) -> list[BaseGroupModel]:
+        user = await self.repository.get_item(user_id)
+
+        await self.check_item(user, UserNotFound)
+
+        return [
+            await self.model_dump(group, BaseGroupModel)
+            for group in user.user_admined_groups
+        ]
 
     async def add_friend(self, user_id: str, friend_id: str) -> None:
         user = await self.repository.get_item(user_id)

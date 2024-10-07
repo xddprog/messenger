@@ -23,4 +23,4 @@ class CommentModel(CommentBase):
     post_fk: UUID4
 
     class Config:
-        orm_mode = True
+        from_attributes = True

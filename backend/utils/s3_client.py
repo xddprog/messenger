@@ -17,7 +17,7 @@ class S3Client:
         )
 
         return f"{self.endpoint_url}/{self.bucket_name}/{path}"
-    
+
     async def delete_one_file(self, path: str):
         await self.client.delete_object(Bucket=self.bucket_name, Key=path)
 

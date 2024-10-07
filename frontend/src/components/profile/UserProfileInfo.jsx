@@ -13,6 +13,7 @@ import { useState, useEffect } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import { getCurrentUser } from '../../requests/auth';
 import { updateUserProfile } from '../../requests/users';
+
 export default function UserProfileInfo() {
 	const [user, setUser] = useState({});
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -48,26 +49,23 @@ export default function UserProfileInfo() {
 	};
 
 	useEffect(() => {
-		const fetchUser = async () => {
-			try {
-				const response = await getCurrentUser();
-				setUser(response.data);
-				console.log(setUser);
-			} catch (error) {
-				console.error(error);
-			}
-		};
-
-		fetchUser();
+		try {
+			getCurrentUser().then((res) => {
+				setUser(res.data);
+			});
+		} catch (error) {
+			console.error(error);
+		}
 	}, [isModalVisible]);
 	return (
-		<div className=''>
+		<div >
 			<Card
+				className='border-none'
 				cover={
 					<div>
 						<Image
 							src='https://storage.yandexcloud.net/mago-storage/base_files/base-profile-cover.jpeg'
-							style={{ width: '100%' }}
+							className='w-full'
 						/>
 					</div>
 				}

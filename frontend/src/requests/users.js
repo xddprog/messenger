@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://messenger-oe3m.onrender.com/api/users';
+const BASE_URL = 'http://localhost:8000/api/user';
 
 export async function getUserChats() {
 	return await axios
 		.get(
-			`${BASE_URL}/${localStorage.getItem('user_id')}/chats`,
+			`${BASE_URL}/chats`,
 			{
 				headers: {
 					Authorization: 'Bearer ' + localStorage.getItem('token'),
@@ -19,17 +19,6 @@ export async function getUserPosts() {
 	return await axios
 		.get(`${BASE_URL}/${localStorage.getItem('user_id')}/posts`)
 		.then((response) => response);
-}
-
-export async function getAllUsers() {
-	return await axios
-		.get(`${BASE_URL}/all`, {
-			headers: {
-				Authorization: 'Bearer ' + localStorage.getItem('token'),
-			},
-			withCredentials: true,
-		})
-		.then((response) => console.log(response));
 }
 
 export async function searchUser(value) {
@@ -46,7 +35,7 @@ export async function searchUser(value) {
 export async function updateUserProfile(value) {
 	return await axios
 		.put(
-			`${BASE_URL}/${localStorage.getItem('user_id')}/profile/update`,
+			`${BASE_URL}/`,
 			value,
 			{
 				headers: {
@@ -56,4 +45,18 @@ export async function updateUserProfile(value) {
 			}
 		)
 		.then((response) => response.data);
+}
+
+
+export async function getUserGroups(userAdminedGroups) {
+	return await axios
+		.get(
+			`${BASE_URL}/groups?user_admined_groups=${userAdminedGroups}`, 
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('token'),
+			},
+
+		})
+		.then((response) => response);
 }

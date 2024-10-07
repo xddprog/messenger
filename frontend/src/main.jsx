@@ -6,7 +6,8 @@ import RegisterPage from './pages/authPages/RegisterPage.jsx';
 import LoginPage from './pages/authPages/LoginPage.jsx';
 import PostsPage from './pages/mainPages/sidebarPages/PostsPage.jsx';
 import ChatPage from './pages/mainPages/sidebarPages/ChatPage.jsx';
-import Profile from './pages/Profile/Profile.jsx';
+import UserGroups from './pages/mainPages/sidebarPages/UserGroups.jsx';
+import Profile from './pages/mainPages/sidebarPages/Profile.jsx';
 // import AccountChecker from './components/auth/AccountChecker.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -27,6 +28,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 					<Route path='posts' element={<PostsPage />} />
 					<Route path='chats' element={<ChatPage />} />
 					<Route path='profile' element={<Profile />} />
+					<Route path='groups' element={<UserGroups />} />
 				</Route>
 			</Routes>
 		</BrowserRouter>

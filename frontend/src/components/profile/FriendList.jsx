@@ -1,22 +1,29 @@
-import users from '../../utils/users.json';
+import { useEffect, useState } from "react";
+import { getUserFriends } from "../../requests/users";
+import { Avatar, Typography } from "antd";
 
 export default function FriendList() {
-	const displayedUsers = users.slice(0, 8);
+	const [friends, setFriends] = useState([]);
+
+	useEffect(() => {
+		getUserFriends().then((res) => setFriends(res.data));
+	}, []);
+
 	return (
 		<div className='border-[#383838] rounded-xl bg-[#17191b] text-white mt-2 ml-2 p-4'>
-			<h2>Friends {users.length}</h2>
+			<Typography.Title level={5}>Друзья {friends.length}</Typography.Title>
 			<div className='flex flex-wrap gap-1 justify-between'>
-				{displayedUsers.map((user) => (
+				{friends.map((user) => (
 					<div
 						key={user.id}
-						className='flex flex-col items-center cursor-pointer'
+						className='flex flex-col items-center cursor-pointer '
 					>
-						<img
-							className='w-16 h-auto rounded-[50%]'
-							src={user.img}
+						<Avatar
+							src={user.avatar}
 							alt='img'
+							size={64}
 						/>
-						<p>{user.name}</p>
+						<p className='text-sm'>{user.username}</p>
 					</div>
 				))}
 			</div>

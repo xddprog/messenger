@@ -9,16 +9,15 @@ import {
 	Image,
 	Typography,
 } from 'antd';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
-import { getCurrentUser } from '../../requests/auth';
 import { updateUserProfile } from '../../requests/users';
 
-export default function UserProfileInfo() {
-	const [user, setUser] = useState({});
+export default function UserProfileInfo({user}) {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [form] = Form.useForm();
 	const [fileList, setFileList] = useState([]);
+
 	const handleUploadChange = ({ fileList }) => {
 		setFileList(fileList);
 	};
@@ -48,15 +47,6 @@ export default function UserProfileInfo() {
 		setIsModalVisible(false);
 	};
 
-	useEffect(() => {
-		try {
-			getCurrentUser().then((res) => {
-				setUser(res.data);
-			});
-		} catch (error) {
-			console.error(error);
-		}
-	}, [isModalVisible]);
 	return (
 		<div >
 			<Card
@@ -64,8 +54,8 @@ export default function UserProfileInfo() {
 				cover={
 					<div>
 						<Image
-							src='https://storage.yandexcloud.net/mago-storage/base_files/base-profile-cover.jpeg'
-							className='w-full'
+							src={user.cover}
+							className='w-full rounded-xl'
 						/>
 					</div>
 				}
@@ -100,25 +90,25 @@ export default function UserProfileInfo() {
 					></Card.Meta>
 					<Button onClick={showModal}>Редактировать профиль</Button>
 				</div>
-			</Card>
+			</Card>			
 			<Modal
-				title='Edit Profile'
-				visible={isModalVisible}
+				open={isModalVisible}
 				onOk={handleOk}
 				onCancel={handleCancel}
 				okText='Save'
 				cancelText='Cancel'
 			>
-				<Form form={form} layout='vertical'>
-					<Form.Item label='Name' name='username'>
-						<Input placeholder='Enter your name' />
+				<Typography.Title level={3}>Редактирование профиля</Typography.Title>
+				<Form form={form} layout='horizontal' labelCol={{ span: 4 }}>
+					<Form.Item label='Имя' name='username'>
+						<Input placeholder='Введите имя' />
 					</Form.Item>
-					<Form.Item label='Description' name='description'>
-						<Input placeholder='Enter a description' />
+					<Form.Item label='Описание' name='description'>
+						<Input placeholder='Введите описание' />
 					</Form.Item>
-					<Form.Item label='Change Profile Picture'>
+					<Form.Item label='Аватар'>
 						<Upload onChange={handleUploadChange} fileList={fileList}>
-							<Button icon={<UploadOutlined />}>Upload New Picture</Button>
+							<Button icon={<UploadOutlined />}>Загрузить фото</Button>
 						</Upload>
 					</Form.Item>
 				</Form>

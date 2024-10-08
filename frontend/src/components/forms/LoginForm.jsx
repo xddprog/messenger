@@ -14,6 +14,7 @@ export default function LoginForm() {
 			const response = await loginUser(values).then((r) => r);
 
 			localStorage.setItem('user_id', response.data.id);
+			localStorage.setItem('token', response.data.token);
 
 			messageApi.open({
 				type: 'success',

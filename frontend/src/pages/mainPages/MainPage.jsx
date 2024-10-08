@@ -1,8 +1,15 @@
 import { Outlet } from 'react-router-dom';
 import SideBar from '../../components/menu/SideBar';
 import MainPageHeader from '../../components/menu/MainPageHeader';
+import { useEffect } from 'react';
+import { getCurrentUser } from '../../requests/auth';
 
 export default function MainPage() {
+	useEffect(() => {
+		getCurrentUser().then((res) => {
+			localStorage.setItem('avatar', res.data.avatar);
+		})
+	})
 	return (
 		<div style={{ backgroundColor: '#1e2022', height: '100vh' }}>
 			<header

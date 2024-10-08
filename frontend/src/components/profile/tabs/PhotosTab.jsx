@@ -14,32 +14,25 @@ export default function PhotosTab() {
 	}, []);
 	return (
 		<div className='flex flex-col gap-3'>
-			<Swiper
-				modules={[Navigation]}
-				style={{ maxWidth: '100%', width: '400px' }}
-				spaceBetween={70}
-				slidesPerView={2}
-				loop={true}
-				navigation
-				className='content'
-			>
-				{!currentPhoto || !Object.keys(currentPhoto).length ? (
-					<h1>Ничего нет</h1>
-				) : Array.isArray(currentPhoto) ? (
-					currentPhoto.map((el) => (
-						<SwiperSlide key={el.id}>
-							<Image
-								style={{ width: 160, height: 160, objectFit: 'cover' }}
-								src={el}
-								alt={el.id}
-							/>
-						</SwiperSlide>
-					))
-				) : null}
-			</Swiper>
+			{!currentPhoto || !Object.keys(currentPhoto).length ? (
+				<h1>Ничего нет</h1>
+			) : Array.isArray(currentPhoto) ? (
+				<div className='flex gap-1'>
+					{currentPhoto.reverse().slice(0, 3).map((photo) => (
+						<Image
+							key={photo.id}
+							className='rounded-md'
+							src={photo}
+							alt='img'
+							style={{objectFit: 'cover', height: '100%', maxHeight: 170}}
+							width={`${currentPhoto.length == 1 ? 100 : 100 / 3}%`}
+						/>
+					))}
+				</div>
+			) : null}
 			<div className='controls grid grid-cols-2 gap-2 w-full'>
-				<Button style={{ width: '100%' }} title='Upload photo' />
-				<Button style={{ width: '100%' }} title='Show all' />
+				<Button style={{ width: '100%' }} title='Загрузить фото' />
+				<Button style={{ width: '100%' }} title='Показать все' />
 			</div>
 		</div>
 	);

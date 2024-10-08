@@ -9,17 +9,17 @@ export default function Navigation() {
 	const tabs = [
 		{
 			id: 'photos',
-			name: 'Photos',
+			name: 'Фотографии',
 			icon: <IoMdPhotos />,
 		},
 		{
 			id: 'music',
-			name: 'Music',
+			name: 'Музыка',
 			icon: <IoIosMusicalNotes />,
 		},
 		{
 			id: 'albums',
-			name: 'Albums',
+			name: 'Альбомы',
 			icon: <IoIosAlbums />,
 		},
 	];
@@ -43,12 +43,12 @@ export default function Navigation() {
 	return (
 		<div className='border-[#383838] rounded-xl bg-[#17191b] text-white mt-2'>
 			<div className='navigation-content p-3 flex flex-col gap-3'>
-				<div className='navigation-tabs flex items-center justify-center gap-4 text-base'>
+				<div className='navigation-tabs flex items-center justify-center gap-4'>
 					{tabs.map((tab) => (
 						<div
 							key={tab.id}
-							className={`tabs-photo btn-tabs btn-tabs-flex ${
-								activeTab === tab.id ? 'bg-[#383838] text-white' : ''
+							className={`tabs-photo btn-tabs btn-tabs-flex font-normal ${
+								activeTab === tab.id ? 'bg-[#252729] text-white' : ''
 							}`}
 							onClick={() => handleTabClick(tab.id)}
 						>

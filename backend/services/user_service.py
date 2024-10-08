@@ -23,29 +23,20 @@ class UserService(BaseService):
 
     async def get_user(self, user_id: str) -> User:
         user = await self.repository.get_item(user_id)
-
-        await self.check_item(user, UserNotFound)
-
         return user
 
     async def get_user_chats(self, user_id: str) -> list[UUID4]:
         user = await self.repository.get_item(user_id)
-
-        await self.check_item(user, UserNotFound)
 
         return [chat.id for chat in user.chats]
 
     async def get_user_posts(self, user_id: str) -> list[PostModel]:
         user = await self.repository.get_item(user_id)
 
-        await self.check_item(user, UserNotFound)
-
         return [post.id for post in user.posts]
 
     async def get_user_groups(self, user_id: str) -> list[BaseGroupModel]:
         user = await self.repository.get_item(user_id)
-
-        await self.check_item(user, UserNotFound)
 
         return [
             await self.model_dump(group, BaseGroupModel)
@@ -57,8 +48,6 @@ class UserService(BaseService):
     ) -> list[BaseGroupModel]:
         user = await self.repository.get_item(user_id)
 
-        await self.check_item(user, UserNotFound)
-
         return [
             await self.model_dump(group, BaseGroupModel)
             for group in user.user_admined_groups
@@ -68,7 +57,6 @@ class UserService(BaseService):
         user = await self.repository.get_item(user_id)
         friend = await self.repository.get_item(friend_id)
 
-        await self.check_item(user, UserNotFound)
         await self.check_item(friend, UserNotFound)
 
         if friend_id in user.friends:
@@ -83,8 +71,6 @@ class UserService(BaseService):
     async def get_friends(self, user_id: str) -> list[BaseUserModel]:
         user = await self.repository.get_item(user_id)
 
-        await self.check_item(user, UserNotFound)
-
         friends = [
             await self.model_dump(
                 db_model=await self.repository.get_item(friend_id),
@@ -98,7 +84,6 @@ class UserService(BaseService):
         user = await self.repository.get_item(user_id)
         friend = await self.repository.get_item(friend_id)
 
-        await self.check_item(user, UserNotFound)
         await self.check_item(friend, UserNotFound)
 
         return friend_id in user.friends
@@ -113,8 +98,6 @@ class UserService(BaseService):
         self, user_id: str, form: BaseUserModel
     ) -> BaseUserModel:
         user = await self.repository.get_item(user_id)
-
-        await self.check_item(user, UserNotFound)
 
         if form.avatar:
             form.avatar = await self.s3_client.upload_one_file(

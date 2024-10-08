@@ -1,4 +1,4 @@
-import { Input, List, Typography } from 'antd';
+import { AutoComplete, Avatar, Button, Dropdown } from 'antd';
 import AppLogo from '../logo/AppLogo';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { IoMusicalNotesOutline } from 'react-icons/io5';
@@ -9,10 +9,27 @@ import { useState } from 'react';
 
 export default function MainPageHeader() {
 	const navigate = useNavigate();
-	const [searchValue, setSearchValue] = useState('');
 	const [users, setUsers] = useState([]);
+	const items = [
+        {
+            key: 'settings',
+            label: (
+                <a onClick={() => navigate('/settings')}>
+                    Настройки
+                </a>
+            ),
+        },
+        {
+            key: 'logout',
+            label: (
+                <a onClick={handleLogout}>
+                    Выйти
+                </a>
+            ),
+        },
+    ];
 
-	const handleLogout = async () => {
+	async function handleLogout() {
 		try {
 			await logoutUser();
 
@@ -22,21 +39,9 @@ export default function MainPageHeader() {
 		}
 	};
 
-	const handleSearchUser = async (e) => {
-		const value = e.target.value;
-		setSearchValue(value);
-		console.log(value);
-		if (value) {
-			try {
-				const response = await searchUser(value);
-				setUsers(response.data);
-			} catch (err) {
-				console.error(err);
-			}
-		} else {
-			setUsers([]);
-		}
-	};
+	function handleSearchUser(value) {
+		searchUser(value).then((res) => setUsers(res.data));
+	}
 
 	return (
 		<div
@@ -61,43 +66,27 @@ export default function MainPageHeader() {
 					</div>
 					<div style={{ display: 'flex', alignItems: 'center' }}>
 						<div className=''>
-							<Input
-								value={searchValue}
+							<AutoComplete
 								placeholder='Поиск'
 								style={{ width: '250px', backgroundColor: '#1e2022' }}
 								size={'middle'}
 								onChange={handleSearchUser}
-								allowClear
+								options={users.map((user) => ({
+									label: (
+										<a>
+											<div className='flex align-middle'>
+												<Avatar src={user.avatar} className='mr-5' size={'large'}/>
+												<div className='flex flex-col'>
+													<p>{user.username}</p>
+														<p>Город: {user.city}</p>
+												</div>
+											</div>	
+										</a>
+									),
+								}))}
 							/>
-							{!users.length ? (
-								<Typography.Text type='secondary'>
-									Нет результатов для поиска.
-								</Typography.Text>
-							) : (
-								<List
-									bordered
-									dataSource={users}
-									className='h-[400px] overflow-auto absolute top-[70px] z-10 bg-slate-600 '
-									renderItem={(user) => (
-										<List.Item className='cursor-pointer hover:bg-slate-400 transition-colors'>
-											<div>
-												<img
-													src={user.avatar}
-													alt={user.username}
-													style={{
-														width: '30px',
-														borderRadius: '50%',
-														marginRight: '10px',
-													}}
-												/>
-												{user.username} (ID: {user.id})
-											</div>
-										</List.Item>
-									)}
-								/>
-							)}
+							
 						</div>
-
 						<div style={{ display: 'flex', alignItems: 'center' }}>
 							<button
 								style={{
@@ -126,27 +115,16 @@ export default function MainPageHeader() {
 						</div>
 					</div>
 				</div>
+				<Dropdown menu={{ items }}>
+					<Avatar
+						className='cursor-pointer'
+						key='avatar'
+						src={localStorage.getItem('avatar') ?? ''}
+						alt='profile-image'
+						size={36}
+					/>
 
-				<button className='text-white' onClick={handleLogout}>
-					Выйти
-				</button>
-
-				<button
-					style={{
-						background: 'none',
-						border: 'none',
-						padding: 0,
-						cursor: 'pointer',
-					}}
-				>
-					<div style={{ display: 'flex', alignItems: 'center' }}>
-						<img
-							src={localStorage.getItem('avatar') ?? ''}
-							style={{ width: '35px', borderRadius: 50 }}
-							alt='profile-image'
-						/>
-					</div>
-				</button>
+				</Dropdown>
 			</div>
 		</div>
 	);

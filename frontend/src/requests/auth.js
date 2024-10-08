@@ -25,7 +25,8 @@ export async function getCurrentUser() {
 }
 
 export async function logoutUser() {
+	localStorage.removeItem('token');
 	return await axios
-		.delete(`${BASE_URL}/logout`, { withCredentials: true })
+		.delete(`${BASE_URL}/logout`)
 		.then((response) => response);
 }

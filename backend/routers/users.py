@@ -7,12 +7,14 @@ from fastapi import APIRouter, Depends, Form, UploadFile
 from backend.dto.group_dto import BaseGroupModel
 from backend.dto.post_dto import PostModel
 from backend.dto.user_dto import BaseUserModel, UpdateUserModel
+from backend.services.group_service import GroupService
 from backend.services.post_service import PostService
 from backend.utils.redis_cache import RedisCache
 from backend.dto.chat_dto import BaseChatModel
 from backend.services import UserService, ChatService
 from backend.utils.dependencies import (
     get_current_user_dependency,
+    get_group_service,
     get_post_service,
     get_redis,
     get_user_service,
@@ -43,13 +45,13 @@ async def search_users(
 
 @router.get("/groups")
 async def get_user_groups(
-    user_service: Annotated[UserService, Depends(get_user_service)],
+    group_service: Annotated[GroupService, Depends(get_group_service)],
     user: BaseUserModel = Depends(get_current_user_dependency),
     user_admined_groups: bool = False,
 ) -> list[BaseGroupModel]:
     if user_admined_groups:
-        return await user_service.get_user_admined_groups(user.id)
-    return await user_service.get_user_groups(user.id)
+        return await group_service.get_user_admined_groups(user.id)
+    return await group_service.get_user_groups(user.id)
 
 
 @router.get("/chats")

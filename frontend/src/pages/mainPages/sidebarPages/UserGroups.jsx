@@ -38,39 +38,39 @@ function UserGroups() {
 	}
     
     return (
-        <List className='bg-[#17191b] p-5 rounded-xl flex flex-col w-[80%]' >
-            <div className='mb-2'>
-                <div className='flex justify-between mb-3 align-middle'>
-                    <Radio.Group
-                        block
-                        options={radioOptions}
-                        defaultValue="allGroups"
-                        optionType="button"
-                        onChange={switchGroupsTypes}
-                    >
-                        <Radio.Button value="allGroups">Все сообщетсва</Radio.Button>
-                        <Radio.Button value="adminedGroups">Управляемые</Radio.Button>
-                    </Radio.Group>     
-                    <CreateGroupModal 
-                        isOpen={CreateGroupModalVisible} 
-                        handleIsOpen={setCreateGroupModalVisible}
-                        addGroupAfterCreate={addGroupAfterCreate}
+        <div  className='fixed w-[45%] h-[83%]'>
+            <List className='bg-[#17191b] p-5 rounded-xl flex flex-col w-[100%] z-0 h-[105%] overflow-auto'>
+                <div className='mb-2'>
+                    <div className='flex justify-between mb-3 align-middle'>
+                        <Radio.Group
+                            block
+                            options={radioOptions}
+                            defaultValue="allGroups"
+                            optionType="button"
+                            onChange={switchGroupsTypes}
+                        >
+                            <Radio.Button value="allGroups">Все сообщетсва</Radio.Button>
+                            <Radio.Button value="adminedGroups">Управляемые</Radio.Button>
+                        </Radio.Group>     
+                        <CreateGroupModal 
+                            isOpen={CreateGroupModalVisible} 
+                            handleIsOpen={setCreateGroupModalVisible}
+                            addGroupAfterCreate={addGroupAfterCreate}
+                        />
+                    </div>
+                    <InputWithIEmoji 
+                        fieldValue={searchInputField}
+                        setFieldValue={setSearchInputField}
                     />
-                </div>
-                <InputWithIEmoji 
-                    fieldValue={searchInputField}
-                    setFieldValue={setSearchInputField}
-                />
-            </div>       
-            {userGroups.map((group) => (
-                <GropListCard
-                    key={group.title}
-                    title={group.title}
-                    avatar={group.avatar}
-                    tag={group.description}
-                />
-            ))}
-        </List>
+                </div>       
+                {userGroups.map((group) => (
+                    <GropListCard
+                        key={group.title}
+                        group={group}
+                    />
+                ))}
+            </List>
+        </div>
     );
 }
 

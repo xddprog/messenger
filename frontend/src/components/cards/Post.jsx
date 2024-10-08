@@ -2,13 +2,14 @@ import {
 	CommentOutlined,
 	EyeOutlined,
 	LikeOutlined,
-	DeleteOutlined,
+	SendOutlined,
 } from '@ant-design/icons';
 import { Card, Image, Space } from 'antd';
 import { likePost, deletePost } from '../../requests/posts.js';
 import { useEffect, useState } from 'react';
 
-export default function Post({ post, updatePost }) {
+
+export default function Post({ post, updatePost, isCreator }) {
 	const [postIsLiked, setPostIsLiked] = useState(false);
 	const [countIsLiked, setCountIsLiked] = useState(0);
 	useEffect(() => {
@@ -43,7 +44,7 @@ export default function Post({ post, updatePost }) {
 
 	return (
 		<Card
-			className='mt-3 h-auto w-[80%] border-none'
+			className='mt-3 h-auto w-[100%] border-none'
 			title={
 				<div
 					style={{
@@ -104,6 +105,7 @@ export default function Post({ post, updatePost }) {
 								style={{
 									borderRadius: 0,
 									height: '100%',
+									maxHeight: 500,
 									objectFit: 'cover',
 								}}
 								width={`${
@@ -142,7 +144,7 @@ export default function Post({ post, updatePost }) {
 					</Space>
 				</button>,
 				<CommentOutlined key={3} width={40} />,
-				<DeleteOutlined onClick={handeDelete} key={4} width={40} />,
+				<SendOutlined key={4} width={40} />,
 			]}
 		>
 			<p style={{ margin: 0 }}>{post.description}</p>

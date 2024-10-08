@@ -1,6 +1,7 @@
+from re import sub
 from uuid import uuid4
 from fastapi import UploadFile
-from pydantic import UUID4, BaseModel, Field
+from pydantic import UUID4, BaseModel, Field, field_validator
 
 from backend.dto.user_dto import BaseUserModel
 
@@ -11,9 +12,9 @@ class BaseGroupModel(BaseModel):
     avatar: str
     cover: str
     description: str | None
+    users: list[BaseUserModel]
 
 
 class GroupModel(BaseGroupModel):
-    users: list[BaseUserModel]
     creator: BaseUserModel
     admins: list[BaseUserModel]

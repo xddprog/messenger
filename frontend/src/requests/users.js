@@ -17,7 +17,14 @@ export async function getUserChats() {
 
 export async function getUserPosts() {
 	return await axios
-		.get(`${BASE_URL}/${localStorage.getItem('user_id')}/posts`)
+		.get(
+			`${BASE_URL}/posts`,
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('token'),
+				},
+			}
+		)
 		.then((response) => response);
 }
 
@@ -52,6 +59,19 @@ export async function getUserGroups(userAdminedGroups) {
 	return await axios
 		.get(
 			`${BASE_URL}/groups?user_admined_groups=${userAdminedGroups}`, 
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('token'),
+			},
+
+		})
+		.then((response) => response);
+}
+
+export async function getUserFriends() {
+	return await axios
+		.get(
+			`${BASE_URL}/friends/all`, 
 			{
 				headers: {
 					Authorization: 'Bearer ' + localStorage.getItem('token'),

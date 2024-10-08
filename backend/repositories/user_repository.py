@@ -30,10 +30,10 @@ class UserRepository(SqlAlchemyRepository):
 
         await self.session.commit()
 
-    async def search_users(self, username: str, **kwargs: str) -> list[User]:
+    async def search_users(self, username: str, current_user_id: str, **kwargs: str) -> list[User]:
         query = (
             select(self.model)
-            .where(self.model.username.contains(username))
+            .where(self.model.username.contains(username), self.model.id != current_user_id)
             .filter_by(**kwargs)
         )
 

@@ -27,8 +27,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 				<Route path='/*' element={<MainPage />}>
 					<Route path='posts' element={<PostsPage />} />
 					<Route path='chats' element={<ChatPage />} />
-					<Route path='profile' element={<Profile />} />
+					<Route path='profile' element={<Profile currentUserProfile={true}/>} />
 					<Route path='groups' element={<UserGroups />} />
+					<Route path='users/:userId' element={<Profile currentUserProfile={false} />} />
 				</Route>
 			</Routes>
 		</BrowserRouter>

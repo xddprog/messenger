@@ -3,7 +3,7 @@ import { useState } from 'react';
 import PhotosTab from '../tabs/PhotosTab';
 import MusicTab from '../tabs/MusicTab';
 import AlbumsTab from '../tabs/AlbumsTab';
-export default function Navigation() {
+export default function Navigation({user, currentUserProfile}) {
 	const [activeTab, setActiveTab] = useState('photos');
 
 	const tabs = [
@@ -30,7 +30,7 @@ export default function Navigation() {
 	const renderActiveTab = () => {
 		switch (activeTab) {
 			case 'photos':
-				return <PhotosTab />;
+				return <PhotosTab images={user.images} />;
 			case 'music':
 				return <MusicTab />;
 			case 'albums':

@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { getUserFriends } from "../../requests/users";
 import { Avatar, Typography } from "antd";
 
-export default function FriendList() {
+export default function FriendList({userId}) {
 	const [friends, setFriends] = useState([]);
 
 	useEffect(() => {
-		getUserFriends().then((res) => setFriends(res.data));
-	}, []);
+		getUserFriends(userId).then((res) => setFriends(res.data));
+	}, [userId]);
 
 	return (
 		<div className='border-[#383838] rounded-xl bg-[#17191b] text-white mt-2 ml-2 p-4'>

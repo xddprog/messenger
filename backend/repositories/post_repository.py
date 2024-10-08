@@ -7,6 +7,7 @@ class PostRepository(SqlAlchemyRepository):
 
     async def add_item(self, **kwargs) -> Post:
         author = kwargs.pop("author")
+
         post = self.model(**kwargs)
         author.posts.append(post)
 

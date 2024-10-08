@@ -55,7 +55,13 @@ export default function SaidBar() {
     ]
 
     async function clickMenuItem(item) {
-        navigate(`/${item.key}`)
+        if (item.key === 'profile') {
+            navigate('/profile', {currentUserProfile: true})
+            setSelectedKey(item.key)
+            return
+        } else {
+            navigate(`/${item.key}`)
+        }
         setSelectedKey(item.key)
     }
 

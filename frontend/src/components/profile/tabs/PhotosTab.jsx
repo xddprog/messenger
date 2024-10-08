@@ -2,30 +2,23 @@ import Button from '../../ui/button';
 import { getCurrentUser } from '../../../requests/auth';
 import { useState, useEffect } from 'react';
 import { Image } from 'antd';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/swiper-bundle.css';
-import { Navigation } from 'swiper/modules';
-export default function PhotosTab() {
-	const [currentPhoto, setCurrentPhoto] = useState([]);
-	useEffect(() => {
-		getCurrentUser().then((res) => {
-			setCurrentPhoto(res.data.images);
-		});
-	}, []);
+
+
+export default function PhotosTab({images}) {
 	return (
 		<div className='flex flex-col gap-3'>
-			{!currentPhoto || !Object.keys(currentPhoto).length ? (
+			{!images || !Object.keys(images).length ? (
 				<h1>Ничего нет</h1>
-			) : Array.isArray(currentPhoto) ? (
+			) : Array.isArray(images) ? (
 				<div className='flex gap-1'>
-					{currentPhoto.reverse().slice(0, 3).map((photo) => (
+					{images.reverse().slice(0, 3).map((photo) => (
 						<Image
 							key={photo.id}
 							className='rounded-md'
 							src={photo}
 							alt='img'
-							style={{objectFit: 'cover', height: '100%', maxHeight: 170}}
-							width={`${currentPhoto.length == 1 ? 100 : 100 / 3}%`}
+							style={{objectFit: 'cover', height: '100%', maxHeight: 180}}
+							width={`${images.length == 1 ? 50 : 100 / 3}%`}
 						/>
 					))}
 				</div>

@@ -3,13 +3,12 @@ import FollowingItem from './FollowindItem';
 import { getUserGroups } from '../../../requests/users';
 import { Typography } from 'antd';
 
-export default function FollowingList() {
+export default function FollowingList({userId}) {
 	const [userGroups, setUserGroups] = useState([]);
 
 	useEffect(() => {
-		getUserGroups(false).then((res) => setUserGroups(res.data));
-		console.log(userGroups)
-	}, []);
+		getUserGroups(false, userId).then((res) => setUserGroups(res.data));
+	}, [userId]);
 
 	return (
 		<div className='border-[#383838] rounded-xl bg-[#17191b] text-white mt-2 ml-2 p-4'>

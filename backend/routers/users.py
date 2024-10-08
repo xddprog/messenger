@@ -34,7 +34,7 @@ async def search_users(
     users = await redis_cache.get_item(username)
 
     if not users:
-        users = await user_service.search_users(username)
+        users = await user_service.search_users(username, '')
         await redis_cache.set_item(
             username, json.dumps([user.model_dump() for user in users])
         )
@@ -48,10 +48,11 @@ async def get_user_groups(
     group_service: Annotated[GroupService, Depends(get_group_service)],
     user: BaseUserModel = Depends(get_current_user_dependency),
     user_admined_groups: bool = False,
+    user_id: str = None,
 ) -> list[BaseGroupModel]:
     if user_admined_groups:
         return await group_service.get_user_admined_groups(user.id)
-    return await group_service.get_user_groups(user.id)
+    return await group_service.get_user_groups(user_id if user_id else user.id)
 
 
 @router.get("/chats")
@@ -70,8 +71,9 @@ async def get_user_posts(
     user_service: Annotated[UserService, Depends(get_user_service)],
     post_service: Annotated[PostService, Depends(get_post_service)],
     user: BaseUserModel = Depends(get_current_user_dependency),
+    user_id: str = None,
 ) -> list[PostModel]:
-    posts = await user_service.get_user_posts(user.id)
+    posts = await user_service.get_user_posts(user_id if user_id else user.id)
     return [await post_service.get_one_post(post_id) for post_id in posts]
 
 
@@ -85,11 +87,12 @@ async def get_user(
 
 
 @router.get("/friends/all")
-async def get_user_friends(
+async def get_current_user_friends(
     user_service: Annotated[UserService, Depends(get_user_service)],
     user: BaseUserModel = Depends(get_current_user_dependency),
+    user_id: str | None = None,
 ) -> list[BaseUserModel]:
-    return await user_service.get_friends(user.id)
+    return await user_service.get_friends(user_id if user_id else user.id)
 
 
 @router.get("/friends/{friend_id}")

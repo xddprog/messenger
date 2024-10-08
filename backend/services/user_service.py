@@ -71,6 +71,8 @@ class UserService(BaseService):
     async def get_friends(self, user_id: str) -> list[BaseUserModel]:
         user = await self.repository.get_item(user_id)
 
+        await self.check_item(user, UserNotFound)
+
         friends = [
             await self.model_dump(
                 db_model=await self.repository.get_item(friend_id),
@@ -89,9 +91,9 @@ class UserService(BaseService):
         return friend_id in user.friends
 
     async def search_users(
-        self, username: str, **kwargs
+        self, username: str, current_user_id: str, **kwargs
     ) -> list[BaseUserModel] | None:
-        users = await self.repository.search_users(username, **kwargs)
+        users = await self.repository.search_users(username, current_user_id, **kwargs)
         return await self.dump_items(users, BaseUserModel) if users else []
 
     async def update_user_profile(

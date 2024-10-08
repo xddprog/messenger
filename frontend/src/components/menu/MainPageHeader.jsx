@@ -37,7 +37,7 @@ export default function MainPageHeader() {
 		} catch (error) {
 			console.error('Logout error:', error);
 		}
-	};
+	}
 
 	function handleSearchUser(value) {
 		searchUser(value).then((res) => setUsers(res.data));
@@ -73,17 +73,18 @@ export default function MainPageHeader() {
 								onChange={handleSearchUser}
 								options={users.map((user) => ({
 									label: (
-										<a>
+										<a onClick={() => navigate(`/users/${user.id}`, {state: {currentUserProfile: false}})}>
 											<div className='flex align-middle'>
 												<Avatar src={user.avatar} className='mr-5' size={'large'}/>
 												<div className='flex flex-col'>
 													<p>{user.username}</p>
-														<p>Город: {user.city}</p>
+													<p>Город: {user.city}</p>
 												</div>
 											</div>	
 										</a>
 									),
-								}))}
+									}))
+								}
 							/>
 							
 						</div>

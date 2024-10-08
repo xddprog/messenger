@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import { updateUserProfile } from '../../requests/users';
 
-export default function UserProfileInfo({user}) {
+export default function UserProfileInfo({user, currentUserProfile}) {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [form] = Form.useForm();
 	const [fileList, setFileList] = useState([]);
@@ -26,6 +26,10 @@ export default function UserProfileInfo({user}) {
 	};
 	const handleCancel = () => {
 		setIsModalVisible(false);
+	};
+
+	const addToFriends = async () => {
+		
 	};
 
 	const handleOk = async () => {
@@ -88,7 +92,8 @@ export default function UserProfileInfo({user}) {
 							</Typography.Paragraph>
 						}
 					></Card.Meta>
-					<Button onClick={showModal}>Редактировать профиль</Button>
+					{currentUserProfile && <Button onClick={showModal}>Редактировать профиль</Button>}
+					{!currentUserProfile && <Button type='primary' onClick={addToFriends}>Добавить в друзья</Button>}
 				</div>
 			</Card>			
 			<Modal

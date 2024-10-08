@@ -1,6 +1,5 @@
-import { Button, Form, Image, message, Modal, Typography, Upload } from 'antd';
-import { useState } from 'react';
-import { createPost } from '../../requests/posts.js';
+import { Form, Image, message, Modal, Typography, Upload } from 'antd';
+import { useEffect, useState } from 'react';
 import InputWithIEmoji from '../inputs/InputWithIEmoji.jsx';
 
 const getBase64 = (file) =>
@@ -12,16 +11,25 @@ const getBase64 = (file) =>
 	});
 
 
-export default function CreatePostModal({
+export default function EditPostModal({
+    postDescription,
+    postImages,
 	isOpen,
 	handleIsOpen,
-	addPostAfterCreate,
 }) {
 	const [previewOpen, setPreviewOpen] = useState(false);
 	const [previewImage, setPreviewImage] = useState('');
 	const form = Form.useForm();
 	const [descriptionValue, setDescriptionValue] = useState('');
 	const [fileList, setFileList] = useState([]);
+
+    useEffect(() => {
+        setFileList(postImages.map((image) => ({url: image})))
+    }, [])
+
+    useEffect(() => {
+        setDescriptionValue(postDescription)
+    }, [])
 
 	function closeModal() {
 		setDescriptionValue('');
@@ -47,7 +55,7 @@ export default function CreatePostModal({
 		}, 0);
 	};
 
-	async function submitCreatePost() {
+	async function submitEditPost() {
 		try {
 			const formData = new FormData();
 			if (fileList.length > 0) {
@@ -59,11 +67,6 @@ export default function CreatePostModal({
 			}
 
 			formData.append('description', descriptionValue);
-			await createPost(formData).then((res) => {
-				addPostAfterCreate(res)
-				closeModal()
-			});
-
 			
 		} catch (error) {
 			console.error(error);
@@ -80,7 +83,7 @@ export default function CreatePostModal({
 
 	const handlePreview = async (file) => {
 		if (!file.url && !file.preview) {
-		  	file.preview = await getBase64(file.originFileObj);
+            file.preview = await getBase64(file.originFileObj);
 		}
 		setPreviewImage(file.url || file.preview);
 		setPreviewOpen(true);
@@ -88,25 +91,17 @@ export default function CreatePostModal({
 
 	return (
 		<>
-			<Button
-				type='primary'
-				className='w-full mb-3'
-				size={'large'}
-				onClick={() => handleIsOpen(true)}
-			>
-				Выложить пост
-			</Button>
 			<Modal
 				centered
 				open={isOpen}
 				onCancel={closeModal}
 				width={'700px'}
-				okText={'Создать'}
+				okText={'Сохранить'}
 				cancelText={'Отмена'}
-				onOk={submitCreatePost}
+				onOk={submitEditPost}
 			>
 				<Typography.Title level={3}>Поделитесь своими мыслями</Typography.Title>
-				<Form form={form[0]} name={'zxc'} onFinish={submitCreatePost}>
+				<Form form={form[0]} name={'zxc'} onFinish={submitEditPost}>
 					<Form.Item name='description' label='Описание'>
 						<InputWithIEmoji
 							fieldValue={descriptionValue}

@@ -18,5 +18,6 @@ class RedisCache:
     async def delete_item(self, key: str) -> None:
         self.redis.delete(key)
 
-    async def close(self):
-        self.redis.close()
+    async def __call__(self):
+        self.redis.flushdb()
+        return self

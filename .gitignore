@@ -291,3 +291,7 @@ dist
 .yarn/install-state.gz
 .pnp.*
 .DS_Store
+# yappa.yaml
+# yappa_package.zip
+# .yc
+# yappa_gw.yaml

@@ -15,7 +15,7 @@ export async function getUserChats() {
 		.then((response) => response);
 }
 
-export async function getUserPosts() {
+export async function getUserPosts(userId) {
 	return await axios
 		.get(
 			`${BASE_URL}/posts`,
@@ -23,6 +23,9 @@ export async function getUserPosts() {
 				headers: {
 					Authorization: 'Bearer ' + localStorage.getItem('token'),
 				},
+				params: {
+					user_id: userId ? userId : null
+				}
 			}
 		)
 		.then((response) => response);
@@ -55,23 +58,43 @@ export async function updateUserProfile(value) {
 }
 
 
-export async function getUserGroups(userAdminedGroups) {
+export async function getUserGroups(userAdminedGroups, userId) {
 	return await axios
 		.get(
-			`${BASE_URL}/groups?user_admined_groups=${userAdminedGroups}`, 
+			`${BASE_URL}/groups`, 
 			{
 				headers: {
 					Authorization: 'Bearer ' + localStorage.getItem('token'),
-			},
-
-		})
+				},
+				params: {
+					user_admined_groups: userAdminedGroups,
+					user_id: userId ? userId : null
+				}
+			}
+		)
 		.then((response) => response);
 }
 
-export async function getUserFriends() {
+export async function getUserFriends(userId) {
 	return await axios
 		.get(
 			`${BASE_URL}/friends/all`, 
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('token'),
+				},
+				params: {
+					user_id: userId ? userId : null
+				}
+			}
+		)
+		.then((response) => response);
+}
+
+export async function getOtherUser(userId) {
+	return await axios
+		.get(
+			`${BASE_URL}/${userId}`, 
 			{
 				headers: {
 					Authorization: 'Bearer ' + localStorage.getItem('token'),

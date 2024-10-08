@@ -5,24 +5,31 @@ import FollowingList from '../../../components/profile/following/FollowingList.j
 import UserPosts from '../../../components/profile/UserPosts.jsx';
 import { useEffect, useState } from 'react';
 import { getCurrentUser } from '../../../requests/auth.js';
-export default function Profile() {
+import { getOtherUser } from '../../../requests/users.js';
+import { useParams } from 'react-router-dom';
+export default function Profile({currentUserProfile}) {
 	const [user, setUser] = useState([]);
+	const {userId} = useParams()
 	
 	useEffect(() => {
-		getCurrentUser().then((res) => setUser(res.data));
-	}, []);
+		if (currentUserProfile) {
+			getCurrentUser().then((res) => setUser(res.data));
+		} else {
+			getOtherUser(userId).then((res) => setUser(res.data));
+		}
+	}, [currentUserProfile, userId]);
 
 	return (
 		<>
-			<UserProfileInfo user={user}/>
+			<UserProfileInfo user={user} currentUserProfile={currentUserProfile}/>
 			<div className='grid grid-cols-[60%,40%] gap-1'>
 				<div className=''>
-					<Navigation />
-					<UserPosts />
+					<Navigation user={user} currentUserProfile={currentUserProfile}/>
+					<UserPosts currentUserProfile={currentUserProfile} userId={userId}/>
 				</div>
 				<div className=''>
-					<FriendList />
-					<FollowingList />
+					<FriendList currentUserProfile={currentUserProfile} userId={userId} />
+					<FollowingList currentUserProfile={currentUserProfile} userId={userId}/>
 				</div>
 			</div>
 		</>

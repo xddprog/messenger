@@ -19,11 +19,9 @@ from backend.routers import (
 
 
 async def lifespan(app: FastAPI):
-    app.state.redis_cache = RedisCache(config=load_redis_config())
+    app.state.redis_cache = await RedisCache(config=load_redis_config())()
     app.state.websocket_manager = WebSocketManager()
-    app.state.db_connection = await DatabaseConnection(
-        load_database_config()
-    )()
+    app.state.db_connection = await DatabaseConnection(load_database_config())()
 
     yield
 

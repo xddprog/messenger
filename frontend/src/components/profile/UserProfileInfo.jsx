@@ -11,7 +11,7 @@ import {
 } from 'antd';
 import { useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
-import { updateUserProfile } from '../../requests/users';
+import { updateUserProfile } from '../../requests/api/users';
 
 export default function UserProfileInfo({user, currentUserProfile}) {
 	const [isModalVisible, setIsModalVisible] = useState(false);

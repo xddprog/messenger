@@ -1,6 +1,6 @@
 import { Button, Form, Image, message, Modal, Typography, Upload } from 'antd';
 import { useState } from 'react';
-import { createPost } from '../../requests/posts.js';
+import { createPost } from '../../requests/api/posts.js';
 import InputWithIEmoji from '../inputs/InputWithIEmoji.jsx';
 
 const getBase64 = (file) =>
@@ -64,7 +64,7 @@ export default function CreatePostModal({
 				closeModal()
 			});
 
-			
+
 		} catch (error) {
 			console.error(error);
 		}
@@ -80,7 +80,7 @@ export default function CreatePostModal({
 
 	const handlePreview = async (file) => {
 		if (!file.url && !file.preview) {
-		  	file.preview = await getBase64(file.originFileObj);
+			file.preview = await getBase64(file.originFileObj);
 		}
 		setPreviewImage(file.url || file.preview);
 		setPreviewOpen(true);
@@ -125,10 +125,10 @@ export default function CreatePostModal({
 							onChange={(file) => setFileList(file.fileList)}
 							onPreview={handlePreview}
 						>
-								Загрузить (Максимум 4 фото)
+							Загрузить (Максимум 4 фото)
 						</Upload>
 						{previewImage && (
-								<Image
+							<Image
 								wrapperStyle={{
 									display: 'none',
 								}}

@@ -1,6 +1,8 @@
 import axios from 'axios';
+import { API_URL} from "../settings.js";
 
 const BASE_URL = `${API_URL}/api/auth`;
+
 
 export async function registerUser(values) {
 	return await axios

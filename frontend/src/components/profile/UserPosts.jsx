@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUserPosts } from "../../requests/users";
+import { getUserPosts } from "../../requests/api/users";
 import { Empty, Typography } from "antd";
 import Post from "../cards/Post";
 import CreatePostModal from "../modals/CreatePostModal";

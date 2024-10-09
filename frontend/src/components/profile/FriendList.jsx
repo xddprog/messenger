@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUserFriends } from "../../requests/users";
+import { getUserFriends } from "../../requests/api/users";
 import { Avatar, Typography } from "antd";
 
 export default function FriendList({userId}) {

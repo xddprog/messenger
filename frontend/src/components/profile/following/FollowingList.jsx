@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import FollowingItem from './FollowindItem';
-import { getUserGroups } from '../../../requests/users';
+import { getUserGroups } from '../../../requests/api/users';
 import { Typography } from 'antd';
 
 export default function FollowingList({userId}) {

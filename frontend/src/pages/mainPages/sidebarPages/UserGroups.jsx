@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import GropListCard from '../../../components/cards/GroupListCard';
 import InputWithIEmoji from '../../../components/inputs/InputWithIEmoji';
 import CreateGroupModal from '../../../components/modals/CreateGroupModal';
-import { getUserGroups } from '../../../requests/users';
+import { getUserGroups } from '../../../requests/api/users';
 
 
 function UserGroups() {
@@ -29,16 +29,16 @@ function UserGroups() {
         console.log(event.target.value)
         const userAdminedGroups = event.target.value == "adminedGroups" ? true : false
         await getUserGroups(userAdminedGroups).then(res => setUserGroups(res.data))
-    }  
+    }
 
     function addGroupAfterCreate(post) {
-		setUserGroups((prev) => [post, ...prev]);
+        setUserGroups((prev) => [post, ...prev]);
         console.log(post)
         console.log(userGroups)
-	}
-    
+    }
+
     return (
-        <div  className='fixed w-[45%] h-[83%]'>
+        <div className='fixed w-[45%] h-[83%]'>
             <List className='bg-[#17191b] p-5 rounded-xl flex flex-col w-[100%] z-0 h-[105%] overflow-auto'>
                 <div className='mb-2'>
                     <div className='flex justify-between mb-3 align-middle'>
@@ -51,18 +51,18 @@ function UserGroups() {
                         >
                             <Radio.Button value="allGroups">Все сообщетсва</Radio.Button>
                             <Radio.Button value="adminedGroups">Управляемые</Radio.Button>
-                        </Radio.Group>     
-                        <CreateGroupModal 
-                            isOpen={CreateGroupModalVisible} 
+                        </Radio.Group>
+                        <CreateGroupModal
+                            isOpen={CreateGroupModalVisible}
                             handleIsOpen={setCreateGroupModalVisible}
                             addGroupAfterCreate={addGroupAfterCreate}
                         />
                     </div>
-                    <InputWithIEmoji 
+                    <InputWithIEmoji
                         fieldValue={searchInputField}
                         setFieldValue={setSearchInputField}
                     />
-                </div>       
+                </div>
                 {userGroups.map((group) => (
                     <GropListCard
                         key={group.title}

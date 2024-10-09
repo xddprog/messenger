@@ -32,7 +32,7 @@ app = FastAPI(lifespan=lifespan)
 PROTECTED = Depends(get_current_user_dependency)
 
 
-origins = ["http://localhost:5173", "https://messenger-orcin.vercel.app"]
+origins = ["http://localhost:5173", "https://messenger-five-blush.vercel.app", "https://messenger-xddprogs-projects.vercel.app", "https://messenger-git-main-xddprogs-projects.vercel.app"]
 
 
 app.add_middleware(

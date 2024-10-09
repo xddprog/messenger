@@ -1,1 +1,1 @@
-export const API_URL = 'https://messenger-oe3m.onrender.com'
+export const API_URL = 'http://localhost:8000';

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_URL } from "../settings.js";
 
 const BASE_URL = `${API_URL}/api/user`;
 
@@ -61,7 +62,7 @@ export async function updateUserProfile(value) {
 export async function getUserGroups(userAdminedGroups, userId) {
 	return await axios
 		.get(
-			`${BASE_URL}/groups`, 
+			`${BASE_URL}/groups`,
 			{
 				headers: {
 					Authorization: 'Bearer ' + localStorage.getItem('token'),
@@ -78,7 +79,7 @@ export async function getUserGroups(userAdminedGroups, userId) {
 export async function getUserFriends(userId) {
 	return await axios
 		.get(
-			`${BASE_URL}/friends/all`, 
+			`${BASE_URL}/friends/all`,
 			{
 				headers: {
 					Authorization: 'Bearer ' + localStorage.getItem('token'),
@@ -94,12 +95,12 @@ export async function getUserFriends(userId) {
 export async function getOtherUser(userId) {
 	return await axios
 		.get(
-			`${BASE_URL}/${userId}`, 
+			`${BASE_URL}/${userId}`,
 			{
 				headers: {
 					Authorization: 'Bearer ' + localStorage.getItem('token'),
-			},
+				},
 
-		})
+			})
 		.then((response) => response);
 }

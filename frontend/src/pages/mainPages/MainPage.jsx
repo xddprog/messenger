@@ -1,8 +1,8 @@
-import { Outlet } from 'react-router-dom';
-import SideBar from '../../components/menu/SideBar';
-import MainPageHeader from '../../components/menu/MainPageHeader';
 import { useEffect } from 'react';
-import { getCurrentUser } from '../../requests/auth';
+import { Outlet } from 'react-router-dom';
+import MainPageHeader from '../../components/menu/MainPageHeader';
+import SideBar from '../../components/menu/SideBar';
+import { getCurrentUser } from '../../requests/api/auth';
 
 export default function MainPage() {
 	useEffect(() => {

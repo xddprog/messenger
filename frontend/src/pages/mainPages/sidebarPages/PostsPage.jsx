@@ -1,8 +1,8 @@
 import { Empty, Typography } from 'antd';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Post from '../../../components/cards/Post';
-import { getAllPosts } from '../../../requests/posts';
 import CreatePostModal from '../../../components/modals/CreatePostModal.jsx';
+import { getAllPosts } from '../../../requests/api/posts.js';
 
 export default function PostsPage() {
 	const [posts, setPosts] = useState([]);

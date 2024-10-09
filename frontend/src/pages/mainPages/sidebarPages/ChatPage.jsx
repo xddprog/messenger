@@ -1,15 +1,15 @@
-import UserChatsMenu from "../../../components/menu/UserChatsMenu.jsx";
-import {useEffect, useState} from "react";
-import {getUserChats} from "../../../requests/users.js";
-import {Avatar, Space} from "antd";
-import {getChatMessages} from "../../../requests/chats.js";
-import ChatHeader from "../../../components/menu/ChatHeader.jsx";
+import { SendOutlined } from "@ant-design/icons";
+import { Avatar, Space } from "antd";
+import { useEffect, useState } from "react";
 import ChatMessage from "../../../components/cards/ChatMessage.jsx";
 import InputWithIEmoji from "../../../components/inputs/InputWithIEmoji.jsx";
-import {SendOutlined} from "@ant-design/icons";
+import ChatHeader from "../../../components/menu/ChatHeader.jsx";
+import UserChatsMenu from "../../../components/menu/UserChatsMenu.jsx";
+import { getChatMessages } from "../../../requests/api/chats.js";
+import { getUserChats } from "../../../requests/api/users.js";
 
 
-function Chat({chat, ws}) {
+function Chat({ chat, ws }) {
     const [messageValue, setMessageValue] = useState('');
     const [messages, setMessages] = useState([]);
 
@@ -26,12 +26,12 @@ function Chat({chat, ws}) {
     }, []);
 
     function sendMessage() {
-        messageValue ? ws.send(messageValue): null
+        messageValue ? ws.send(messageValue) : null
     }
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
-            <div style={{ width: '100%'}}>
+            <div style={{ width: '100%' }}>
                 <ChatHeader chat={chat} />
             </div>
             <div
@@ -45,21 +45,21 @@ function Chat({chat, ws}) {
             >
                 <div style={{ position: "absolute", width: '100%', bottom: 0, maxHeight: '100%', overflow: 'scroll' }}>
                     {messages.map((message, index) => {
-                    return (
-                        <div
-                            style={{
-                                marginBottom: '15px',
-                                maxWidth: '50%',
-                            }}
-                            key={index}
-                        >
-                            <ChatMessage message={message} key={message.id} />
-                        </div>
-                    )
-                })}
+                        return (
+                            <div
+                                style={{
+                                    marginBottom: '15px',
+                                    maxWidth: '50%',
+                                }}
+                                key={index}
+                            >
+                                <ChatMessage message={message} key={message.id} />
+                            </div>
+                        )
+                    })}
                 </div>
             </div>
-            <div style={{ width: '100%'}}>
+            <div style={{ width: '100%' }}>
                 <div
                     style={{
                         padding: '18px 20px 18.5px 20px',
@@ -67,7 +67,7 @@ function Chat({chat, ws}) {
                         display: 'flex',
                     }}
                 >
-                    <div style={{width:'100%', marginRight: 10}}>
+                    <div style={{ width: '100%', marginRight: 10 }}>
                         <InputWithIEmoji minRows={1} fieldValue={messageValue} setFieldValue={setMessageValue} />
                     </div>
                     <button
@@ -79,7 +79,7 @@ function Chat({chat, ws}) {
                         }}
                         onClick={sendMessage}
                     >
-                        <SendOutlined style={{ fontSize: '20px', color: '#fff'}}/>
+                        <SendOutlined style={{ fontSize: '20px', color: '#fff' }} />
                     </button>
                 </div>
             </div>
@@ -92,7 +92,7 @@ export default function ChatPage() {
     const baseChat = {
         id: 'favourite',
         title: 'Избранное',
-        avatar: <Avatar alt="favourites-logo" src="/images/favourites_logo.jpg" size={50}/>
+        avatar: <Avatar alt="favourites-logo" src="/images/favourites_logo.jpg" size={50} />
     }
     const [chats, setChats] = useState([baseChat]);
     const [openedChat, setOpenedChat] = useState(null)
@@ -115,12 +115,12 @@ export default function ChatPage() {
     }
 
     return (
-        <div style={{backgroundColor: '#17191b', borderRadius: 10, display: 'flex', height: '83%', position: 'fixed', width: '51%'}}>
-            <Space  direction={"vertical"} style={{padding: '5px 0 5px 15px', width: '30%', borderRight: '1px solid rgba(255, 255, 255, 0.07)'}}>
+        <div style={{ backgroundColor: '#17191b', borderRadius: 10, display: 'flex', height: '83%', position: 'fixed', width: '51%' }}>
+            <Space direction={"vertical"} style={{ padding: '5px 0 5px 15px', width: '30%', borderRight: '1px solid rgba(255, 255, 255, 0.07)' }}>
                 <UserChatsMenu chats={chats} openChat={openChat} />
             </Space>
-            <div style={{width: '70%'}}>
-                {openedChat ? <Chat chat={openedChat} ws={ws} key={openedChat} />: null}
+            <div style={{ width: '70%' }}>
+                {openedChat ? <Chat chat={openedChat} ws={ws} key={openedChat} /> : null}
             </div>
         </div>
     )

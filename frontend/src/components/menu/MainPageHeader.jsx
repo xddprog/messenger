@@ -1,33 +1,33 @@
-import { AutoComplete, Avatar, Button, Dropdown } from 'antd';
-import AppLogo from '../logo/AppLogo';
+import { AutoComplete, Avatar, Dropdown } from 'antd';
+import { useState } from 'react';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { IoMusicalNotesOutline } from 'react-icons/io5';
-import { logoutUser } from '../../requests/auth';
 import { useNavigate } from 'react-router-dom';
-import { searchUser } from '../../requests/users';
-import { useState } from 'react';
+import { logoutUser } from '../../requests/api/auth';
+import { searchUser } from '../../requests/api/users';
+import AppLogo from '../logo/AppLogo';
 
 export default function MainPageHeader() {
 	const navigate = useNavigate();
 	const [users, setUsers] = useState([]);
 	const items = [
-        {
-            key: 'settings',
-            label: (
-                <a onClick={() => navigate('/settings')}>
-                    Настройки
-                </a>
-            ),
-        },
-        {
-            key: 'logout',
-            label: (
-                <a onClick={handleLogout}>
-                    Выйти
-                </a>
-            ),
-        },
-    ];
+		{
+			key: 'settings',
+			label: (
+				<a onClick={() => navigate('/settings')}>
+					Настройки
+				</a>
+			),
+		},
+		{
+			key: 'logout',
+			label: (
+				<a onClick={handleLogout}>
+					Выйти
+				</a>
+			),
+		},
+	];
 
 	async function handleLogout() {
 		try {
@@ -73,20 +73,20 @@ export default function MainPageHeader() {
 								onChange={handleSearchUser}
 								options={users.map((user) => ({
 									label: (
-										<a onClick={() => navigate(`/users/${user.id}`, {state: {currentUserProfile: false}})}>
+										<a onClick={() => navigate(`/users/${user.id}`, { state: { currentUserProfile: false } })}>
 											<div className='flex align-middle'>
-												<Avatar src={user.avatar} className='mr-5' size={'large'}/>
+												<Avatar src={user.avatar} className='mr-5' size={'large'} />
 												<div className='flex flex-col'>
 													<p>{user.username}</p>
 													<p>Город: {user.city}</p>
 												</div>
-											</div>	
+											</div>
 										</a>
 									),
-									}))
+								}))
 								}
 							/>
-							
+
 						</div>
 						<div style={{ display: 'flex', alignItems: 'center' }}>
 							<button

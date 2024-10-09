@@ -1,45 +1,45 @@
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Modal, Select, Typography, Upload } from 'antd';
 import { useState } from 'react';
+import { createGroup } from '../../requests/api/groups';
 import InputWithIEmoji from '../inputs/InputWithIEmoji';
-import { createGroup } from '../../requests/groups';
 
-function CreateGroupModal({isOpen, handleIsOpen,addGroupAfterCreate}) {
+function CreateGroupModal({ isOpen, handleIsOpen, addGroupAfterCreate }) {
     const form = Form.useForm();
-	const [descriptionValue, setDescriptionValue] = useState('');
-	const [fileList, setFileList] = useState([]);
+    const [descriptionValue, setDescriptionValue] = useState('');
+    const [fileList, setFileList] = useState([]);
     const tagOptions = [
         {
-            value:'Футбол',
-            label:'Футбол'
+            value: 'Футбол',
+            label: 'Футбол'
         },
         {
-            value:'Хоккей',
-            label:'Хоккей'
+            value: 'Хоккей',
+            label: 'Хоккей'
         },
         {
-            value:'Баскетбол',
-            label:'Баскетбол'
+            value: 'Баскетбол',
+            label: 'Баскетбол'
         },
         {
-            value:'Волейбол',
-            label:'Волейбол'
+            value: 'Волейбол',
+            label: 'Волейбол'
         },
         {
-            value:'Программирование',
-            label:'Программирование'
+            value: 'Программирование',
+            label: 'Программирование'
         },
         {
-            value:'Математика',
-            label:'Математика'
+            value: 'Математика',
+            label: 'Математика'
         },
         {
-            value:'Музыка',
-            label:'Музыка'
+            value: 'Музыка',
+            label: 'Музыка'
         },
         {
-            value:'Английский',
-            label:'Английский'
+            value: 'Английский',
+            label: 'Английский'
         },
     ]
     const layout = {
@@ -49,59 +49,59 @@ function CreateGroupModal({isOpen, handleIsOpen,addGroupAfterCreate}) {
 
     function closeModal() {
         setDescriptionValue('');
-		setFileList([]);
-		handleIsOpen(false);
+        setFileList([]);
+        handleIsOpen(false);
         form[0].resetFields()
     }
 
     function checkFileType(file) {
-		const isImage =
-			file.type === 'image/png' ||
-			file.type === 'image/jpeg' ||
-			file.type === 'image/jpg';
-		if (!isImage) {
-			message.error(`${file.name} не является фотографией`);
-		}
-		return isImage || Upload.LIST_IGNORE;
-	}
+        const isImage =
+            file.type === 'image/png' ||
+            file.type === 'image/jpeg' ||
+            file.type === 'image/jpg';
+        if (!isImage) {
+            message.error(`${file.name} не является фотографией`);
+        }
+        return isImage || Upload.LIST_IGNORE;
+    }
 
     const dummyRequest = ({ onSuccess }) => {
-		setTimeout(() => {
-			onSuccess('ok');
-		}, 0);
-	};
+        setTimeout(() => {
+            onSuccess('ok');
+        }, 0);
+    };
 
     function onRemove(file) {
-		const index = fileList.indexOf(file);
-		const newFileList = fileList.slice();
+        const index = fileList.indexOf(file);
+        const newFileList = fileList.slice();
 
-		newFileList.splice(index, 1);
-		setFileList(newFileList);
-	}
+        newFileList.splice(index, 1);
+        setFileList(newFileList);
+    }
 
 
     async function submitCreateGroup() {
         try {
-			const formData = new FormData();
+            const formData = new FormData();
             const values = await form[0].validateFields();
 
-			if (fileList.length > 0) {
-				formData.append('avatar', fileList[0].originFileObj);
-			} else {
-				formData.append('avatar', [null]);
-			}
+            if (fileList.length > 0) {
+                formData.append('avatar', fileList[0].originFileObj);
+            } else {
+                formData.append('avatar', [null]);
+            }
 
             formData.append('title', values.title);
-			formData.append('description', descriptionValue);
+            formData.append('description', descriptionValue);
             formData.append('tags', values.tags)
-            
-			await createGroup(formData).then(res => {
+
+            await createGroup(formData).then(res => {
                 addGroupAfterCreate(res)
                 closeModal()
             });
-		} catch (error) {
-			console.error(error);
-		}
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     function openModal() {
@@ -122,8 +122,8 @@ function CreateGroupModal({isOpen, handleIsOpen,addGroupAfterCreate}) {
             >
                 <Typography.Title level={3}>Создай свой личный блог!</Typography.Title>
                 <Form form={form[0]} onFinish={submitCreateGroup} {...layout}>
-                    <Form.Item 
-                        name='title' 
+                    <Form.Item
+                        name='title'
                         label='Название'
                         rules={[
                             {
@@ -132,18 +132,18 @@ function CreateGroupModal({isOpen, handleIsOpen,addGroupAfterCreate}) {
                             },
                         ]}
                     >
-                        <Input placeholder='Введите название'/>
+                        <Input placeholder='Введите название' />
                     </Form.Item>
-                    <Form.Item 
-                        name='title' 
-                        label='Описание' 
+                    <Form.Item
+                        name='title'
+                        label='Описание'
                         rules={[
-                                { 
-                                    required: true, 
-                                    message: 'Пожалуйста, введите описание сообщества'
-                                }
-                            ]}
-                        >
+                            {
+                                required: true,
+                                message: 'Пожалуйста, введите описание сообщества'
+                            }
+                        ]}
+                    >
                         <InputWithIEmoji
                             fieldValue={descriptionValue}
                             setFieldValue={setDescriptionValue}
@@ -151,7 +151,7 @@ function CreateGroupModal({isOpen, handleIsOpen,addGroupAfterCreate}) {
                         />
                     </Form.Item>
                     <Form.Item name='tags' label='Теги' wrapperCol={{ span: 10 }}>
-                        <Select mode='multiple' options={tagOptions} /> 
+                        <Select mode='multiple' options={tagOptions} />
                     </Form.Item>
                     <Form.Item name='avatar' label='Аватар' >
                         <Upload
@@ -166,7 +166,7 @@ function CreateGroupModal({isOpen, handleIsOpen,addGroupAfterCreate}) {
                                 Загрузить фото
                             </Button>
                         </Upload>
-					</Form.Item>
+                    </Form.Item>
                 </Form>
             </Modal>
         </div>

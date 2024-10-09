@@ -1,19 +1,19 @@
+import { UploadOutlined } from '@ant-design/icons';
 import {
-	Card,
 	Avatar,
 	Button,
-	Modal,
+	Card,
 	Form,
-	Input,
-	Upload,
 	Image,
+	Input,
+	Modal,
 	Typography,
+	Upload,
 } from 'antd';
 import { useState } from 'react';
-import { UploadOutlined } from '@ant-design/icons';
-import { updateUserProfile } from '../../requests/users';
+import { updateUserProfile } from '../../requests/api/users';
 
-export default function UserProfileInfo({user, currentUserProfile}) {
+export default function UserProfileInfo({ user, currentUserProfile }) {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [form] = Form.useForm();
 	const [fileList, setFileList] = useState([]);
@@ -29,7 +29,7 @@ export default function UserProfileInfo({user, currentUserProfile}) {
 	};
 
 	const addToFriends = async () => {
-		
+
 	};
 
 	const handleOk = async () => {
@@ -95,7 +95,7 @@ export default function UserProfileInfo({user, currentUserProfile}) {
 					{currentUserProfile && <Button onClick={showModal}>Редактировать профиль</Button>}
 					{!currentUserProfile && <Button type='primary' onClick={addToFriends}>Добавить в друзья</Button>}
 				</div>
-			</Card>			
+			</Card>
 			<Modal
 				open={isModalVisible}
 				onOk={handleOk}

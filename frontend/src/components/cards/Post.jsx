@@ -6,7 +6,7 @@ import {
 	SendOutlined,
 } from '@ant-design/icons';
 import { Card, Dropdown, Image, Space } from 'antd';
-import { likePost, deletePost } from '../../requests/posts.js';
+import { likePost, deletePost } from '../../requests/api/posts.js';
 import { useEffect, useState } from 'react';
 import EditPostModal from '../modals/EditPostModal.jsx';
 

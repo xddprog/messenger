@@ -1,6 +1,4 @@
 import Button from '../../ui/button';
-import { getCurrentUser } from '../../../requests/auth';
-import { useState, useEffect } from 'react';
 import { Image } from 'antd';
 
 

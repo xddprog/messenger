@@ -1,36 +1,46 @@
-import { Button } from "antd"
-import { useEffect, useState } from "react"
-import Post from "../../../components/cards/Post"
-import { getAllPosts } from "../../../requests/posts"
-
+import { Empty, Typography } from 'antd';
+import { useState, useEffect } from 'react';
+import Post from '../../../components/cards/Post';
+import { getAllPosts } from '../../../requests/posts';
+import CreatePostModal from '../../../components/modals/CreatePostModal.jsx';
 
 export default function PostsPage() {
-    const [posts, setPosts] = useState(null)
-    const [postsLoading, setPostsLoading] = useState(true)
+	const [posts, setPosts] = useState([]);
+	const [createPostModalIsOpen, setCreatePostModalIsOpen] = useState(false);
 
-    useEffect(() => {
-        getAllPosts().then(res => {
-            console.log(res);
-            setPosts(res)
-        })
-        setPostsLoading(false)
-    }, [])
+	useEffect(() => {
+		getAllPosts().then((res) => setPosts(res.reverse()));
+	}, []);
 
-    return (
-       <div style={{}}>
-            <Button
-                type="primary"
-                style={{
-                    width: '100%',
-                    marginBottom:'10px',
-                }}
-                size={'large'}
-            >
-                Выложить пост
-            </Button>
-            <div style={{ marginTop: '10px'}}>
-                {posts == null ? 'zxc': posts.map(post => <Post key={post.id} post={post} />)}
-            </div>
-       </div>
-    )
+	function updatePost(postId) {
+		setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+	}
+
+	function addPostAfterCreate(post) {
+		setPosts((prev) => [post, ...prev]);
+	}
+
+	return (
+		<div
+			style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}
+		>
+			<CreatePostModal
+				isOpen={createPostModalIsOpen}
+				handleIsOpen={setCreatePostModalIsOpen}
+				addPostAfterCreate={addPostAfterCreate}
+			/>
+			<div
+				style={{ marginTop: '10px', width: '100%' }}
+				className='flex flex-col items-center'
+			>
+				{posts == null ? (
+					<Empty description={<Typography.Text>Нет постов</Typography.Text>} />
+				) : (
+					posts.map((post) => (
+						<Post key={post.id} post={post} updatePost={updatePost} />
+					))
+				)}
+			</div>
+		</div>
+	);
 }

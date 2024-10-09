@@ -1,4 +1,12 @@
-import { BookOutlined, FolderOutlined, MessageOutlined, PauseCircleOutlined, ReadOutlined, SettingOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
+import {
+    BookOutlined,
+    FolderOutlined,
+    MessageOutlined,
+    ReadOutlined,
+    SettingOutlined,
+    TeamOutlined,
+    UserOutlined
+} from "@ant-design/icons";
 import { Menu } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -35,11 +43,6 @@ export default function SaidBar() {
             icon: <TeamOutlined />
         },
         {
-            label: 'Музыка',
-            key: 'music',
-            icon: <PauseCircleOutlined />
-        },
-        {
             label: 'Закладки',
             key: 'bookmarks',
             icon: <BookOutlined />
@@ -52,13 +55,19 @@ export default function SaidBar() {
     ]
 
     async function clickMenuItem(item) {
-        navigate(`/${item.key}`)
+        if (item.key === 'profile') {
+            navigate('/profile', {currentUserProfile: true})
+            setSelectedKey(item.key)
+            return
+        } else {
+            navigate(`/${item.key}`)
+        }
         setSelectedKey(item.key)
     }
 
     return (
         <Menu
-            style={{ borderRadius: 10 }}
+            style={{ borderRadius: 10, border: 'none'}}
             items={menuItems}
             onClick={clickMenuItem}
             selectedKeys={[seelectedKey]}

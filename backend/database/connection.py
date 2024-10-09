@@ -1,12 +1,22 @@
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy import NullPool
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from backend.database.models import Base
+from backend.utils.config.config import DatabaseConfig
 
-from database.models import Base
-from utils.config import load_database_config
 
-config = load_database_config()
-url = f'postgresql+asyncpg://{config.db_user}:{config.db_pass}@{config.db_host}:{config.db_port}/{config.db_name}'
-engine = create_async_engine(url)
+class DatabaseConnection:
+    def __init__(self, config: DatabaseConfig):
+        self._engine = create_async_engine(
+            url=f"postgresql+asyncpg://{config.db_user}:{config.db_pass}"
+            f"@{config.db_host}:{config.db_port}/{config.db_name}",
+            poolclass=NullPool,
+        )
 
-async def create_tables():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    async def get_session(self) -> AsyncSession:
+        return AsyncSession(bind=self._engine)
+
+    async def __call__(self):
+        async with self._engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+
+        return self

@@ -1,0 +1,1 @@
+export const API_URL = 'https://messenger-oe3m.onrender.com'

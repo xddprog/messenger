@@ -1,0 +1,14 @@
+[tool.ruff]
+extend-exclude = ["**/__init__.py"]
+fix = true
+indent-width = 4
+line-length = 79
+show-fixes = true
+target-version="py311"
+
+
+[tool.pytest.ini_options]
+pythonpath = [
+  ".",
+]
+asyncio_mode="auto"

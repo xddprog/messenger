@@ -73,6 +73,12 @@ class User(Base):
         lazy="selectin",
         secondary="users_admined_groups",
     )
+    notifications: Mapped[list["Notification"]] = relationship(
+        back_populates="users",
+        secondary="users_notifications",
+        uselist=True,
+        lazy="selectin",
+    )
 
     group_fk: Mapped[UUID4 | None] = mapped_column(ForeignKey("groups.id"))
 
@@ -233,6 +239,25 @@ class Group(Base):
     )
 
 
+class Notification(Base):
+    __tablename__ = "notifications"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    message: Mapped[str]
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now())
+    notification_type: Mapped[str]
+    is_read: Mapped[bool] = mapped_column(default=False)
+    notification_sender_id: Mapped[str] = mapped_column(nullable=True)
+    notification_sender_name: Mapped[str] = mapped_column(nullable=True)
+    image: Mapped[str] = mapped_column(nullable=True)
+
+    users: Mapped[list["User"]] = relationship(
+        back_populates="notifications",
+        secondary="users_notifications",
+        uselist=True,
+    )
+
+
 class GroupTag(Base):
     __tablename__ = "group_tags"
     tag_fk: Mapped[int] = mapped_column(
@@ -283,4 +308,14 @@ class UserAdminedGroups(Base):
     )
 
 
-ModelType = Type[User | Post | Message | Chat | Comment | Group]
+class UserNotifications(Base):
+    __tablename__ = "users_notifications"
+    user_fk: Mapped[UUID4] = mapped_column(
+        ForeignKey("users.id"), primary_key=True
+    )
+    notification_fk: Mapped[int] = mapped_column(
+        ForeignKey("notifications.id"), primary_key=True
+    )
+
+
+ModelType = Type[User | Post | Message | Chat | Comment | Group | Notification]

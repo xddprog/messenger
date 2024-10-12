@@ -104,3 +104,87 @@ export async function getOtherUser(userId) {
 			})
 		.then((response) => response);
 }
+
+export async function addUserToFriendRequest(friendId) {
+	return await axios
+		.post(
+			`${BASE_URL}/friends/add/${friendId}/request`,
+			{ friend_id: friendId },
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('token'),
+				},
+			}
+		)
+		.then((response) => response);
+}
+
+export async function addUserToFriendAccept(friendId) {
+	return await axios
+		.post(
+			`${BASE_URL}/friends/add/${friendId}/accept`,
+			{ friend_id: friendId },
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('token'),
+				},
+			}
+		)
+		.then((response) => response);
+}
+
+export async function addUserToFriendRejected(friendId) {
+	return await axios
+		.post(
+			`${BASE_URL}/friends/add/${friendId}/decline`,
+			{ friend_id: friendId },
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('token'),
+				},
+			}
+		)
+		.then((response) => response);
+}
+
+
+export async function removeFriend(friendId) {
+	return await axios
+		.delete(
+			`${BASE_URL}/friends/remove/${friendId}`,
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('token'),
+				},
+			}
+		)
+		.then((response) => response);
+}
+
+export async function getUserNotifications() {
+	return await axios
+		.get(
+			`${BASE_URL}/notifications`,
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('token'),
+				},
+			}
+		)
+		.then((response) => response);
+}
+
+
+export async function getUserUnReadedNotifications() {
+	return await axios
+		.get(
+			`${BASE_URL}/notifications/unreaded`,
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('token'),
+				},
+			}
+		)
+		.then((response) => response);
+}
+

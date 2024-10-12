@@ -9,7 +9,7 @@ from backend.dto.auth_dto import (
 )
 from backend.dto.user_dto import BaseUserModel
 from backend.services import AuthService
-from backend.utils.dependencies import (
+from backend.utils.dependencies.dependencies import (
     get_auth_service,
     get_current_user_dependency,
 )

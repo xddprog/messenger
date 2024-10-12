@@ -6,33 +6,93 @@ import {
 	Form,
 	Image,
 	Input,
+	message,
 	Modal,
 	Typography,
 	Upload,
 } from 'antd';
-import { useState } from 'react';
-import { updateUserProfile } from '../../requests/api/users';
+import { useEffect, useState } from 'react';
+import { addUserToFriendAccept, removeFriend, updateUserProfile } from '../../requests/api/users';
+import { getCurrentUser } from '../../requests/api/auth';
 
-export default function UserProfileInfo({ user, currentUserProfile }) {
+export default function UserProfileInfo(
+	{ 
+		user, 
+		currentUserProfile, 
+		notificationWs,
+		requestAddFriendIsSend,
+		requestAddFriendIsGet,
+		setRequestAddFriendIsSend,
+		setRequestAddFriendIsGet,
+		isFriend,
+		setIsFriend
+	}
+) {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [form] = Form.useForm();
 	const [fileList, setFileList] = useState([]);
 
-	const handleUploadChange = ({ fileList }) => {
+	function handleUploadChange ({ fileList }){
 		setFileList(fileList);
-	};
-	const showModal = () => {
+	}
+	function showModal(){
 		setIsModalVisible(true);
-	};
-	const handleCancel = () => {
+	}
+	function handleCancel() {
 		setIsModalVisible(false);
-	};
+	}
 
-	const addToFriends = async () => {
+	async function handleAddToFriendsRequest() {
+		const currentUser = await getCurrentUser().then(res => res.data)
 
-	};
+		notificationWs.send(JSON.stringify({
+			type: 'add_friend',
+			friend_id: user.id,
+			notification_sender_id: currentUser.id,
+			notification_sender_name: currentUser.username
+		}))
+	}
 
-	const handleOk = async () => {
+	async function handleAddUserToFriendAccept() {
+		const currentUser = await getCurrentUser().then(res => res.data)
+
+		await addUserToFriendAccept(user.id).then(() => {
+			setRequestAddFriendIsSend(false)
+			setRequestAddFriendIsGet(false)
+			setIsFriend(true)
+			notificationWs.send(JSON.stringify({
+				type: 'add_friend_accept',
+				friend_id: user.id,
+				notification_sender_id: currentUser.id,
+				notification_sender_name: currentUser.username
+			}
+			))
+		})
+	}
+
+
+	async function handleRemoveFriend() {
+		const currentUser = await getCurrentUser().then(res => res.data)
+
+		await removeFriend(user.id).then(() => {
+			setIsFriend(false)
+			setRequestAddFriendIsSend(false)
+			setRequestAddFriendIsGet(false)
+			notificationWs.send(JSON.stringify({
+				type: 'remove_friend',
+				friend_id: user.id,
+				notification_sender_id: currentUser.id,
+				notification_sender_name: currentUser.username
+			}))
+		})
+	}
+
+
+	async function handleAddUserToFriendRejected() {
+		
+	}
+	
+	async function handleOk(){
 		try {
 			const values = await form.validateFields();
 			const formData = new FormData();
@@ -49,7 +109,7 @@ export default function UserProfileInfo({ user, currentUserProfile }) {
 			console.error(err);
 		}
 		setIsModalVisible(false);
-	};
+	}
 
 	return (
 		<div >
@@ -92,8 +152,28 @@ export default function UserProfileInfo({ user, currentUserProfile }) {
 							</Typography.Paragraph>
 						}
 					></Card.Meta>
-					{currentUserProfile && <Button onClick={showModal}>Редактировать профиль</Button>}
-					{!currentUserProfile && <Button type='primary' onClick={addToFriends}>Добавить в друзья</Button>}
+					{currentUserProfile ? (
+						<Button onClick={showModal}>Редактировать профиль</Button>
+						) : (
+								<>
+									{(!isFriend && !requestAddFriendIsSend && !requestAddFriendIsGet) && (
+										<Button type='primary' onClick={handleAddToFriendsRequest}>
+											Добавить в друзья
+										</Button>
+									)}
+									{(!isFriend && requestAddFriendIsGet) && (
+										<Button onClick={handleAddUserToFriendAccept}>
+											Принять заявку
+										</Button>
+									)}
+									{isFriend && (
+										<Button type='primary' onClick={handleRemoveFriend}>
+											Удалить из друзей
+										</Button>
+									)}
+								</>
+							)
+					}
 				</div>
 			</Card>
 			<Modal

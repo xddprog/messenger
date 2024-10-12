@@ -7,21 +7,39 @@ import FollowingList from '../../../components/profile/following/FollowingList.j
 import Navigation from '../../../components/profile/navigation/navigation.jsx';
 import { getCurrentUser } from '../../../requests/api/auth.js';
 import { getOtherUser } from '../../../requests/api/users.js';
-export default function Profile({ currentUserProfile }) {
+export default function Profile({ currentUserProfile, notificationWs }) {
 	const [user, setUser] = useState([]);
 	const { userId } = useParams()
+	const [requestAddFriendIsSend, setRequestAddFriendIsSend] = useState(false)
+	const [requestAddFriendIsGet, setRequestAddFriendIsGet] = useState(false)
+	const [isFriend, setIsFriend] = useState(false)
 
 	useEffect(() => {
 		if (currentUserProfile) {
 			getCurrentUser().then((res) => setUser(res.data));
 		} else {
-			getOtherUser(userId).then((res) => setUser(res.data));
+			getOtherUser(userId).then((res) => {
+				setRequestAddFriendIsSend(res.data.request_add_friend_is_send)
+				setRequestAddFriendIsGet(res.data.request_add_friend_is_get)
+				setUser(res.data.current_user)
+				setIsFriend(res.data.is_friend)
+			});
 		}
 	}, [currentUserProfile, userId]);
 
 	return (
 		<>
-			<UserProfileInfo user={user} currentUserProfile={currentUserProfile} />
+			<UserProfileInfo 
+				user={user} 
+				currentUserProfile={currentUserProfile} 
+				notificationWs={notificationWs} 
+				requestAddFriendIsSend={requestAddFriendIsSend}
+				requestAddFriendIsGet={requestAddFriendIsGet}
+				setRequestAddFriendIsSend={setRequestAddFriendIsSend}
+				setRequestAddFriendIsGet={setRequestAddFriendIsGet}
+				isFriend={isFriend}
+				setIsFriend={setIsFriend}
+			/>
 			<div className='grid grid-cols-[60%,40%] gap-1'>
 				<div className=''>
 					<Navigation user={user} currentUserProfile={currentUserProfile} />

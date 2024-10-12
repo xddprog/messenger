@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.utils.dependencies import get_current_user_dependency
+from backend.utils.dependencies.dependencies import get_current_user_dependency
 from backend.utils.websocket_manager import WebSocketManager
 from backend.utils.redis_cache import RedisCache
 from backend.utils.config.config import load_database_config, load_redis_config
@@ -21,7 +21,9 @@ from backend.routers import (
 async def lifespan(app: FastAPI):
     app.state.redis_cache = await RedisCache(config=load_redis_config())()
     app.state.websocket_manager = WebSocketManager()
-    app.state.db_connection = await DatabaseConnection(load_database_config())()
+    app.state.db_connection = await DatabaseConnection(
+        load_database_config()
+    )()
 
     yield
 
@@ -32,7 +34,12 @@ app = FastAPI(lifespan=lifespan)
 PROTECTED = Depends(get_current_user_dependency)
 
 
-origins = ["http://localhost:5173", "https://messenger-five-blush.vercel.app", "https://messenger-xddprogs-projects.vercel.app", "https://messenger-git-main-xddprogs-projects.vercel.app"]
+origins = [
+    "http://localhost:5173",
+    "https://messenger-five-blush.vercel.app",
+    "https://messenger-xddprogs-projects.vercel.app",
+    "https://messenger-git-main-xddprogs-projects.vercel.app",
+]
 
 
 app.add_middleware(
@@ -45,7 +52,7 @@ app.add_middleware(
 
 
 app.include_router(auth_router)
-app.include_router(users_router, dependencies=[PROTECTED])
+app.include_router(users_router, dependencies=[])
 app.include_router(chats_router)
 app.include_router(posts_router, dependencies=[PROTECTED])
 app.include_router(comment_router, dependencies=[PROTECTED])

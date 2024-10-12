@@ -120,16 +120,16 @@ export default function Post({ post, updatePost, isCreator }) {
 								{post.views}
 							</p>
 							{isCreator ? (
-							<Dropdown
-								className="w-[30px] h-[30px]"
-								menu={{
-									items,
-								}}
-							>
-								<a onClick={(e) => e.preventDefault()} className="ml-3">
-									<EllipsisOutlined className="text-3xl"/>
-								</a>
-							</Dropdown>
+								<Dropdown
+									className="w-[30px] h-[30px]"
+									menu={{
+										items,
+									}}
+								>
+									<a onClick={(e) => e.preventDefault()} className="ml-3">
+										<EllipsisOutlined className="text-3xl"/>
+									</a>
+								</Dropdown>
 						): ''}
 						</div>
 					</div>

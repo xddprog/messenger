@@ -5,3 +5,4 @@ from backend.repositories.chat_repository import ChatRepository
 from backend.repositories.message_repository import MessageRepository
 from backend.repositories.comment_repository import CommentRepository
 from backend.repositories.group_repository import GroupRepository
+from backend.repositories.notification_repository import NotificationRepository

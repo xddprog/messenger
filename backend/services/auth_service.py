@@ -61,7 +61,7 @@ class AuthService(BaseService):
             data, self.config.jwt_secret, algorithm=self.config.algorithm
         )
 
-        return token.decode()
+        return token
 
     async def verify_token(self, token: HTTPBearer) -> dict[str, str]:
         try:

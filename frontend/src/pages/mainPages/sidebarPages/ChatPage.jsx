@@ -100,7 +100,6 @@ export default function ChatPage() {
 
     useEffect(() => {
         getUserChats().then(response => {
-            // console.log(response.data)
             setChats([...chats, ...response.data])
         })
     }, []);
@@ -110,7 +109,7 @@ export default function ChatPage() {
         setOpenedChat(chat)
         setWs(
             // new WebSocket(`ws://localhost:5000/api/chats/ws/${chat.id}/${user_id}`)
-            new WebSocket(`wss://messenger-oe3m.onrender.com/api/chats/ws/${chat.id}/${user_id}`)
+            new WebSocket(`ws://localhost:8000/api/chats/ws/${chat.id}/${user_id}`)
         )
     }
 

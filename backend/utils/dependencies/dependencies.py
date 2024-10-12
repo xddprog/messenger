@@ -1,9 +1,10 @@
 from typing import Annotated, AsyncGenerator
 
-from fastapi import Depends, Request
+from fastapi import Depends
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from aiobotocore.session import AioSession
+from starlette.requests import HTTPConnection
 
 import backend.services as services
 import backend.repositories as repositories
@@ -12,12 +13,15 @@ from backend.dto.user_dto import BaseUserModel
 from backend.services import AuthService
 from backend.utils.config.config import load_s3_storage_config
 from backend.utils.s3_client import S3Client
+from backend.utils.websocket_manager import WebSocketManager
 
 
 bearer = HTTPBearer(auto_error=False)
 
 
-async def get_session(request: Request) -> AsyncGenerator[AsyncSession, None]:
+async def get_session(
+    request: HTTPConnection,
+) -> AsyncGenerator[AsyncSession, None]:
     session = await request.app.state.db_connection.get_session()
     try:
         yield session
@@ -25,8 +29,12 @@ async def get_session(request: Request) -> AsyncGenerator[AsyncSession, None]:
         await session.close()
 
 
-async def get_redis(request: Request) -> RedisCache:
+async def get_redis(request: HTTPConnection) -> RedisCache:
     return request.app.state.redis_cache
+
+
+async def get_websocket_manager(websocket: HTTPConnection) -> WebSocketManager:
+    return websocket.app.state.websocket_manager
 
 
 async def get_s3_client():
@@ -113,5 +121,14 @@ async def get_group_service(
 ):
     return services.GroupService(
         repository=repositories.GroupRepository(session=session),
+        s3_client=s3_client,
+    )
+
+
+async def get_notification_service(
+    session=Depends(get_session), s3_client=Depends(get_s3_client)
+):
+    return services.NotificationService(
+        repository=repositories.NotificationRepository(session=session),
         s3_client=s3_client,
     )

@@ -9,7 +9,7 @@ from backend.dto.comment_dto import CommentModel
 from backend.dto.post_dto import PostModel
 from backend.dto.user_dto import BaseUserModel
 from backend.services.comment_service import CommentService
-from backend.utils.dependencies import (
+from backend.utils.dependencies.dependencies import (
     get_comment_service,
     get_current_user_dependency,
     get_post_service,

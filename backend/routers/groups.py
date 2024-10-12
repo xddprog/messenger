@@ -7,7 +7,7 @@ from pydantic import UUID4
 from backend.dto.user_dto import BaseUserModel
 from backend.services.group_service import GroupService
 from backend.services.user_service import UserService
-from backend.utils.dependencies import (
+from backend.utils.dependencies.dependencies import (
     get_current_user_dependency,
     get_group_service,
     get_user_service,

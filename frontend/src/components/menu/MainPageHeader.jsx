@@ -6,8 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import { logoutUser } from '../../requests/api/auth';
 import { searchUser } from '../../requests/api/users';
 import AppLogo from '../logo/AppLogo';
+import NotificationDropdown from '../dropdowns/NotificationDropdown';
 
-export default function MainPageHeader() {
+export default function MainPageHeader({notifications}) {
 	const navigate = useNavigate();
 	const [users, setUsers] = useState([]);
 	const items = [
@@ -83,26 +84,11 @@ export default function MainPageHeader() {
 											</div>
 										</a>
 									),
-								}))
-								}
+								}))}
 							/>
-
 						</div>
 						<div style={{ display: 'flex', alignItems: 'center' }}>
-							<button
-								style={{
-									background: 'none',
-									border: 'none',
-									padding: 0,
-									cursor: 'pointer',
-								}}
-							>
-								<IoMdNotificationsOutline
-									size={'30px'}
-									color='#fff'
-									style={{ marginLeft: '30px', marginRight: '10px' }}
-								/>
-							</button>
+							<NotificationDropdown notifications={notifications}/>
 							<button
 								style={{
 									background: 'none',
@@ -118,13 +104,11 @@ export default function MainPageHeader() {
 				</div>
 				<Dropdown menu={{ items }}>
 					<Avatar
-						className='cursor-pointer'
+						className='cursor-pointer min-w-[36px] min-h-[36px]'
 						key='avatar'
 						src={localStorage.getItem('avatar') ?? ''}
 						alt='profile-image'
-						size={36}
 					/>
-
 				</Dropdown>
 			</div>
 		</div>

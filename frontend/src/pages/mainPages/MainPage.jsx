@@ -1,21 +1,23 @@
 import { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import MainPageHeader from '../../components/menu/MainPageHeader';
 import SideBar from '../../components/menu/SideBar';
 import { getCurrentUser } from '../../requests/api/auth';
 
-export default function MainPage() {
+export default function MainPage({ notifications }) {
+	const navigate = useNavigate();
+
 	useEffect(() => {
 		getCurrentUser().then((res) => {
 			localStorage.setItem('avatar', res.data.avatar);
-		})
+		}).catch(err => navigate('/login'))
 	})
 	return (
 		<div style={{ backgroundColor: '#1e2022', height: '100vh' }}>
 			<header
 				style={{ position: 'fixed', zIndex: 1, width: '100%', padding: 0 }}
 			>
-				<MainPageHeader />
+				<MainPageHeader notifications={notifications}/>
 			</header>
 			<div
 				style={{

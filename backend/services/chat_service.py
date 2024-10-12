@@ -9,8 +9,11 @@ from backend.repositories import ChatRepository
 class ChatService(BaseService):
     repository: ChatRepository
 
-    async def get_chat(self, chat_id: UUID4) -> Chat | None:
-        return await self.repository.get_item(chat_id)
+    async def get_chat(
+        self, chat_id: UUID4, dump: bool = False
+    ) -> Chat | None:
+        chat = await self.repository.get_item(chat_id)
+        return chat if dump else await self.model_dump(chat, BaseChatModel)
 
     async def create_chat(self, form: CreateChatForm) -> BaseChatModel:
         new_chat = await self.repository.add_item(**form.model_dump())

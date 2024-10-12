@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from pydantic import UUID4
 
 from backend.database.models import Comment, User
@@ -45,7 +43,7 @@ class PostService(BaseService):
 
     async def like_post(self, post_id: UUID4, user: User) -> PostModel:
         post = await self.repository.get_item(post_id)
-        
+
         await self.check_item(post, PostNotFound)
 
         await self.repository.like_post(post, user)

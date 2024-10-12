@@ -2,6 +2,7 @@ from uuid import uuid4
 from pydantic import UUID4
 
 from backend.dto.group_dto import BaseGroupModel
+from backend.dto.notification_dto import BaseNotificationModel
 from backend.errors.user_errors import UserAlreadyHaveThisFriend, UserNotFound
 from backend.database.models import User
 from backend.dto.post_dto import PostModel
@@ -21,9 +22,12 @@ class UserService(BaseService):
         users = await self.repository.get_all_items()
         return await self.dump_items(users, BaseUserModel)
 
-    async def get_user(self, user_id: str) -> User:
+    async def get_user(self, user_id: str, check_exists: bool = False, dump: bool = False) -> User:
         user = await self.repository.get_item(user_id)
-        return user
+        if check_exists:
+            await self.check_item(user, UserNotFound)
+
+        return user if not dump else await self.model_dump(user, BaseUserModel)
 
     async def get_user_chats(self, user_id: str) -> list[UUID4]:
         user = await self.repository.get_item(user_id)
@@ -52,6 +56,22 @@ class UserService(BaseService):
             await self.model_dump(group, BaseGroupModel)
             for group in user.user_admined_groups
         ]
+
+    async def get_user_unreaded_notifications(
+        self, user_id: str, limit: int, offset: int
+    ) -> list[UUID4]:
+        user = await self.repository.get_item(user_id)
+
+        return (
+            await self.dump_items(
+                [
+                    notification
+                    for notification in user.notifications
+                    if not notification.is_read
+                ],
+                BaseNotificationModel,
+            )
+        )[offset : limit + offset]
 
     async def add_friend(self, user_id: str, friend_id: str) -> None:
         user = await self.repository.get_item(user_id)
@@ -93,7 +113,9 @@ class UserService(BaseService):
     async def search_users(
         self, username: str, current_user_id: str, **kwargs
     ) -> list[BaseUserModel] | None:
-        users = await self.repository.search_users(username, current_user_id, **kwargs)
+        users = await self.repository.search_users(
+            username, current_user_id, **kwargs
+        )
         return await self.dump_items(users, BaseUserModel) if users else []
 
     async def update_user_profile(

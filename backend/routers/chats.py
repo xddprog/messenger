@@ -7,10 +7,11 @@ from starlette.websockets import WebSocketDisconnect, WebSocket
 from backend.dto.chat_dto import BaseChatModel, CreateChatForm
 from backend.dto.message_dto import MessageModel
 from backend.services import ChatService, MessageService, UserService
-from backend.utils.dependencies import (
+from backend.utils.dependencies.dependencies import (
     get_chat_service,
     get_message_service,
     get_user_service,
+    get_websocket_manager,
 )
 from backend.utils.websocket_manager import WebSocketManager
 
@@ -28,9 +29,6 @@ router = APIRouter(
 )
 
 
-manager = WebSocketManager()
-
-
 @router.post("/create", status_code=201)
 async def create_chat(
     form: CreateChatForm,
@@ -38,7 +36,8 @@ async def create_chat(
     user_service: Annotated[UserService, Depends(get_user_service)],
 ) -> BaseChatModel:
     form.users = [
-        await user_service.get_user(user_id) for user_id in form.users
+        await user_service.get_user(user_id, check_exists=True)
+        for user_id in form.users
     ]
     return await chat_service.create_chat(form)
 
@@ -60,6 +59,7 @@ async def websocket_endpoint(
     chat_service: Annotated[ChatService, Depends(get_chat_service)],
     message_service: Annotated[MessageService, Depends(get_message_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
+    manager: Annotated[WebSocketManager, Depends(get_websocket_manager)],
 ):
     await manager.connect(websocket)
 

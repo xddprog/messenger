@@ -6,3 +6,4 @@ from backend.services.chat_service import ChatService
 from backend.services.message_service import MessageService
 from backend.services.comment_service import CommentService
 from backend.services.group_service import GroupService
+from backend.services.notification_service import NotificationService

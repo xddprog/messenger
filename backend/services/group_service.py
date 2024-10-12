@@ -1,4 +1,3 @@
-from click import group
 from fastapi import UploadFile
 from pydantic import UUID4
 from backend.database.models import User
@@ -18,7 +17,7 @@ class GroupService(BaseService):
     @staticmethod
     async def create_group_cover_url(group_id: UUID4) -> str:
         return f"groups/{group_id}/covers/"
-    
+
     async def get_all_groups(self) -> list:
         groups = await self.repository.get_all_items()
         return await self.dump_items(groups, BaseGroupModel)
@@ -29,15 +28,17 @@ class GroupService(BaseService):
         await self.check_item(group, GroupNotFound)
 
         return self.model_dump(group, GroupModel)
-    
+
     async def get_user_groups(self, user_id: str) -> list[BaseGroupModel]:
         groups = await self.repository.get_user_groups(user_id)
 
         return await self.dump_items(groups, BaseGroupModel)
-    
-    async def get_user_admined_groups(self, user_id: str) -> list[BaseGroupModel]:
+
+    async def get_user_admined_groups(
+        self, user_id: str
+    ) -> list[BaseGroupModel]:
         groups = await self.repository.get_user_admined_groups(user_id)
-        
+
         return await self.dump_items(groups, BaseGroupModel)
 
     async def create_group(
@@ -47,12 +48,11 @@ class GroupService(BaseService):
         description: str,
         avatar: UploadFile | None,
         cover: UploadFile | None,
-        creator: User
+        creator: User,
     ) -> BaseGroupModel:
         if avatar:
             avatar = await self.s3_client.upload_one_file(
-                file=avatar,
-                path=await self.create_group_avatar_url(id)
+                file=avatar, path=await self.create_group_avatar_url(id)
             )
 
         if cover:
@@ -67,7 +67,7 @@ class GroupService(BaseService):
             description=description,
             avatar=avatar,
             cover=cover,
-            creator=creator
+            creator=creator,
         )
         return await self.model_dump(new_group, BaseGroupModel)
 

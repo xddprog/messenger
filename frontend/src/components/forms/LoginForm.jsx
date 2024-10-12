@@ -13,7 +13,7 @@ export default function LoginForm() {
 			const values = await form[0].validateFields();
 			const response = await loginUser(values).then((r) => r);
 
-			localStorage.setItem('user_id', response.data.id);
+			localStorage.setItem('user_id', response.data.user.id);
 			localStorage.setItem('token', response.data.token);
 
 			messageApi.open({

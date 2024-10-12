@@ -1,7 +1,4 @@
-from re import sub
-from uuid import uuid4
-from fastapi import UploadFile
-from pydantic import UUID4, BaseModel, Field, field_validator
+from pydantic import UUID4, BaseModel
 
 from backend.dto.user_dto import BaseUserModel
 

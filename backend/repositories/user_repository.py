@@ -1,4 +1,3 @@
-from pydantic import UUID4
 from sqlalchemy import select, update
 
 from backend.database.models import User
@@ -30,10 +29,15 @@ class UserRepository(SqlAlchemyRepository):
 
         await self.session.commit()
 
-    async def search_users(self, username: str, current_user_id: str, **kwargs: str) -> list[User]:
+    async def search_users(
+        self, username: str, current_user_id: str, **kwargs: str
+    ) -> list[User]:
         query = (
             select(self.model)
-            .where(self.model.username.contains(username), self.model.id != current_user_id)
+            .where(
+                self.model.username.contains(username),
+                self.model.id != current_user_id,
+            )
             .filter_by(**kwargs)
         )
 

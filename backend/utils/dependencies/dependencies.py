@@ -8,12 +8,12 @@ from starlette.requests import HTTPConnection
 
 import backend.services as services
 import backend.repositories as repositories
-from backend.utils.redis_cache import RedisCache
 from backend.dto.user_dto import BaseUserModel
 from backend.services import AuthService
 from backend.utils.config.config import load_s3_storage_config
+from backend.utils.redis_cache import RedisCache
 from backend.utils.s3_client import S3Client
-from backend.utils.websocket_manager import WebSocketManager
+from backend.utils.websockets.notification_manager import NotificationsManager
 
 
 bearer = HTTPBearer(auto_error=False)
@@ -33,8 +33,12 @@ async def get_redis(request: HTTPConnection) -> RedisCache:
     return request.app.state.redis_cache
 
 
-async def get_websocket_manager(websocket: HTTPConnection) -> WebSocketManager:
-    return websocket.app.state.websocket_manager
+async def get_notifications_manager(websocket: HTTPConnection) -> NotificationsManager:
+    return websocket.app.state.notifications_manager
+
+
+async def get_chats_manager(websocket: HTTPConnection) -> NotificationsManager:
+    return websocket.app.state.chats_manager
 
 
 async def get_s3_client():

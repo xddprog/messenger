@@ -8,10 +8,10 @@ class NotificationRepository(SqlAlchemyRepository):
     model = Notification
 
     async def get_item(
-        self, 
-        notification_sender_id: str, 
-        notification_user_id: str, 
-        notification_type: str
+        self,
+        notification_sender_id: str,
+        notification_user_id: str,
+        notification_type: str,
     ) -> Notification | None:
         query = select(self.model).where(
             self.model.notification_type == notification_type,
@@ -21,7 +21,7 @@ class NotificationRepository(SqlAlchemyRepository):
 
         notification = await self.session.execute(query)
         notification = notification.scalars().all()[0]
-        
+
         return notification
 
     async def add_item(self, **kwargs) -> Notification:

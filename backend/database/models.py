@@ -46,6 +46,9 @@ class User(Base):
         uselist=True,
         lazy="selectin",
     )
+    created_chats: Mapped[list["Chat"]] = relationship(
+        back_populates="creator", uselist=True, lazy="selectin"
+    )
     messages: Mapped[list["Message"]] = relationship(
         back_populates="user", uselist=True, lazy="selectin"
     )
@@ -173,6 +176,11 @@ class Chat(Base):
     id: Mapped[UUID4] = mapped_column(primary_key=True)
     title: Mapped[str]
     avatar: Mapped[str]
+    creator: Mapped["User"] = relationship(
+        back_populates="created_chats",
+        uselist=False,
+        lazy="selectin",
+    )
 
     users: Mapped[list["User"]] = relationship(
         back_populates="chats",
@@ -183,6 +191,8 @@ class Chat(Base):
     messages: Mapped[list["Message"]] = relationship(
         back_populates="chat", uselist=True, lazy="selectin"
     )
+
+    creator_fk: Mapped[str] = mapped_column(ForeignKey("users.id"))
 
 
 class Tag(Base):

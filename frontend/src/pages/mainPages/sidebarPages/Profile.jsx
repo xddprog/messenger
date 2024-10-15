@@ -15,6 +15,7 @@ export default function Profile({ currentUserProfile, notificationWs }) {
 	const [isFriend, setIsFriend] = useState(false)
 
 	useEffect(() => {
+		
 		if (currentUserProfile) {
 			getCurrentUser().then((res) => setUser(res.data));
 		} else {
@@ -46,7 +47,11 @@ export default function Profile({ currentUserProfile, notificationWs }) {
 					<UserPosts currentUserProfile={currentUserProfile} userId={userId} />
 				</div>
 				<div className=''>
-					<FriendList currentUserProfile={currentUserProfile} userId={userId} />
+					<FriendList 
+						currentUserProfile={currentUserProfile} 
+						userId={userId}
+						notificationWs={notificationWs}
+					/>
 					<FollowingList currentUserProfile={currentUserProfile} userId={userId} />
 				</div>
 			</div>

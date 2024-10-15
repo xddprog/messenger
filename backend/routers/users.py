@@ -19,20 +19,20 @@ from backend.services.group_service import GroupService
 from backend.services.notification_service import NotificationService
 from backend.services.post_service import PostService
 from backend.utils.config.enums import NotificationType
-from backend.utils.redis_cache import RedisCache
 from backend.dto.chat_dto import BaseChatModel
 from backend.services import UserService, ChatService
 from backend.utils.dependencies.dependencies import (
     get_current_user_dependency,
     get_group_service,
     get_notification_service,
+    get_notifications_manager,
     get_post_service,
     get_redis,
     get_user_service,
     get_chat_service,
-    get_websocket_manager,
 )
-from backend.utils.websocket_manager import WebSocketManager
+from backend.utils.redis_cache import RedisCache
+from backend.utils.websockets.notification_manager import NotificationsManager
 
 
 router = APIRouter(prefix="/api/user", tags=["users"])
@@ -209,7 +209,7 @@ async def update_user_profile(
 async def websocket_endpoint(
     websocket: WebSocket,
     user_id: str,
-    manager: Annotated[WebSocketManager, Depends(get_websocket_manager)],
+    manager: Annotated[NotificationsManager, Depends(get_notifications_manager)],
     user_service: Annotated[UserService, Depends(get_user_service)],
     notification_service: Annotated[
         NotificationService, Depends(get_notification_service)
@@ -220,7 +220,7 @@ async def websocket_endpoint(
         while True:
             data = await websocket.receive_json()
             current_user = await user_service.get_user(user_id, dump=True)
-            
+
             if data["type"] == NotificationType.ADD_FRIEND.value:
                 send_to_user = await user_service.get_user(data["friend_id"])
                 new_notification = await notification_service.create_notification(
@@ -235,7 +235,7 @@ async def websocket_endpoint(
                 await notification_service.delete_notification(
                     data["friend_id"],
                     data["notification_sender_id"],
-                    NotificationType.ADD_FRIEND.value
+                    NotificationType.ADD_FRIEND.value,
                 )
                 send_to_user = await user_service.get_user(data["friend_id"])
                 new_notification = await notification_service.create_notification(
@@ -250,7 +250,7 @@ async def websocket_endpoint(
                 await notification_service.delete_notification(
                     data["friend_id"],
                     data["notification_sender_id"],
-                    NotificationType.ADD_FRIEND_ACCEPT.value
+                    NotificationType.ADD_FRIEND_ACCEPT.value,
                 )
                 new_notification = BaseNotificationModel(
                     notification_sender_id=data["notification_sender_id"],
@@ -258,8 +258,10 @@ async def websocket_endpoint(
                     message=f"{data['notification_sender_name']} удалил вас из друзей",
                     image=current_user.avatar,
                     notification_type=NotificationType.REMOVE_FRIEND.value,
-                    is_read=False
+                    is_read=False,
                 )
-            await manager.send_notification(data["friend_id"], new_notification)
+            await manager.send_notification(
+                data["friend_id"], new_notification
+            )
     except WebSocketDisconnect:
         manager.disconnect(user_id)

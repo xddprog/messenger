@@ -4,8 +4,6 @@ from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.utils.dependencies.dependencies import get_current_user_dependency
-from backend.utils.websocket_manager import WebSocketManager
-from backend.utils.redis_cache import RedisCache
 from backend.utils.config.config import load_database_config, load_redis_config
 from backend.database.connection import DatabaseConnection
 from backend.routers import (
@@ -16,11 +14,15 @@ from backend.routers import (
     comment_router,
     group_router,
 )
+from backend.utils.redis_cache import RedisCache
+from backend.utils.websockets.chats_manager import ChatsManager
+from backend.utils.websockets.notification_manager import NotificationsManager
 
 
 async def lifespan(app: FastAPI):
     app.state.redis_cache = await RedisCache(config=load_redis_config())()
-    app.state.websocket_manager = WebSocketManager()
+    app.state.notifications_manager = NotificationsManager()
+    app.state.chats_manager = ChatsManager()
     app.state.db_connection = await DatabaseConnection(
         load_database_config()
     )()
@@ -53,7 +55,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(users_router, dependencies=[])
-app.include_router(chats_router)
+app.include_router(chats_router, dependencies=[])
 app.include_router(posts_router, dependencies=[PROTECTED])
 app.include_router(comment_router, dependencies=[PROTECTED])
 app.include_router(group_router, dependencies=[PROTECTED])

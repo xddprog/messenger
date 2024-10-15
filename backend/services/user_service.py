@@ -22,7 +22,9 @@ class UserService(BaseService):
         users = await self.repository.get_all_items()
         return await self.dump_items(users, BaseUserModel)
 
-    async def get_user(self, user_id: str, check_exists: bool = False, dump: bool = False) -> User:
+    async def get_user(
+        self, user_id: str, check_exists: bool = False, dump: bool = False
+    ) -> User:
         user = await self.repository.get_item(user_id)
         if check_exists:
             await self.check_item(user, UserNotFound)

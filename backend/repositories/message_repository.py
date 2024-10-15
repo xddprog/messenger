@@ -15,6 +15,9 @@ class MessageRepository(SqlAlchemyRepository):
         chat.messages.append(message)
 
         await self.session.commit()
+        await self.session.refresh(message)
+        await self.session.refresh(user)
+        await self.session.refresh(chat)
 
         return message
 

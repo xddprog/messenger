@@ -101,7 +101,6 @@ export default function UserProfileInfo(
 
 			if (fileList.length > 0) {
 				formData.append('avatar', fileList[0].originFileObj);
-				console.log(true);
 			}
 
 			await updateUserProfile(formData);
@@ -152,28 +151,31 @@ export default function UserProfileInfo(
 							</Typography.Paragraph>
 						}
 					></Card.Meta>
-					{currentUserProfile ? (
-						<Button onClick={showModal}>Редактировать профиль</Button>
-						) : (
-								<>
-									{(!isFriend && !requestAddFriendIsSend && !requestAddFriendIsGet) && (
-										<Button type='primary' onClick={handleAddToFriendsRequest}>
-											Добавить в друзья
-										</Button>
-									)}
-									{(!isFriend && requestAddFriendIsGet) && (
-										<Button onClick={handleAddUserToFriendAccept}>
-											Принять заявку
-										</Button>
-									)}
-									{isFriend && (
-										<Button type='primary' onClick={handleRemoveFriend}>
-											Удалить из друзей
-										</Button>
-									)}
-								</>
-							)
-					}
+					<div className='flex gap-3'>
+						{currentUserProfile ? (
+							<Button onClick={showModal}>Редактировать профиль</Button>
+							) : (
+									<>
+										{(!isFriend && !requestAddFriendIsSend && !requestAddFriendIsGet) && (
+											<Button type='primary' onClick={handleAddToFriendsRequest}>
+												Добавить в друзья
+											</Button>
+										)}
+										{(!isFriend && requestAddFriendIsGet) && (
+											<Button onClick={handleAddUserToFriendAccept}>
+												Принять заявку
+											</Button>
+										)}
+										{isFriend && (
+											<Button type='primary' onClick={handleRemoveFriend}>
+												Удалить из друзей
+											</Button>
+										)}
+									</>
+								)
+						}
+						{!currentUserProfile && <Button>Написать</Button>}
+					</div>
 				</div>
 			</Card>
 			<Modal

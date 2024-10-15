@@ -2,7 +2,7 @@ import axios from "axios";
 import { API_URL} from "../settings.js";
 
 
-const BASE_URL = `${API_URL}/api/chats`
+const BASE_URL = `${API_URL}/api/chat`
 
 
 export async function getChatMessages(chatId) {
@@ -16,3 +16,15 @@ export async function getChatMessages(chatId) {
     ).then(response => response);
 }
 
+export async function createChat(values) {
+    return await axios.post(
+        `${BASE_URL}`,
+        values,
+        {
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('token'),
+                "content-type": "multipart/form-data"
+            },
+        }
+    )
+}

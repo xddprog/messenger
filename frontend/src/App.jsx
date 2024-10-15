@@ -11,6 +11,7 @@ import useNotification from 'antd/es/notification/useNotification.js';
 import { useEffect, useState } from 'react';
 import { getUserUnReadedNotifications } from './requests/api/users.js';
 import useMessage from 'antd/es/message/useMessage.js';
+import GroupPage from './pages/otherPages/GroupPage.jsx';
 
 export default function App() {
 	const [notification, notificationHolder] = useNotification()
@@ -34,6 +35,11 @@ export default function App() {
 		}
 
 		setNotificationWs(ws)
+
+		return () => {
+			ws.close()
+		}
+		
 	}, [])
 
 	function updateNotifications(notification) {
@@ -68,7 +74,13 @@ export default function App() {
 				<Routes>
 					<Route path='/register' element={<RegisterPage />} />
 					<Route path='/login' element={<LoginPage />} />
-					<Route path='/*' element={<MainPage notifications={allNotifications} />}>
+					<Route path='/*' element={
+							<MainPage 
+								notifications={allNotifications} 
+								notificationWs={notificationWs}
+							/>
+						}
+					>
 						<Route path='posts' element={<PostsPage />} />
 						<Route path='chats' element={<ChatPage />} />
 						<Route 
@@ -90,6 +102,7 @@ export default function App() {
 								/>
 							} 
 						/>
+						<Route path='groups/:groupId' element={<GroupPage />}/>
 					</Route>
 				</Routes>
 			</BrowserRouter>

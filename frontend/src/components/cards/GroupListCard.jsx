@@ -1,8 +1,15 @@
 import {  EllipsisOutlined } from "@ant-design/icons"
 import { Avatar, Dropdown, List } from "antd"
 import Title from "antd/es/typography/Title"
+import { useNavigate } from "react-router-dom";
 
 function GropListCard({group}) {
+
+    const navigate = useNavigate();
+
+    function handleClickGroup() {
+        navigate(`/groups/${group.id}`);
+    }
     const items = [
         {
             key: 'unsubscribe',
@@ -49,12 +56,11 @@ function GropListCard({group}) {
         } else if (amount % 10 >= 2 && amount % 10 <= 4 && (amount % 100 < 10 || amount % 100 >= 20)) {
             variant = 1; 
         }
-    
         return `${amount} ${variants[variant]}`;
     }
 
     return (
-        <List.Item>
+        <List.Item onClick={handleClickGroup}>
             <List.Item.Meta
                 avatar={<Avatar size={72} src={group.avatar} className='cursor-pointer'/>}
                 description={
@@ -64,12 +70,7 @@ function GropListCard({group}) {
                             <p>{group.description}</p>
                             <p>{choosePlural(group.users.length, ['подписчик', 'подписчика', 'подписчиков'])}</p>
                         </div>
-                        <Dropdown
-                            className="w-[30px] h-[30px]"
-                            menu={{
-                                items,
-                            }}
-                        >
+                        <Dropdown className="w-[30px] h-[30px]" menu={{ items }}>
                             <a onClick={(e) => e.preventDefault()} className="m-0">
                                 <EllipsisOutlined className="text-3xl"/>
                             </a>

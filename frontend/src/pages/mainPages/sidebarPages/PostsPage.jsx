@@ -33,7 +33,7 @@ export default function PostsPage() {
 				style={{ marginTop: '10px', width: '100%' }}
 				className='flex flex-col items-center'
 			>
-				{posts == null ? (
+				{posts.length == 0 ? (
 					<Empty description={<Typography.Text>Нет постов</Typography.Text>} />
 				) : (
 					posts.map((post) => (

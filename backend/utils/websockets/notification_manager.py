@@ -4,9 +4,9 @@ from backend.dto.message_dto import MessageModel
 from backend.dto.notification_dto import BaseNotificationModel
 
 
-class WebSocketManager:
+class NotificationsManager:
     def __init__(self, *args, **kwargs):
-        self.active_connections: dict[str, WebSocket] = {}
+        self.active_connections = {}
 
     async def connect(self, user_id: str, websocket: WebSocket):
         await websocket.accept()
@@ -16,8 +16,7 @@ class WebSocketManager:
         self.active_connections.pop(user_id)
 
     async def broadcast(self, message: MessageModel):
-        for connection in self.active_connections:
-            # await connection.send_json(message.model_dump())
+        for connection in self.active_connections.values():
             await connection.send_json(message)
 
     async def send_notification(

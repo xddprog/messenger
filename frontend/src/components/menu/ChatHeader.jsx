@@ -1,4 +1,4 @@
-import { Typography } from 'antd';
+import { Avatar, Typography } from 'antd';
 
 export default function ChatHeader({ chat }) {
 	return (
@@ -18,10 +18,10 @@ export default function ChatHeader({ chat }) {
 						display: 'flex',
 						justifyContent: 'space-between',
 						alignItems: 'center',
-						padding: '18px 20px 17.5px 20px',
+						padding: '17px 20px 17.5px 20px',
 					}}
 				>
-					<div
+					<div 
 						style={{
 							display: 'flex',
 							justifyContent: 'space-between',
@@ -31,24 +31,13 @@ export default function ChatHeader({ chat }) {
 						<Typography.Title level={5} style={{ margin: 0 }}>
 							{chat.title}
 						</Typography.Title>
-						<Typography.Paragraph
-							style={{ margin: '0px 0px 0px 10px', color: '#424242' }}
-						>
+						<Typography.Paragraph style={{ margin: '0px 0px 0px 10px', color: '#424242' }} >
 							{chat.users.length} участника(-ов)
 						</Typography.Paragraph>
 					</div>
 				</div>
 			</div>
-			<img
-				alt='chat-avatar'
-				style={{
-					width: '35px',
-					borderRadius: 100,
-					marginRight: 20,
-					cursor: 'pointer',
-				}}
-				src='/images/profile_example.jpg'
-			/>
+			<Avatar size={42} src={chat.avatar} className='mr-[5%]'/>
 		</div>
 	);
 }

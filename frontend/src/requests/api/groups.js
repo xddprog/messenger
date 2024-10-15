@@ -15,3 +15,13 @@ export async function createGroup(values) {
         })
         .then((response) => response.data);
 }
+
+export async function getGroup(groupId) {
+    return await axios
+        .get(`${BASE_URL}/${groupId}`, {
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('token'),
+            },
+        })
+        .then((response) => response.data);
+}

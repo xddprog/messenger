@@ -27,7 +27,7 @@ class GroupService(BaseService):
 
         await self.check_item(group, GroupNotFound)
 
-        return self.model_dump(group, GroupModel)
+        return await self.model_dump(group, GroupModel)
 
     async def get_user_groups(self, user_id: str) -> list[BaseGroupModel]:
         groups = await self.repository.get_user_groups(user_id)

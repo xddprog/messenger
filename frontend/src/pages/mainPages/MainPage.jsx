@@ -10,7 +10,7 @@ export default function MainPage({ notifications }) {
 	useEffect(() => {
 		getCurrentUser().then((res) => {
 			localStorage.setItem('avatar', res.data.avatar);
-		}).catch(err => navigate('/login'))
+		}).catch(() => navigate('/login'))
 	})
 	return (
 		<div style={{ backgroundColor: '#1e2022', height: '100vh' }}>
@@ -34,7 +34,7 @@ export default function MainPage({ notifications }) {
 					style={{
 						flex: 1,
 						boxSizing: 'border-box',
-						marginLeft: '23%',
+						marginLeft: '21.5%',
 						height: '100vh',
 					}}
 				>

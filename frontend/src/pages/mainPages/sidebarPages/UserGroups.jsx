@@ -1,4 +1,4 @@
-import { List, Radio } from 'antd';
+import { Empty, List, Radio, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import GropListCard from '../../../components/cards/GroupListCard';
 import InputWithIEmoji from '../../../components/inputs/InputWithIEmoji';
@@ -38,7 +38,7 @@ function UserGroups() {
     }
 
     return (
-        <div className='fixed w-[45%] h-[83%]'>
+        <div className='fixed w-[45%] max-h-[83%]'>
             <List className='bg-[#17191b] p-5 rounded-xl flex flex-col w-[100%] z-0 h-[105%] overflow-auto'>
                 <div className='mb-2'>
                     <div className='flex justify-between mb-3 align-middle'>
@@ -63,12 +63,17 @@ function UserGroups() {
                         setFieldValue={setSearchInputField}
                     />
                 </div>
-                {userGroups.map((group) => (
-                    <GropListCard
-                        key={group.title}
-                        group={group}
-                    />
-                ))}
+                {userGroups == 0 ? (
+                        <Empty description={<Typography.Text>Вы не подписаны ни на одну группу</Typography.Text>} />
+                    ) : (
+                        userGroups.map((group) => (
+                            <GropListCard
+                                key={group.title}
+                                group={group}
+                            />
+                        ))
+                    )
+                }
             </List>
         </div>
     );

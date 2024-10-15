@@ -8,7 +8,7 @@ import { searchUser } from '../../requests/api/users';
 import AppLogo from '../logo/AppLogo';
 import NotificationDropdown from '../dropdowns/NotificationDropdown';
 
-export default function MainPageHeader({notifications}) {
+export default function MainPageHeader({notifications, notificationWs}) {
 	const navigate = useNavigate();
 	const [users, setUsers] = useState([]);
 	const items = [
@@ -88,7 +88,7 @@ export default function MainPageHeader({notifications}) {
 							/>
 						</div>
 						<div style={{ display: 'flex', alignItems: 'center' }}>
-							<NotificationDropdown notifications={notifications}/>
+							<NotificationDropdown notifications={notifications} notificationWs={notificationWs}/>
 							<button
 								style={{
 									background: 'none',

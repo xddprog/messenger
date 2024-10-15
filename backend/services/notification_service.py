@@ -37,17 +37,17 @@ class NotificationService(BaseService):
         self,
         notification_sender_id: str,
         notification_user_id: str,
-        notification_type: str
+        notification_type: str,
     ):
         return await self.repository.get_item(
             notification_sender_id, notification_user_id, notification_type
-        )   
+        )
 
     async def delete_notification(
         self,
         notification_sender_id: str,
         notification_user_id: str,
-        notification_type: str
+        notification_type: str,
     ):
         notification = await self.get_notification(
             notification_sender_id, notification_user_id, notification_type

@@ -2,7 +2,7 @@ import Button from '../../ui/button';
 import { Image } from 'antd';
 
 
-export default function PhotosTab({images}) {
+export default function PhotosTab({images, currentUserProfile}) {
 	return (
 		<div className='flex flex-col gap-3'>
 			{!images || !Object.keys(images).length ? (
@@ -21,8 +21,8 @@ export default function PhotosTab({images}) {
 					))}
 				</div>
 			) : null}
-			<div className='controls grid grid-cols-2 gap-2 w-full'>
-				<Button style={{ width: '100%' }} title='Загрузить фото' />
+			<div className='controls grid grid-cols-2 gap-2'>
+				{currentUserProfile && <Button style={{ width: '100%' }} title='Загрузить фото' />}
 				<Button style={{ width: '100%' }} title='Показать все' />
 			</div>
 		</div>

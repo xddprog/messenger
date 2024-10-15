@@ -26,7 +26,7 @@ async def get_all_groups(
 
 @router.get("/{group_id}")
 async def get_one_group(
-    group_id: int,
+    group_id: str,
     group_service: Annotated[GroupService, Depends(get_group_service)],
 ):
     return await group_service.get_one_group(group_id)

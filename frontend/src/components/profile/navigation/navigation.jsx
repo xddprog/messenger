@@ -30,7 +30,7 @@ export default function Navigation({user, currentUserProfile}) {
 	const renderActiveTab = () => {
 		switch (activeTab) {
 			case 'photos':
-				return <PhotosTab images={user.images} />;
+				return <PhotosTab images={user.images} currentUserProfile={currentUserProfile} />;
 			case 'music':
 				return <MusicTab />;
 			case 'albums':

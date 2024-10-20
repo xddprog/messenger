@@ -52,6 +52,12 @@ class User(Base):
     messages: Mapped[list["Message"]] = relationship(
         back_populates="user", uselist=True, lazy="selectin"
     )
+    readed_messages: Mapped[list["Message"]] = relationship(
+        back_populates="users_who_readed",
+        secondary="users_readed_messages",
+        uselist=True,
+        lazy="selectin",
+    )
     liked_posts: Mapped[list["Post"]] = relationship(
         back_populates="likes",
         secondary="users_liked_posts",
@@ -82,7 +88,7 @@ class User(Base):
         uselist=True,
         lazy="selectin",
     )
-
+    
     group_fk: Mapped[UUID4 | None] = mapped_column(ForeignKey("groups.id"))
 
 
@@ -154,6 +160,7 @@ class Message(Base):
     message: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
     images: Mapped[list[str]] = mapped_column(ARRAY(String), default=[])
+    is_edited: Mapped[bool] = mapped_column(default=False)
 
     user_fk: Mapped[UUID4 | None] = mapped_column(
         ForeignKey("users.id"), default=None
@@ -167,6 +174,12 @@ class Message(Base):
     )
     chat: Mapped["Chat"] = relationship(
         back_populates="messages", uselist=False
+    )
+    users_who_readed: Mapped[list["User"]] = relationship(
+        back_populates="readed_messages",
+        secondary="users_readed_messages",
+        uselist=True,
+        lazy="selectin",
     )
 
 
@@ -270,9 +283,7 @@ class Notification(Base):
 
 class GroupTag(Base):
     __tablename__ = "group_tags"
-    tag_fk: Mapped[int] = mapped_column(
-        ForeignKey("tags.id"), primary_key=True
-    )
+    tag_fk: Mapped[int] = mapped_column(ForeignKey("tags.id"), primary_key=True)
     group_fk: Mapped[str] = mapped_column(
         ForeignKey("groups.id"), primary_key=True
     )
@@ -327,5 +338,13 @@ class UserNotifications(Base):
         ForeignKey("notifications.id"), primary_key=True
     )
 
+class UsersReadedMessages(Base):
+    __tablename__ = "users_readed_messages"
+    user_fk: Mapped[UUID4] = mapped_column(
+        ForeignKey("users.id"), primary_key=True
+    )
+    message_fk: Mapped[int] = mapped_column(
+        ForeignKey("messages.id"), primary_key=True
+    )
 
 ModelType = Type[User | Post | Message | Chat | Comment | Group | Notification]

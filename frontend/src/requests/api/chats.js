@@ -28,3 +28,26 @@ export async function createChat(values) {
         }
     )
 }
+
+export async function deleteMessage(chatId, messageId) {
+    return await axios.delete(
+        `${BASE_URL}/${chatId}/messages/${messageId}`,
+        {
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('token'),
+            },
+        }
+    )
+}
+
+export async function editMessage(chatId, messageId, values) {
+    return await axios.put(
+        `${BASE_URL}/${chatId}/messages/${messageId}`,
+        values,
+        {
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('token'),
+            },
+        }
+    )
+}

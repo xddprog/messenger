@@ -3,8 +3,14 @@ from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.utils.dependencies.dependencies import get_current_user_dependency
-from backend.utils.config.config import load_database_config, load_redis_config
+from backend.utils.dependencies.dependencies import (
+    get_current_user_dependency,
+)
+from backend.utils.config.config import (
+    load_database_config,
+    load_redis_config,
+    load_s3_storage_config,
+)
 from backend.database.connection import DatabaseConnection
 from backend.routers import (
     auth_router,
@@ -15,6 +21,7 @@ from backend.routers import (
     group_router,
 )
 from backend.utils.redis_cache import RedisCache
+from backend.utils.s3_client import S3Client
 from backend.utils.websockets.chats_manager import ChatsManager
 from backend.utils.websockets.notification_manager import NotificationsManager
 
@@ -23,9 +30,8 @@ async def lifespan(app: FastAPI):
     app.state.redis_cache = await RedisCache(config=load_redis_config())()
     app.state.notifications_manager = NotificationsManager()
     app.state.chats_manager = ChatsManager()
-    app.state.db_connection = await DatabaseConnection(
-        load_database_config()
-    )()
+    app.state.db_connection = await DatabaseConnection(load_database_config())()
+    app.state.s3_client = await S3Client(load_s3_storage_config())()
 
     yield
 
@@ -86,6 +92,4 @@ async def validation_exception_handler(
 
         return JSONResponse(content=errors, status_code=422)
     except TypeError:
-        return JSONResponse(
-            status_code=422, content={"detail": "invalid json"}
-        )
+        return JSONResponse(status_code=422, content={"detail": "invalid json"})

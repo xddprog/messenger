@@ -2,14 +2,7 @@ import { Button, Form, Image, message, Modal, Typography, Upload } from 'antd';
 import { useState } from 'react';
 import { createPost } from '../../requests/api/posts.js';
 import InputWithIEmoji from '../inputs/InputWithIEmoji.jsx';
-
-const getBase64 = (file) =>
-	new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.readAsDataURL(file);
-		reader.onload = () => resolve(reader.result);
-		reader.onerror = (error) => reject(error);
-	});
+import UploadImages from '../ui/upload/UploadImages.jsx';
 
 
 export default function CreatePostModal({
@@ -17,8 +10,6 @@ export default function CreatePostModal({
 	handleIsOpen,
 	addPostAfterCreate,
 }) {
-	const [previewOpen, setPreviewOpen] = useState(false);
-	const [previewImage, setPreviewImage] = useState('');
 	const form = Form.useForm();
 	const [descriptionValue, setDescriptionValue] = useState('');
 	const [fileList, setFileList] = useState([]);
@@ -29,23 +20,6 @@ export default function CreatePostModal({
 		form[0].resetFields()
 		handleIsOpen(false);
 	}
-
-	function checkFileType(file) {
-		const isImage =
-			file.type === 'image/png' ||
-			file.type === 'image/jpeg' ||
-			file.type === 'image/jpg';
-		if (!isImage) {
-			message.error(`${file.name} не является фотографией`);
-		}
-		return isImage || Upload.LIST_IGNORE;
-	}
-
-	const dummyRequest = ({ onSuccess }) => {
-		setTimeout(() => {
-			onSuccess('ok');
-		}, 0);
-	};
 
 	async function submitCreatePost() {
 		try {
@@ -69,22 +43,6 @@ export default function CreatePostModal({
 			console.error(error);
 		}
 	}
-
-	const onRemove = (file) => {
-		const index = fileList.indexOf(file);
-		const newFileList = fileList.slice();
-
-		newFileList.splice(index, 1);
-		setFileList(newFileList);
-	};
-
-	const handlePreview = async (file) => {
-		if (!file.url && !file.preview) {
-			file.preview = await getBase64(file.originFileObj);
-		}
-		setPreviewImage(file.url || file.preview);
-		setPreviewOpen(true);
-	};
 
 	return (
 		<>
@@ -115,31 +73,7 @@ export default function CreatePostModal({
 						/>
 					</Form.Item>
 					<Form.Item name='images' label='Фотографии'>
-						<Upload
-							fileList={fileList}
-							maxCount={4}
-							listType="picture-card"
-							beforeUpload={checkFileType}
-							onRemove={onRemove}
-							customRequest={dummyRequest}
-							onChange={(file) => setFileList(file.fileList)}
-							onPreview={handlePreview}
-						>
-							Загрузить (Максимум 4 фото)
-						</Upload>
-						{previewImage && (
-							<Image
-								wrapperStyle={{
-									display: 'none',
-								}}
-								preview={{
-									visible: previewOpen,
-									onVisibleChange: (visible) => setPreviewOpen(visible),
-									afterOpenChange: (visible) => !visible && setPreviewImage(''),
-								}}
-								src={previewImage}
-							/>
-						)}
+						<UploadImages fileList={fileList} setFileList={setFileList} maxCount={4}/>
 					</Form.Item>
 				</Form>
 			</Modal>

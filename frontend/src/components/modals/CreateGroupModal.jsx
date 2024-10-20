@@ -3,6 +3,7 @@ import { Button, Form, Input, message, Modal, Select, Typography, Upload } from 
 import { useState } from 'react';
 import { createGroup } from '../../requests/api/groups';
 import InputWithIEmoji from '../inputs/InputWithIEmoji';
+import UploadImages from '../ui/upload/UploadImages';
 
 function CreateGroupModal({ isOpen, handleIsOpen, addGroupAfterCreate }) {
     const form = Form.useForm();
@@ -53,32 +54,6 @@ function CreateGroupModal({ isOpen, handleIsOpen, addGroupAfterCreate }) {
         handleIsOpen(false);
         form[0].resetFields()
     }
-
-    function checkFileType(file) {
-        const isImage =
-            file.type === 'image/png' ||
-            file.type === 'image/jpeg' ||
-            file.type === 'image/jpg';
-        if (!isImage) {
-            message.error(`${file.name} не является фотографией`);
-        }
-        return isImage || Upload.LIST_IGNORE;
-    }
-
-    const dummyRequest = ({ onSuccess }) => {
-        setTimeout(() => {
-            onSuccess('ok');
-        }, 0);
-    };
-
-    function onRemove(file) {
-        const index = fileList.indexOf(file);
-        const newFileList = fileList.slice();
-
-        newFileList.splice(index, 1);
-        setFileList(newFileList);
-    }
-
 
     async function submitCreateGroup() {
         try {
@@ -154,18 +129,7 @@ function CreateGroupModal({ isOpen, handleIsOpen, addGroupAfterCreate }) {
                         <Select mode='multiple' options={tagOptions} />
                     </Form.Item>
                     <Form.Item name='avatar' label='Аватар' >
-                        <Upload
-                            fileList={fileList}
-                            maxCount={1}
-                            beforeUpload={checkFileType}
-                            onRemove={onRemove}
-                            customRequest={dummyRequest}
-                            onChange={(file) => setFileList(file.fileList)}
-                        >
-                            <Button icon={<UploadOutlined />}>
-                                Загрузить фото
-                            </Button>
-                        </Upload>
+                        <UploadImages fileList={fileList} setFileList={setFileList} maxCount={1}/>
                     </Form.Item>
                 </Form>
             </Modal>

@@ -4,7 +4,7 @@ from pydantic import UUID4
 from backend.dto.message_dto import MessageModel
 from backend.dto.notification_dto import BaseNotificationModel
 
- 
+
 class ChatsManager:
     def __init__(self):
         self.active_connections = {}
@@ -19,9 +19,9 @@ class ChatsManager:
     def disconnect(self, chat_id: UUID4, websocket: WebSocket):
         self.active_connections[chat_id].remove(websocket)
 
-    async def broadcast(self, chat_id: UUID4,message: MessageModel):
+    async def broadcast(self, chat_id: UUID4, response_type: str, message: MessageModel):
         for connection in self.active_connections[chat_id]:
-            await connection.send_json(message)
+            await connection.send_json({"response_type": response_type, "message": message})
 
     async def send_notification(
         self, user_id: str, notification: BaseNotificationModel

@@ -37,9 +37,7 @@ class CommentRepository(SqlAlchemyRepository):
 
         if deleted_images:
             comment.images = [
-                image
-                for image in comment.images
-                if image not in deleted_images
+                image for image in comment.images if image not in deleted_images
             ]
 
         if images:

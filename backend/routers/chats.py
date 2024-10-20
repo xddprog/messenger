@@ -1,3 +1,4 @@
+import json
 from typing import Annotated
 from uuid import uuid4
 
@@ -46,38 +47,8 @@ async def get_chat_messages(
     chat_id: UUID4,
     offset: int,
     message_service: Annotated[MessageService, Depends(get_message_service)],
-    chat_service: Annotated[ChatService, Depends(get_chat_service)],
 ) -> list[MessageModel]:
-    return await chat_service.get_messages_from_chat(chat_id, offset)
-
-
-@router.delete("/messages/{message_id}")
-async def delete_message(
-    message_id: int,
-    message_service: Annotated[MessageService, Depends(get_message_service)],
-) -> dict[str, str]:
-    await message_service.delete_message(message_id)
-    return {"detail": "Сообщение удалено"}
-
-
-@router.put("/messages/{message_id}")
-async def edit_message(
-    message_id: int,
-    message_service: Annotated[MessageService, Depends(get_message_service)],
-    message: str | None = Form(default=None),
-    new_images: list[UploadFile] | None = Form(default=None),
-    deleted_images: list[str] | None = Form(default=None),
-    user_id: str = Form(default=None),
-    chat_id: str = Form(default=None),
-) -> MessageModel:
-    return await message_service.edit_message(
-        user_id=user_id,
-        chat_id=chat_id,
-        message_id=message_id,
-        message=message,
-        new_images=new_images,
-        delete_images=deleted_images,
-    )
+    return await message_service.get_messages_from_chat(chat_id, offset)
 
 
 @router.websocket("/ws/{chat_id}/{client_id}")
@@ -88,7 +59,7 @@ async def websocket_endpoint(
     chat_service: Annotated[ChatService, Depends(get_chat_service)],
     message_service: Annotated[MessageService, Depends(get_message_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
-    manager: Annotated[ChatsManager, Depends(get_chats_manager)]
+    manager: Annotated[ChatsManager, Depends(get_chats_manager)],
 ):
     await manager.connect(chat_id, websocket)
 
@@ -98,8 +69,23 @@ async def websocket_endpoint(
     try:
         while True:
             data = await websocket.receive_text()
-            # images = await websocket.receive_bytes()
-            message = await message_service.create_message(data, [], user, chat)
-            await manager.broadcast(chat_id, message.model_dump())
+            data = json.loads(data)
+
+            if data.get("type") == "delete":
+                message = await message_service.delete_message(chat_id, client_id, data.get("message_id"))
+            elif data.get("type") == "edit":
+                message = await message_service.edit_message(
+                    chat_id,
+                    client_id,
+                    data.get("message_id"),
+                    data.get("message"),
+                )
+            else:
+                message = await message_service.create_message(
+                    data.get("message"), data.get("images"), user, chat
+                )
+            
+            await manager.broadcast(chat_id, data.get("type"), message.model_dump())
+
     except WebSocketDisconnect:
         manager.disconnect(chat_id, websocket)

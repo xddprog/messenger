@@ -3,18 +3,10 @@ import { useState } from "react";
 import { RiChatNewLine } from "react-icons/ri";
 import { createChat } from "../../requests/api/chats";
 import { getUserFriends } from "../../requests/api/users";
+import UploadImages from "../ui/upload/UploadImages";
 
-const getBase64 = (file) =>
-	new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.readAsDataURL(file);
-		reader.onload = () => resolve(reader.result);
-		reader.onerror = (error) => reject(error);
-	});
 
 export default function CreateChatModal({isOpen, handleIsOpen, addChatAfterCreate}) {
-    const [previewOpen, setPreviewOpen] = useState(false);
-	const [previewImage, setPreviewImage] = useState('');
 	const form = Form.useForm();
     const [fileList, setFileList] = useState([]);
     const [friends, setFriends] = useState([]);
@@ -34,38 +26,6 @@ export default function CreateChatModal({isOpen, handleIsOpen, addChatAfterCreat
         getUserFriends().then((res) => setFriends(res.data));
     }
 
-    function checkFileType(file) {
-		const isImage =
-			file.type === 'image/png' ||
-			file.type === 'image/jpeg' ||
-			file.type === 'image/jpg';
-		if (!isImage) {
-			message.error(`${file.name} не является фотографией`);
-		}
-		return isImage || Upload.LIST_IGNORE;
-	}
-
-	const dummyRequest = ({ onSuccess }) => {
-		setTimeout(() => {
-			onSuccess('ok');
-		}, 0);
-	};
-    const onRemove = (file) => {
-		const index = fileList.indexOf(file);
-		const newFileList = fileList.slice();
-
-		newFileList.splice(index, 1);
-		setFileList(newFileList);
-	};
-
-	const handlePreview = async (file) => {
-		if (!file.url && !file.preview) {
-			file.preview = await getBase64(file.originFileObj);
-		}
-		setPreviewImage(file.url || file.preview);
-		setPreviewOpen(true);
-	};
-    
     async function submitCreateChat() {
         try {
             const values = await form[0].validateFields();
@@ -90,10 +50,8 @@ export default function CreateChatModal({isOpen, handleIsOpen, addChatAfterCreat
     }
 
     return (
-        <>
-            <button className="bg-none border-none cursor-pointer p-0" onClick={openModal}>
-                <RiChatNewLine className="text-[#424242] text-[20px] p-0 m-0 ml-5" />
-            </button>
+        <div className="flex items-center">
+            <RiChatNewLine className="text-[#424242] min-w-[20px] min-h-[20px] p-0 m-0 ml-5 hover:text-[#b9b9b9] cursor-pointer" onClick={openModal}/>
             <Modal
                 centered
                 open={isOpen}
@@ -135,34 +93,10 @@ export default function CreateChatModal({isOpen, handleIsOpen, addChatAfterCreat
                         />
                     </Form.Item>
                     <Form.Item name="avatar" label="Аватар" valuePropName="fileList" >
-                        <Upload
-							fileList={fileList}
-							maxCount={1}
-							listType="picture-card"
-							beforeUpload={checkFileType}
-							onRemove={onRemove}
-							customRequest={dummyRequest}
-							onChange={(file) => setFileList(file.fileList)}
-							onPreview={handlePreview}
-						>
-                            Загрузить фото
-                        </Upload>
-                        {previewImage && (
-							<Image
-								wrapperStyle={{
-									display: 'none',
-								}}
-								preview={{
-									visible: previewOpen,
-									onVisibleChange: (visible) => setPreviewOpen(visible),
-									afterOpenChange: (visible) => !visible && setPreviewImage(''),
-								}}
-								src={previewImage}
-							/>
-						)}
+                        <UploadImages fileList={fileList} setFileList={setFileList} maxCount={1}/>
                     </Form.Item>
                 </Form>
             </Modal>
-        </>
+        </div>
     )
 } 

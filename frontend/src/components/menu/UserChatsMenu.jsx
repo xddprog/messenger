@@ -1,5 +1,4 @@
 import {Avatar, Input, List} from "antd";
-import {RiChatNewLine} from "react-icons/ri";
 import CreateChatModal from "../modals/CreateChatModal";
 import { useState } from "react";
 
@@ -10,7 +9,7 @@ export default function UserChatsMenu({chats, openChat, updateChats}) {
     return (
         <List itemLayout="horizontal">
             <List.Item>
-                <div className="flex items-center fixed w-[13%]">
+                <div className="flex items-center fixed w-[14%]">
                     <Input
                         placeholder="Найти чат"
                         className="border-t-0 border-r-0 border-l-0 rounded-none"
@@ -34,7 +33,7 @@ export default function UserChatsMenu({chats, openChat, updateChats}) {
                         return (
                             <List.Item onClick={() => openChat(item)} className="cursor-pointer" key={index}>
                                 <div className="flex items-center gap-3">
-                                    <Avatar src={item.avatar} size={54}/>
+                                    <Avatar src={item.avatar} size={54} className="min-w-[54px] min-h-[54px]"/>
                                     <div className="flex flex-col">
                                         <p className="text-[16px] font-medium">{item.title}</p>
                                         <p className="text-[14px] text-gray-500">Example last mesage</p>

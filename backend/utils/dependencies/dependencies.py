@@ -3,20 +3,47 @@ from typing import Annotated, AsyncGenerator
 from fastapi import Depends
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio.session import AsyncSession
-from aiobotocore.session import AioSession
 from starlette.requests import HTTPConnection
 
 import backend.services as services
 import backend.repositories as repositories
 from backend.dto.user_dto import BaseUserModel
 from backend.services import AuthService
-from backend.utils.config.config import load_s3_storage_config
 from backend.utils.redis_cache import RedisCache
 from backend.utils.s3_client import S3Client
 from backend.utils.websockets.notification_manager import NotificationsManager
-
+# from functools import wraps
+# from time import perf_counter
+# from typing import AsyncGenerator, Callable, TypeVar, Any, Awaitable, Union
 
 bearer = HTTPBearer(auto_error=False)
+
+
+# R = TypeVar("R")
+
+# def measure_execution_time(func: Callable[..., Union[Awaitable[R], AsyncGenerator[Any, None]]]) -> Callable[..., Union[Awaitable[R], AsyncGenerator[Any, None]]]:
+#     @wraps(func)
+#     async def wrapper(*args: Any, **kwargs: Any) -> Union[R, AsyncGenerator[Any, None]]:
+#         start_time = perf_counter()
+
+#         if func.__name__ == 'get_s3_client' or func.__name__ == 'get_session':
+#             async def generator_wrapper() -> AsyncGenerator[Any, None]:
+
+#                 async for value in func(*args, **kwargs):
+#                     yield value
+
+#                 process_time = perf_counter() - start_time
+#                 print(f"Execution time of {func.__name__}: {process_time} seconds")
+
+#             return generator_wrapper()
+
+#         else:
+#             result = await func(*args, **kwargs)
+#             process_time = perf_counter() - start_time
+#             print(f"Execution time of {func.__name__}: {process_time:.4f} seconds")
+#             return result
+
+#     return wrapper
 
 
 async def get_session(
@@ -33,7 +60,9 @@ async def get_redis(request: HTTPConnection) -> RedisCache:
     return request.app.state.redis_cache
 
 
-async def get_notifications_manager(websocket: HTTPConnection) -> NotificationsManager:
+async def get_notifications_manager(
+    websocket: HTTPConnection,
+) -> NotificationsManager:
     return websocket.app.state.notifications_manager
 
 
@@ -41,21 +70,8 @@ async def get_chats_manager(websocket: HTTPConnection) -> NotificationsManager:
     return websocket.app.state.chats_manager
 
 
-async def get_s3_client():
-    config = load_s3_storage_config()
-    session = AioSession()
-    async with session.create_client(
-        "s3",
-        aws_access_key_id=config.access_key_id,
-        aws_secret_access_key=config.secret_access_key,
-        endpoint_url=config.endpoint_url,
-        region_name=config.region,
-    ) as client:
-        yield S3Client(
-            client=client,
-            bucket_name=config.bucket_name,
-            endpoint_url=config.endpoint_url,
-        )
+async def get_s3_client(request: HTTPConnection) -> S3Client:
+    return request.app.state.s3_client
 
 
 async def get_auth_service(

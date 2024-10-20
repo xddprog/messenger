@@ -209,7 +209,9 @@ async def update_user_profile(
 async def websocket_endpoint(
     websocket: WebSocket,
     user_id: str,
-    manager: Annotated[NotificationsManager, Depends(get_notifications_manager)],
+    manager: Annotated[
+        NotificationsManager, Depends(get_notifications_manager)
+    ],
     user_service: Annotated[UserService, Depends(get_user_service)],
     notification_service: Annotated[
         NotificationService, Depends(get_notification_service)
@@ -260,8 +262,6 @@ async def websocket_endpoint(
                     notification_type=NotificationType.REMOVE_FRIEND.value,
                     is_read=False,
                 )
-            await manager.send_notification(
-                data["friend_id"], new_notification
-            )
+            await manager.send_notification(data["friend_id"], new_notification)
     except WebSocketDisconnect:
         manager.disconnect(user_id)

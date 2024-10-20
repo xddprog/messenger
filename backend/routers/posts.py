@@ -33,6 +33,7 @@ async def create_post(
     images: list = Form(default=[""]),
     author: BaseUserModel = Depends(get_current_user_dependency),
 ) -> PostModel:
+    print(images[0].file)
     author = await user_service.get_user(author.id)
     new_post = await post_service.create_post(
         post_id=id, description=description, images=images, author=author

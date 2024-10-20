@@ -10,9 +10,23 @@ class MessageModel(BaseModel):
     message: str
     created_at: datetime | str
     user: BaseUserModel
+    is_edited: bool
+    images: list[str] | None = None
 
     @field_validator("user")
     def format_user(cls, user: BaseUserModel) -> BaseUserModel:
         user.id = str(user.id)
         return user
+
+    @field_validator("created_at")
+    def format_created_at(cls, created_at: datetime) -> datetime:
+        return created_at.isoformat()
+
+class DeleteMessageModel(BaseModel):
+    id: int
+    created_at: datetime | str
+
+    @field_validator("created_at")
+    def format_created_at(cls, created_at: datetime) -> datetime:
+        return created_at.isoformat()
     

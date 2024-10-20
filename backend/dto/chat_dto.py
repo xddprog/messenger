@@ -1,8 +1,7 @@
 from uuid import uuid4
 
-from pydantic import BaseModel, UUID4, Field, field_validator
+from pydantic import BaseModel, UUID4, Field
 
-from backend.database.models import User
 from backend.dto.user_dto import BaseUserModel
 
 

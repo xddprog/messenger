@@ -2,8 +2,8 @@
 
 Учебный проект социальной сети, со всеми возможностями подобных сервисов
 
-<img width="450" alt="Снимок экрана 2024-10-21 в 01 07 04" src="https://github.com/user-attachments/assets/78ebdbb3-ca33-4e79-88fe-71a4b49e1e13"> <img width="450" alt="Снимок экрана 2024-10-21 в 01 04 40" src="https://github.com/user-attachments/assets/7408cabd-25fb-4582-98d4-4b2492375336">
-<img width="450" alt="Снимок экрана 2024-10-21 в 01 03 58" src="https://github.com/user-attachments/assets/b5d0525c-78ed-4648-9aa6-5d9373995c52"> <img width="450" alt="Снимок экрана 2024-10-21 в 01 03 47" src="https://github.com/user-attachments/assets/c2c4b904-ec2d-442b-96a7-b8b82838cd06">
+<img width="400" alt="Снимок экрана 2024-10-21 в 01 07 04" src="https://github.com/user-attachments/assets/78ebdbb3-ca33-4e79-88fe-71a4b49e1e13"> <img width="400" alt="Снимок экрана 2024-10-21 в 01 04 40" src="https://github.com/user-attachments/assets/7408cabd-25fb-4582-98d4-4b2492375336">
+<img width="400" alt="Снимок экрана 2024-10-21 в 01 03 58" src="https://github.com/user-attachments/assets/b5d0525c-78ed-4648-9aa6-5d9373995c52"> <img width="400" alt="Снимок экрана 2024-10-21 в 01 03 47" src="https://github.com/user-attachments/assets/c2c4b904-ec2d-442b-96a7-b8b82838cd06">
 
 ## Используемые Backend технологии:
 1. **FastAPI**  

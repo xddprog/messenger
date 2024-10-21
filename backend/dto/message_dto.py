@@ -12,6 +12,7 @@ class MessageModel(BaseModel):
     user: BaseUserModel
     is_edited: bool
     images: list[str] | None = None
+    users_who_readed: list[BaseUserModel] | list[str] | None = None
 
     @field_validator("user")
     def format_user(cls, user: BaseUserModel) -> BaseUserModel:
@@ -21,6 +22,10 @@ class MessageModel(BaseModel):
     @field_validator("created_at")
     def format_created_at(cls, created_at: datetime) -> datetime:
         return created_at.isoformat()
+    
+    @field_validator('users_who_readed')
+    def format_users_who_read(cls, users_who_read: list | None):
+        return [user.id for user in users_who_read]
 
 class DeleteMessageModel(BaseModel):
     id: int

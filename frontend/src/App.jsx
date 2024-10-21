@@ -6,12 +6,12 @@ import LoginPage from './pages/authPages/LoginPage.jsx';
 import PostsPage from './pages/mainPages/sidebarPages/PostsPage.jsx';
 import ChatPage from './pages/mainPages/sidebarPages/ChatPage.jsx';
 import UserGroups from './pages/mainPages/sidebarPages/UserGroups.jsx';
-import Profile from './pages/mainPages/sidebarPages/Profile.jsx';
 import useNotification from 'antd/es/notification/useNotification.js';
 import { useEffect, useState } from 'react';
 import { getUserUnReadedNotifications } from './requests/api/users.js';
 import useMessage from 'antd/es/message/useMessage.js';
 import GroupPage from './pages/otherPages/GroupPage.jsx';
+import ProfilePage from './pages/mainPages/sidebarPages/ProfilePage.jsx'
 
 export default function App() {
 	const [notification, notificationHolder] = useNotification()
@@ -86,7 +86,7 @@ export default function App() {
 						<Route 
 							path='profile' 
 							element={
-								<Profile 
+								<ProfilePage
 									currentUserProfile={true} 
 									updateNotifications={updateNotifications}
 								/>
@@ -96,7 +96,7 @@ export default function App() {
 						<Route 
 							path='users/:userId' 
 							element={
-								<Profile 
+								<ProfilePage
 									currentUserProfile={false} 
 									notificationWs={notificationWs}
 								/>

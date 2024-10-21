@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import MainPageHeader from '../../components/menu/MainPageHeader';
-import SideBar from '../../components/menu/SideBar';
 import { getCurrentUser } from '../../requests/api/auth';
+import MainPageHeader from '../../components/ui/menu/MainPageHeader';
+import SideBar from '../../components/ui/menu/SideBar';
 
 export default function MainPage({ notifications }) {
 	const navigate = useNavigate();

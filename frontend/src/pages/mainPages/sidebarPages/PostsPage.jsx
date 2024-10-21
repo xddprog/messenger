@@ -1,7 +1,7 @@
 import { Empty, Typography } from 'antd';
 import { useEffect, useState } from 'react';
-import Post from '../../../components/cards/Post';
-import CreatePostModal from '../../../components/modals/CreatePostModal.jsx';
+import CreatePostModal from '../../../components/PostComponents/CreatePostModal.jsx';
+import Post from '../../../components/PostComponents/Post.jsx';
 import { getAllPosts } from '../../../requests/api/posts.js';
 
 export default function PostsPage() {

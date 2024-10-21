@@ -1,19 +1,12 @@
-import RegisterForm from "../../components/forms/RegisterForm";
+import RegisterForm from "../../components/ui/forms/RegisterForm";
 
 
 export default function RegisterPage () {
     return (
-         <div style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "column",
-        }}>
-            <div style={{
-                width: '350px'
-            }}>
+        <div className='flex items-center justify-center flex-col'>
+            <div className="w-[350px]">
                 <RegisterForm/>
             </div>
-         </div>
+        </div>
     )
 }

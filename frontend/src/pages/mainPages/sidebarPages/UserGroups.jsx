@@ -1,8 +1,8 @@
 import { Empty, List, Radio, Typography } from 'antd';
 import { useEffect, useState } from 'react';
-import GropListCard from '../../../components/cards/GroupListCard';
-import InputWithIEmoji from '../../../components/inputs/InputWithIEmoji';
-import CreateGroupModal from '../../../components/modals/CreateGroupModal';
+import GropListCard from '../../../components/GroupComponents/GroupListCard';
+import CreateGroupModal from '../../../components/GroupComponents/CreateGroupModal';
+import InputWithIEmoji from '../../../components/ui/inputs/InputWithIEmoji';
 import { getUserGroups } from '../../../requests/api/users';
 
 
@@ -64,15 +64,15 @@ function UserGroups() {
                     />
                 </div>
                 {userGroups == 0 ? (
-                        <Empty description={<Typography.Text>Вы не подписаны ни на одну группу</Typography.Text>} />
-                    ) : (
-                        userGroups.map((group) => (
-                            <GropListCard
-                                key={group.title}
-                                group={group}
-                            />
-                        ))
-                    )
+                    <Empty description={<Typography.Text>Вы не подписаны ни на одну группу</Typography.Text>} />
+                ) : (
+                    userGroups.map((group) => (
+                        <GropListCard
+                            key={group.title}
+                            group={group}
+                        />
+                    ))
+                )
                 }
             </List>
         </div>

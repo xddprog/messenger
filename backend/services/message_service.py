@@ -116,3 +116,4 @@ class MessageService(BaseService):
 
     async def read_message(self, user_id, chat_id, message_id) -> None:
         message = await self.check_item(message_id, chat_id, user_id, MessageNotFound)
+        

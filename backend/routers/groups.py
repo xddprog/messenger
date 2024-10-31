@@ -72,5 +72,3 @@ async def join_user_to_group(
 ):
     user = await user_service.get_user(user.id)
     return await group_service.join_user_to_group(group_id, user)
-
-

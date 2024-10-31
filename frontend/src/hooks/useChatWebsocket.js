@@ -1,11 +1,10 @@
 import { useEffect } from "react";
 import { groupMessagesByDate } from "../components/ChatComponents/utils";
 import { getChatMessages } from "../requests/api/chats";
-import { createMessage, deleteMessage, editMessage } from "../requests/websocket/chats";
+import { createMessage, deleteMessage, editMessage, readMessage } from "../requests/websocket/chats";
 
 export default function useChatWebsocket(chatId, setWs, setMessages, setFirstUnreadedMessageIndex) {
     useEffect(() => {
-        console.log('sdsdsds')
         setMessages([]);
 
         const webSocket = new WebSocket(`ws://localhost:8000/api/chat/ws/${chatId}/${localStorage.getItem('user_id')}`);
@@ -23,10 +22,16 @@ export default function useChatWebsocket(chatId, setWs, setMessages, setFirstUnr
                 if (parsedData.response_type === 'delete') {
                     return deleteMessage(parsedData.message, prevMessages);
                 } else if (parsedData.response_type === 'create') {
-                    setFirstUnreadedMessageIndex(prev => prev + 1000000)  
-                    return createMessage(parsedData.message, prevMessages);
+                    if (parsedData.message.user.id == localStorage.getItem('user_id')) {
+                        setFirstUnreadedMessageIndex(prev => prev + 1000000)
+                    } else {
+                        setFirstUnreadedMessageIndex(prev => prev + 1)
+                    }
+                    return createMessage(parsedData.message, prevMessages)
                 } else if (parsedData.response_type === 'edit') {
                     return editMessage(parsedData.message, prevMessages);
+                } else if (parsedData.response_type === 'read') {
+                    return readMessage(parsedData.message, prevMessages);
                 }
             })
         }

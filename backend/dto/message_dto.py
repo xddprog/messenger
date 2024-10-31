@@ -1,8 +1,16 @@
 from datetime import datetime
+from enum import Enum
 
 from pydantic import BaseModel, field_validator
 
 from backend.dto.user_dto import BaseUserModel
+
+
+class MessageTypes(str, Enum):
+    CREATE = "create"
+    EDIT = "edit"
+    DELETE = "delete"
+    READ = "read"
 
 
 class MessageModel(BaseModel):
@@ -22,10 +30,7 @@ class MessageModel(BaseModel):
     @field_validator("created_at")
     def format_created_at(cls, created_at: datetime) -> datetime:
         return created_at.isoformat()
-    
-    @field_validator('users_who_readed')
-    def format_users_who_read(cls, users_who_read: list | None):
-        return [user.id for user in users_who_read]
+
 
 class DeleteMessageModel(BaseModel):
     id: int
@@ -34,4 +39,9 @@ class DeleteMessageModel(BaseModel):
     @field_validator("created_at")
     def format_created_at(cls, created_at: datetime) -> datetime:
         return created_at.isoformat()
-    
+
+
+class WebsocketMessageModel(BaseModel):
+    response_type: str
+    status_code: int
+    message: MessageModel

@@ -1,12 +1,17 @@
 import base64
 from tempfile import SpooledTemporaryFile
 from uuid import uuid4
-from fastapi import HTTPException, UploadFile
+from fastapi import HTTPException, UploadFile, WebSocketException
 from pydantic import UUID4
 
 from backend.database.models import Message, User, Chat
-from backend.dto.message_dto import DeleteMessageModel, MessageModel
+from backend.dto.message_dto import (
+    DeleteMessageModel,
+    MessageModel,
+    MessageTypes,
+)
 from backend.errors.message_errors import MessageNotFound
+from backend.errors.user_errors import UserAlreadyreadMessage
 from backend.repositories import MessageRepository
 from backend.services import BaseService
 
@@ -40,17 +45,21 @@ class MessageService(BaseService):
         return converted_images
 
     async def check_item(
-        self, message_id: int, chat_id: UUID4, user_id: str, error: HTTPException
-    ) -> None:
+        self,
+        message_id: int,
+        chat_id: UUID4,
+        user_id: str,
+        error: HTTPException,
+        check_user: bool = True,
+    ) -> Message:
         message = await self.repository.get_item(message_id)
 
         if not message:
             raise error
         elif message.chat_fk != chat_id:
             raise error
-        elif message.user_fk != user_id:
+        elif check_user and message.user_fk != user_id:
             raise error
-        
         return message
 
     async def get_model(self, message: Message):
@@ -89,7 +98,9 @@ class MessageService(BaseService):
     async def delete_message(
         self, chat_id: UUID4, user_id: str, message_id: int
     ) -> None:
-        message = await self.check_item(message_id, chat_id, user_id, MessageNotFound)
+        message = await self.check_item(
+            message_id, chat_id, user_id, MessageNotFound
+        )
         await self.repository.delete_item(message)
         return await self.model_dump(message, DeleteMessageModel)
 
@@ -114,6 +125,41 @@ class MessageService(BaseService):
 
         return await self.model_dump(edited_message, MessageModel)
 
-    async def read_message(self, user_id, chat_id, message_id) -> None:
-        message = await self.check_item(message_id, chat_id, user_id, MessageNotFound)
-        
+    async def read_message(
+        self, user: User, chat_id: UUID4, message_id: UUID4
+    ) -> None:
+        message = await self.check_item(
+            message_id, chat_id, user.id, MessageNotFound, check_user=False
+        )
+        if user in message.users_who_readed:
+            raise UserAlreadyreadMessage()
+
+        await self.repository.read_message(message, user)
+        message = await self.repository.get_item(message_id)
+        return await self.model_dump(message, MessageModel)
+
+    async def handle_message_in_websocket(
+        self,
+        type_: str,
+        chat_id: UUID4,
+        client_id: str,
+        message_id: int,
+        user: User,
+        chat: Chat,
+        data: dict,
+    ) -> MessageModel:
+        if type_ == MessageTypes.DELETE:
+            return await self.delete_message(chat_id, client_id, message_id)
+        elif type_ == MessageTypes.EDIT:
+            return await self.edit_message(
+                chat_id,
+                client_id,
+                message_id,
+                data.get("message"),
+            )
+        elif type_ == MessageTypes.READ:
+            return await self.read_message(user, chat_id, message_id)
+        elif type_ == MessageTypes.CREATE:
+            return await self.create_message(
+                data.get("message"), data.get("images"), user, chat
+            )

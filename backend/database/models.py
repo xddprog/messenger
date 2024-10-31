@@ -88,7 +88,7 @@ class User(Base):
         uselist=True,
         lazy="selectin",
     )
-    
+
     group_fk: Mapped[UUID4 | None] = mapped_column(ForeignKey("groups.id"))
 
 
@@ -338,6 +338,7 @@ class UserNotifications(Base):
         ForeignKey("notifications.id"), primary_key=True
     )
 
+
 class UsersReadedMessages(Base):
     __tablename__ = "users_readed_messages"
     user_fk: Mapped[UUID4] = mapped_column(
@@ -346,5 +347,6 @@ class UsersReadedMessages(Base):
     message_fk: Mapped[int] = mapped_column(
         ForeignKey("messages.id"), primary_key=True
     )
+
 
 ModelType = Type[User | Post | Message | Chat | Comment | Group | Notification]

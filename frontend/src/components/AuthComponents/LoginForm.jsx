@@ -1,7 +1,7 @@
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../../../requests/api/auth';
+import { loginUser } from '../../requests/api/auth';
 
 export default function LoginForm() {
 	const form = Form.useForm();

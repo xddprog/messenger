@@ -2,11 +2,12 @@ import { SendOutlined } from "@ant-design/icons";
 import SendImagesMessageModal from "../MessageComponents/SendImagesMessageModal";
 import InputWithIEmoji from "../ui/inputs/InputWithIEmoji";
 import { Empty, Typography } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import formatMessagesDateTitle from "./utils";
 import ChatHeader from "./ChatHeader";
 import MessageCard from "../MessageComponents/MessageCard";
 import useChatWebsocket from "../../hooks/useChatWebsocket";
+import useChatScroll from "../../hooks/useChatScroll";
 
 
 export default function ChatWindow({ chat }) {
@@ -15,10 +16,19 @@ export default function ChatWindow({ chat }) {
     const [sendImagesModalIsOpen, setSendImagesModalIsOpen] = useState(false);
     const [ws, setWs] = useState(null)
     const [firstUnreadedMessageIndex, setFirstUnreadedMessageIndex] = useState(null)
+    const unreadMessageRef = useRef(null);
 
     useChatWebsocket(chat.id, setWs, setMessages, setFirstUnreadedMessageIndex);
+    useChatScroll(messages, handleReadMessage, chat.id)
+
+    useEffect(() => {
+        if (unreadMessageRef.current) {
+            unreadMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, [firstUnreadedMessageIndex]);
 
     function sendMessage() {
+        console.log("send", messageValue)
         messageValue.trim() && ws.send(JSON.stringify({ message: messageValue, type: 'create' }))
         setMessageValue('')
     }
@@ -30,13 +40,23 @@ export default function ChatWindow({ chat }) {
         }))
     }
 
+    async function handleReadMessage(messageId) {
+        ws.send(JSON.stringify({
+            type: 'read',
+            message_id: messageId
+        }))
+    }
+
     return (
         <div className="flex flex-col justify-between items-center h-full">
             <div className="w-full r">
                 <ChatHeader chat={chat} />
             </div>
             <div className="w-full h-full ml-[5%] relative">
-                <div className="absolute w-full -bottom-4 max-h-full overflow-x-scroll flex flex-col gap-3">
+                <div 
+                    className="absolute w-full -bottom-4 max-h-full overflow-x-scroll flex flex-col gap-3" 
+                    id='chat-messages-parent'
+                >
                     {Object.keys(messages).length == 0 ? (<Empty description="Нет сообщений" className="mb-[38%]" />) :
                         Object.entries(messages).map(([date, messagesFromDate], index) => {
                             return (
@@ -46,17 +66,24 @@ export default function ChatWindow({ chat }) {
                                             {formatMessagesDateTitle(new Date(date))}
                                         </Typography.Paragraph>
                                     </div>
-                                    <div className="flex flex-col">
+                                    <div className="flex flex-col" >
                                         {messagesFromDate.map((message, messageIndex) => (
                                             <div key={message.id}>
                                                 {messageIndex * (index + 1) == firstUnreadedMessageIndex && (
-                                                    <div className="rounded-xl bg-[#1e2022] max-w-[220px] mx-auto">
+                                                    <div 
+                                                        className="rounded-xl bg-[#1e2022] max-w-[220px] mx-auto"
+                                                        ref={unreadMessageRef}
+                                                    >
                                                         <Typography.Paragraph className="text-white text-sm text-center p-1 mt-2">
                                                             Непрочитанные сообщения
                                                         </Typography.Paragraph>
                                                     </div>
                                                 )}
-                                                <div className="max-w-[80%] mb-3" key={messageIndex * (index + 1)}>
+                                                <div
+                                                    className="max-w-[80%] mb-3" 
+                                                    key={messageIndex * (index + 1)} 
+                                                    id={`message-${message.id}`}
+                                                >
                                                     <MessageCard
                                                         messageProp={message}
                                                         chatId={chat.id}

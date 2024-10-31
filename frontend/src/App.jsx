@@ -36,10 +36,6 @@ export default function App() {
 
 		setNotificationWs(ws)
 
-		return () => {
-			ws.close()
-		}
-		
 	}, [])
 
 	function updateNotifications(notification) {

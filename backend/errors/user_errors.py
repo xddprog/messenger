@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from starlette import status
+from starlette.responses import JSONResponse
 
 
 class UserNotFound(HTTPException):
@@ -23,4 +24,12 @@ class UserAlreadyHaveThisFriend(HTTPException):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
             detail="Пользователь уже находится в друзьях",
+        )
+
+
+class UserAlreadyreadMessage(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Пользователь уже прочитал сообщение"
         )

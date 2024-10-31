@@ -1,10 +1,12 @@
-import { Button, DatePicker, Form, Input, message, Typography } from 'antd';
+import { AutoComplete, Button, DatePicker, Form, Input, message, Typography } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { registerUser } from '../../../requests/api/auth.js';
+import { getCities, registerUser } from '../../requests/api/auth.js';
+import { useState } from 'react';
 export default function RegisterForm() {
 	const form = Form.useForm();
 	const navigate = useNavigate();
 	const [messageApi, contextHolder] = message.useMessage();
+	const [cities, setCities] = useState([]);
 	const config = {
 		rules: [
 			{
@@ -34,6 +36,10 @@ export default function RegisterForm() {
 				content: error.response.data.detail,
 			});
 		}
+	}
+
+	function searchCities(data) {
+		getCities(data).then(res => setCities(res));
 	}
 
 	return (
@@ -127,7 +133,17 @@ export default function RegisterForm() {
 						},
 					]}
 				>
-					<Input placeholder='Родной город ' size={'large'} />
+					<AutoComplete 
+						placeholder='Введите город' 
+						options={cities.map(city => {
+							return {
+								label: city,
+								value: city
+							};
+						})}
+						onChange={searchCities}
+						size='large'
+					/>
 				</Form.Item>
 
 				<Form.Item className='w-full' name='birthday' label='' {...config}>

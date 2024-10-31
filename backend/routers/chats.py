@@ -2,12 +2,12 @@ import json
 from typing import Annotated
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, Form, UploadFile
+from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile
 from pydantic import UUID4
 from starlette.websockets import WebSocketDisconnect, WebSocket
 
 from backend.dto.chat_dto import BaseChatModel
-from backend.dto.message_dto import MessageModel
+from backend.dto.message_dto import MessageModel, MessageTypes
 from backend.dto.user_dto import BaseUserModel
 from backend.services import ChatService, MessageService, UserService
 from backend.utils.dependencies.dependencies import (
@@ -70,22 +70,15 @@ async def websocket_endpoint(
         while True:
             data = await websocket.receive_text()
             data = json.loads(data)
-
-            if data.get("type") == "delete":
-                message = await message_service.delete_message(chat_id, client_id, data.get("message_id"))
-            elif data.get("type") == "edit":
-                message = await message_service.edit_message(
-                    chat_id,
-                    client_id,
-                    data.get("message_id"),
-                    data.get("message"),
-                )
-            else:
-                message = await message_service.create_message(
-                    data.get("message"), data.get("images"), user, chat
-                )
+            type_, message_id = data.get("type"), data.get("message_id")
             
-            await manager.broadcast(chat_id, data.get("type"), message.model_dump())
+            try:
+                message = await message_service.handle_message_in_websocket(
+                    type_, chat.id, client_id, message_id, user, chat, data
+                )
+                await manager.broadcast_message(chat_id, type_, message.model_dump())
+            except HTTPException as error:
+                await manager.broadcast_error(chat_id, error)
 
     except WebSocketDisconnect:
         manager.disconnect(chat_id, websocket)

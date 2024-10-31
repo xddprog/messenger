@@ -30,6 +30,7 @@ export function editMessage(message, updatedMessages) {
 }
 
 export function createMessage(message, updatedMessages) {
+    console.log("create")
     const date = new Date(message.created_at).toISOString().split('T')[0];
 
     if (!updatedMessages[date]) {
@@ -37,6 +38,21 @@ export function createMessage(message, updatedMessages) {
     }
 
     updatedMessages[date].push(message);
+
+    return updatedMessages;
+}
+
+export function readMessage(message, updatedMessages) {
+    const date = new Date(message.created_at).toISOString().split('T')[0];
+    
+    if (updatedMessages[date]) {
+        updatedMessages[date] = updatedMessages[date].map(stateMessage => {
+            if (stateMessage.id === message.id) {
+                return message;
+            }
+            return stateMessage;
+        });
+    }
 
     return updatedMessages;
 }

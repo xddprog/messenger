@@ -1,4 +1,4 @@
-import LoginForm from "../../components/ui/forms/LoginForm";
+import LoginForm from "../../components/AuthComponents/LoginForm";
 
 
 export default function LoginPage() {

@@ -4,7 +4,7 @@ import FriendList from '../../../components/UserComponents/FriendList.jsx';
 import UserPosts from '../../../components/UserComponents/UserPosts.jsx';
 import UserProfileInfo from '../../../components/UserComponents/UserProfileInfo.jsx';
 import FollowingList from '../../../components/UserComponents/following/FollowingList.jsx';
-import Navigation from '../../../components/UserComponents/navigation/navigation.jsx';
+import Navigation from '../../../components/UserComponents/navigation/Navigation.jsx';
 import { getCurrentUser } from '../../../requests/api/auth.js';
 import { getOtherUser } from '../../../requests/api/users.js';
 

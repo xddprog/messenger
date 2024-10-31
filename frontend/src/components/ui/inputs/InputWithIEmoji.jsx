@@ -13,8 +13,8 @@ export default function InputWithIEmoji({fieldValue, setFieldValue, minRows, ent
             <Input.TextArea
                 autoSize
                 minRows={minRows}
-                maxRows={15}
                 value={fieldValue}
+                maxLength={500}
                 onChange={(e) => {
                     setFieldValue(e.target.value)
                 }}

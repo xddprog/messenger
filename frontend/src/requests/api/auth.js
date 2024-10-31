@@ -32,3 +32,16 @@ export async function logoutUser() {
 		.delete(`${BASE_URL}/logout`)
 		.then((response) => response);
 }
+
+
+export async function getCities(input) {
+	return await axios
+		.get(`${BASE_URL}/cities`, {
+			headers: {
+				Authorization: 'Bearer ' + localStorage.getItem('token'),
+			},
+			params: {
+				city: input
+			}
+	}).then((response) => response.data);
+}

@@ -28,7 +28,11 @@ export function groupMessagesByDate(messages, setFirstUnreadedMessageIndex) {
         if (!acc[date]) {
             acc[date] = [];
         }
-        if (!firstUnreadedMessageIndex && message.users_who_readed.indexOf(localStorage.getItem('user_id')) === -1) {
+        if (
+            !firstUnreadedMessageIndex && 
+            !message.users_who_readed.some(user => user.id === localStorage.getItem('user_id')) && 
+            message.user.id !== localStorage.getItem('user_id')
+        ) {
             firstUnreadedMessageIndex = index
             setFirstUnreadedMessageIndex(index)
         }

@@ -56,8 +56,9 @@ async def register_user(
     )
 
 
-@router.get("/cities/search")
+@router.get("/cities")
 async def autocomplete_city(
     auth_service: Annotated[AuthService, Depends(get_auth_service)], city: str
 ) -> list[str]:
+    print(await auth_service.search_cities(city))
     return await auth_service.search_cities(city)

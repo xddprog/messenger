@@ -1,5 +1,6 @@
 from fastapi.websockets import WebSocket
-from pydantic import UUID4
+from pydantic import UUID4, BaseModel
+from starlette.responses import JSONResponse
 
 from backend.dto.message_dto import MessageModel
 from backend.dto.notification_dto import BaseNotificationModel
@@ -19,9 +20,21 @@ class ChatsManager:
     def disconnect(self, chat_id: UUID4, websocket: WebSocket):
         self.active_connections[chat_id].remove(websocket)
 
-    async def broadcast(self, chat_id: UUID4, response_type: str, message: MessageModel):
+    async def broadcast_message(
+        self, chat_id: UUID4, response_type: str, message: MessageModel | BaseModel
+    ):  
         for connection in self.active_connections[chat_id]:
-            await connection.send_json({"response_type": response_type, "message": message})
+            try:
+                await connection.send_json(
+                    {"response_type": response_type, "message": message}
+                )
+            except RuntimeError:
+                self.disconnect(chat_id, connection)
+    
+    async def broadcast_error(self, chat_id, error):
+        print(error.args)
+        for connection in self.active_connections[chat_id]:
+            await connection.send_json(error)
 
     async def send_notification(
         self, user_id: str, notification: BaseNotificationModel

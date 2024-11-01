@@ -60,5 +60,4 @@ async def register_user(
 async def autocomplete_city(
     auth_service: Annotated[AuthService, Depends(get_auth_service)], city: str
 ) -> list[str]:
-    print(await auth_service.search_cities(city))
     return await auth_service.search_cities(city)

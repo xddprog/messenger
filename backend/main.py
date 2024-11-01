@@ -32,7 +32,6 @@ async def lifespan(app: FastAPI):
     app.state.chats_manager = ChatsManager()
     app.state.db_connection = await DatabaseConnection(load_database_config())()
     app.state.s3_client = await S3Client(load_s3_storage_config())()
-
     yield
 
 

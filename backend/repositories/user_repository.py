@@ -43,7 +43,6 @@ class UserRepository(SqlAlchemyRepository):
 
         users = await self.session.execute(query)
         users = users.scalars().all()
-
         return users
 
     async def update_item(self, item_id: int | str, **update_values) -> User:

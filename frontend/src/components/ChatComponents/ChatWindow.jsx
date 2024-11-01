@@ -25,7 +25,7 @@ export default function ChatWindow({ chat }) {
         if (unreadMessageRef.current) {
             unreadMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-    }, [firstUnreadedMessageIndex]);
+    }, [firstUnreadedMessageIndex]); 
 
     function sendMessage() {
         console.log("send", messageValue)

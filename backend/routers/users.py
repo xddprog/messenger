@@ -43,11 +43,12 @@ async def search_users(
     username: str,
     user_service: Annotated[UserService, Depends(get_user_service)],
     redis_cache: Annotated[RedisCache, Depends(get_redis)],
+    user: BaseUserModel = Depends(get_current_user_dependency),
 ) -> list[BaseUserModel]:
     users = await redis_cache.get_item(username)
 
     if not users:
-        users = await user_service.search_users(username, "")
+        users = await user_service.search_users(username, user.id)
         await redis_cache.set_item(
             username, json.dumps([user.model_dump() for user in users])
         )

@@ -5,4 +5,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD ["python", "backend/main.py"]
+CMD ["uvicorn", "backend.main:app", "--reload"]

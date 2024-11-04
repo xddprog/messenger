@@ -1,4 +1,4 @@
-from fastapi import HTTPException, WebSocket, WebSocketException
+from fastapi import HTTPException, WebSocketException
 from starlette import status
 
 

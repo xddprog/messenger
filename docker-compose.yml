@@ -17,6 +17,32 @@ services:
     networks:
       - app-network
 
+  rabbitmq:
+    image: rabbitmq:3.10.7-management
+    container_name: rabbitmq-store
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf 
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+    networks:
+      - app-network
+
   app:
     build:
       context: .
@@ -29,23 +55,16 @@ services:
       - DB_PASS=postgres
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - RABBIT_HOST=rabbitmq
+      - RABBIT_PORT=5672
     depends_on:
       - db
       - redis
+      - rabbitmq
     networks:
       - app-network
-
-  nginx:
-    image: nginx:latest
-    container_name: nginx-proxy
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf  # Используйте свой файл конфигурации
-    ports:
-      - "80:80"  # Публикация порта для внешнего доступа
-    depends_on:
-      - app
-    networks:
-      - app-network
+    # ports:
+    #   - "8000:8000"
 
 networks:
   app-network:

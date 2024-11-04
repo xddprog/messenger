@@ -31,7 +31,7 @@ from backend.utils.dependencies.dependencies import (
     get_user_service,
     get_chat_service,
 )
-from backend.utils.redis_cache import RedisCache
+from backend.utils.clients.redis_client import RedisCache
 from backend.utils.websockets.notification_manager import NotificationsManager
 
 
@@ -84,13 +84,10 @@ async def get_user_chats(
 
 @router.get("/posts")
 async def get_user_posts(
-    user_service: Annotated[UserService, Depends(get_user_service)],
     post_service: Annotated[PostService, Depends(get_post_service)],
     user: BaseUserModel = Depends(get_current_user_dependency),
-    user_id: str = None,
 ) -> list[PostModel]:
-    posts = await user_service.get_user_posts(user_id if user_id else user.id)
-    return [await post_service.get_one_post(post_id) for post_id in posts]
+    return await post_service.get_user_posts(user.id)
 
 
 @router.get("/notifications/unreaded")

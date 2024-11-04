@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from sqlalchemy import Table
 
 from backend.repositories import BaseRepository
-from backend.utils.s3_client import S3Client
+from backend.utils.clients.s3_client import S3Client
 
 
 class BaseService:

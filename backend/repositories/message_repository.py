@@ -21,27 +21,19 @@ class MessageRepository(SqlAlchemyRepository):
         return result.scalar_one_or_none()
 
     async def add_item(
-        self, message: str, user: User, chat: Chat, images: list[str]
+        self, message: str, user_id: str, chat_id: str, images: list[str]
     ) -> Message:
         message = Message(
             message=message,
-            user=user,
-            chat=chat,
+            user_fk=user_id,
+            chat_fk=chat_id,
             created_at=datetime.now(),
             images=images,
         )
 
-        await self.session.refresh(user)
-        await self.session.refresh(chat)
-
-        user.messages.append(message)
-        chat.messages.append(message)
-
+        self.session.add(message)
         await self.session.commit()
         await self.session.refresh(message)
-        await self.session.refresh(chat)
-        await self.session.refresh(user)
-
         return message
 
     async def update_item(
@@ -71,7 +63,6 @@ class MessageRepository(SqlAlchemyRepository):
         messages = await self.session.execute(query)
         return messages.scalars().all()
 
-    async def read_message(self, message: Message, user: User) -> None:
-        message.users_who_readed.append(user)
-
+    async def read_message(self, message: Message, user_id: UUID4) -> None:
+        message.users_who_readed.append(await self.session.get(User, user_id))
         await self.session.commit()

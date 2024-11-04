@@ -22,7 +22,7 @@ class CommentService(BaseService):
     ) -> Comment:
         if parent:
             parent = await self.repository.get_item(parent)
-        
+
         if not isinstance(images[0], str):
             images = await self.s3_client.upload_many_files(
                 images, f"posts/{post_id}/comments/{author.id}/{uuid4()}"

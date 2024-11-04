@@ -29,6 +29,11 @@ class RedisConfig(BaseModel):
     port: int
 
 
+class RabbitMQConfig(BaseModel):
+    host: str
+    port: int
+
+
 def load_database_config() -> DatabaseConfig:
     env = Env()
     env.read_env()
@@ -73,3 +78,12 @@ async def load_here_geocoding_api_key() -> str:
     env = Env()
     env.read_env()
     return env.str("HERE_GEOCODING_API_KEY")
+
+
+def load_rabbitmq_config() -> RabbitMQConfig:
+    env = Env()
+    env.read_env()
+    return RabbitMQConfig(
+        host=env.str("RABBIT_HOST"),
+        port=env.int("RABBIT_PORT"),
+    )

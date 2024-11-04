@@ -9,8 +9,9 @@ import backend.services as services
 import backend.repositories as repositories
 from backend.dto.user_dto import BaseUserModel
 from backend.services import AuthService
-from backend.utils.redis_cache import RedisCache
-from backend.utils.s3_client import S3Client
+from backend.utils.clients.rabbit_client import RabbitClient
+from backend.utils.clients.redis_client import RedisCache
+from backend.utils.clients.s3_client import S3Client
 from backend.utils.websockets.notification_manager import NotificationsManager
 # from functools import wraps
 # from time import perf_counter
@@ -72,6 +73,10 @@ async def get_chats_manager(websocket: HTTPConnection) -> NotificationsManager:
 
 async def get_s3_client(request: HTTPConnection) -> S3Client:
     return request.app.state.s3_client
+
+
+async def get_rabbit_client(request: HTTPConnection) -> RabbitClient:
+    return request.app.state.rabbit_client
 
 
 async def get_auth_service(

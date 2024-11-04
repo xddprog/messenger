@@ -1,7 +1,9 @@
 import base64
+import pprint
 from tempfile import SpooledTemporaryFile
 from uuid import uuid4
-from fastapi import HTTPException, UploadFile, WebSocketException
+from cffi.cffi_opcode import PRIM_BOOL
+from fastapi import HTTPException, UploadFile
 from pydantic import UUID4
 
 from backend.database.models import Message, User, Chat
@@ -74,15 +76,15 @@ class MessageService(BaseService):
         return b64_string
 
     async def create_message(
-        self, message: str, images: list[dict], user: User, chat: Chat
+        self, message: str, images: list[dict], user_id: str, chat_id: UUID4
     ) -> MessageModel:
         if images:
             images = await self.convert_message_images(
-                images, f"{chat.id}/messages/{user.id}"
+                images, f"{chat_id}/messages/{user_id}"
             )
 
         new_message = await self.repository.add_item(
-            message=message, user=user, chat=chat, images=images
+            message=message, user_id=user_id, chat_id=chat_id, images=images
         )
 
         return await self.model_dump(new_message, MessageModel)
@@ -107,7 +109,7 @@ class MessageService(BaseService):
     async def edit_message(
         self,
         chat_id: UUID4,
-        user_id: UUID4,
+        user_id: str,
         message_id: int,
         message: str | None,
     ) -> MessageModel:
@@ -117,12 +119,10 @@ class MessageService(BaseService):
             user_id,
             MessageNotFound,
         )
-
         edited_message = await self.repository.update_item(
             message_id,
             message=message,
         )
-
         return await self.model_dump(edited_message, MessageModel)
 
     async def read_message(
@@ -144,22 +144,17 @@ class MessageService(BaseService):
         chat_id: UUID4,
         client_id: str,
         message_id: int,
-        user: User,
-        chat: Chat,
         data: dict,
     ) -> MessageModel:
         if type_ == MessageTypes.DELETE:
             return await self.delete_message(chat_id, client_id, message_id)
         elif type_ == MessageTypes.EDIT:
             return await self.edit_message(
-                chat_id,
-                client_id,
-                message_id,
-                data.get("message"),
+                chat_id, client_id, message_id, data.get("message")
             )
         elif type_ == MessageTypes.READ:
-            return await self.read_message(user, chat_id, message_id)
+            return await self.read_message(client_id, chat_id, message_id)
         elif type_ == MessageTypes.CREATE:
             return await self.create_message(
-                data.get("message"), data.get("images"), user, chat
+                data.get("message"), data.get("images"), client_id, chat_id
             )

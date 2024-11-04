@@ -9,30 +9,23 @@ import { Card, Dropdown, Image, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { deletePost, likePost } from '../../requests/api/posts.js';
 import EditPostModal from './EditPostModal.jsx';
-
+import PostComments from '../CommentsComponents/CreatePostComment.jsx';
 
 export default function Post({ post, updatePost, isCreator }) {
+	const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 	const [postIsLiked, setPostIsLiked] = useState(false);
 	const [countIsLiked, setCountIsLiked] = useState(0);
 	const [editModalIsOpen, setEditModalIsOpen] = useState(false);
 	const items = [
 		{
 			key: 'editPost',
-			label: (
-				<a onClick={handleEdit}>
-					Редактировать
-				</a>
-			)
+			label: <a onClick={handleEdit}>Редактировать</a>,
 		},
 		{
 			key: 'deletePost',
-			label: (
-				<a onClick={handeDelete}>
-					Удалить
-				</a>
-			),
-		}
-	]
+			label: <a onClick={handeDelete}>Удалить</a>,
+		},
+	];
 
 	useEffect(() => {
 		let userId = localStorage.getItem('user_id');
@@ -41,7 +34,9 @@ export default function Post({ post, updatePost, isCreator }) {
 			post.likes.map((item) => item.id).indexOf(userId) !== -1;
 
 		userInLikedPost ? setPostIsLiked(true) : setPostIsLiked(false);
-		userInLikedPost ? setCountIsLiked(post.likes.length) : setCountIsLiked(post.likes.length);
+		userInLikedPost
+			? setCountIsLiked(post.likes.length)
+			: setCountIsLiked(post.likes.length);
 	}, [post.likes]);
 
 	async function handeDelete() {
@@ -54,7 +49,7 @@ export default function Post({ post, updatePost, isCreator }) {
 	}
 
 	async function handleEdit() {
-		setEditModalIsOpen(true)
+		setEditModalIsOpen(true);
 	}
 
 	async function handeLike() {
@@ -67,6 +62,10 @@ export default function Post({ post, updatePost, isCreator }) {
 			console.error(error);
 		}
 	}
+
+	const handleCommentButtonClick = () => {
+		setIsCommentsOpen(!isCommentsOpen);
+	};
 
 	return (
 		<>
@@ -121,16 +120,18 @@ export default function Post({ post, updatePost, isCreator }) {
 							</p>
 							{isCreator ? (
 								<Dropdown
-									className="w-[30px] h-[30px]"
+									className='w-[30px] h-[30px]'
 									menu={{
 										items,
 									}}
 								>
-									<a onClick={(e) => e.preventDefault()} className="ml-3">
-										<EllipsisOutlined className="text-3xl" />
+									<a onClick={(e) => e.preventDefault()} className='ml-3'>
+										<EllipsisOutlined className='text-3xl' />
 									</a>
 								</Dropdown>
-							) : ''}
+							) : (
+								''
+							)}
 						</div>
 					</div>
 				}
@@ -142,11 +143,11 @@ export default function Post({ post, updatePost, isCreator }) {
 									src={image}
 									key={image}
 									className='border-none object-cover h-full max-h-[500px] min-h-[500px]'
-									width={`${post.images.length == 1 ? 100 : 100 / post.images.length
-										}%`}
+									width={`${
+										post.images.length == 1 ? 100 : 100 / post.images.length
+									}%`}
 								/>
-							))
-						}
+							))}
 					</div>
 				}
 				actions={[
@@ -177,18 +178,26 @@ export default function Post({ post, updatePost, isCreator }) {
 							</p>
 						</Space>
 					</button>,
-					<CommentOutlined key={3} width={40} />,
+					<CommentOutlined
+						onClick={handleCommentButtonClick}
+						key={3}
+						width={40}
+					/>,
 					<SendOutlined key={4} width={40} />,
 				]}
 			>
 				<p style={{ margin: 0 }}>{post.description}</p>
 			</Card>
-			{<EditPostModal
-				isOpen={editModalIsOpen}
-				handleIsOpen={setEditModalIsOpen}
-				postImages={post.images}
-				postDescription={post.description}
-			/>}
+			<PostComments isCommentsOpen={isCommentsOpen} postId={post.id} />
+
+			{
+				<EditPostModal
+					isOpen={editModalIsOpen}
+					handleIsOpen={setEditModalIsOpen}
+					postImages={post.images}
+					postDescription={post.description}
+				/>
+			}
 		</>
 	);
 }

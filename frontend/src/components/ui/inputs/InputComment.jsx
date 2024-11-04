@@ -1,8 +1,8 @@
 import { Input, Popover } from 'antd';
 import EmojiPicker from 'emoji-picker-react';
-import { SmileOutlined } from '@ant-design/icons';
+import { SmileOutlined, UploadOutlined } from '@ant-design/icons';
 
-export default function InputWithIEmoji({
+export default function InputComments({
 	fieldValue,
 	setFieldValue,
 	minRows,
@@ -13,7 +13,7 @@ export default function InputWithIEmoji({
 	}
 
 	return (
-		<div className='flex justify-between'>
+		<div className='flex justify-between relative'>
 			<Input.TextArea
 				autoSize
 				minRows={minRows}
@@ -22,12 +22,18 @@ export default function InputWithIEmoji({
 				onChange={(e) => {
 					setFieldValue(e.target.value);
 				}}
-				size={'middle'}
 				placeholder='Введите...'
 				onKeyDown={enterHandler ? enterHandler : null}
+				className='w-[410px]'
 			/>
 			<Popover content={<EmojiPicker onEmojiClick={addEmojiToFieldValue} />}>
-				<SmileOutlined className='text-[#fff] cursor-pointer ml-[10px] text-[20px] hover:text-[#b9b9b9]' />
+				<SmileOutlined className='text-[#fff] cursor-pointer ml-[10px] text-[20px] hover:text-[#b9b9b9] absolute right-2 top-1.5' />
+			</Popover>
+			<Popover>
+				<UploadOutlined
+					key={'uploadImages'}
+					className='text-[#fff] cursor-pointer ml-[10px] text-[20px] hover:text-[#b9b9b9] absolute right-10 top-1.5'
+				/>
 			</Popover>
 		</div>
 	);

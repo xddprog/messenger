@@ -11,58 +11,59 @@ import { useEffect, useState } from 'react';
 import { getUserUnReadedNotifications } from './requests/api/users.js';
 import useMessage from 'antd/es/message/useMessage.js';
 import GroupPage from './pages/otherPages/GroupPage.jsx';
-import ProfilePage from './pages/mainPages/sidebarPages/ProfilePage.jsx'
+import ProfilePage from './pages/mainPages/sidebarPages/ProfilePage.jsx';
 
 export default function App() {
-	const [notification, notificationHolder] = useNotification()
-	const [notificationWs, setNotificationWs] = useState(null)
-	const [allNotifications, setAllNotifications] = useState([])
-	const [message, messageHolder] = useMessage()
+	const [notification, notificationHolder] = useNotification();
+	const [notificationWs, setNotificationWs] = useState(null);
+	const [allNotifications, setAllNotifications] = useState([]);
+	const [message, messageHolder] = useMessage();
 
 	useEffect(() => {
-		getUserUnReadedNotifications().then(response => {
-			setAllNotifications(response.data)
-		})
-		
+		getUserUnReadedNotifications().then((response) => {
+			setAllNotifications(response.data);
+		});
+
 		const ws = new WebSocket(
-			`ws://localhost:8000/api/user/ws/notifications/${localStorage.getItem('user_id')}`
-		)
-    
+			`ws://localhost:8000/api/user/ws/notifications/${localStorage.getItem(
+				'user_id'
+			)}`
+		);
+
 		ws.onmessage = (event) => {
-			const data = JSON.parse(event.data)
-			notificationHandler(data)
-			updateNotifications(data)
-		}
+			const data = JSON.parse(event.data);
+			notificationHandler(data);
+			updateNotifications(data);
+		};
 
-		setNotificationWs(ws)
-
-	}, [])
+		setNotificationWs(ws);
+	}, []);
 
 	function updateNotifications(notification) {
-		setAllNotifications(prevState => [...prevState, notification])
+		setAllNotifications((prevState) => [...prevState, notification]);
 	}
 
 	function notificationHandler(data) {
 		notification.open({
 			message: (
 				<div className='flex gap-3 mb-0'>
-					<Avatar src={data.image} className='min-w-[50px] min-h-[50px]'/>
+					<Avatar src={data.image} className='min-w-[50px] min-h-[50px]' />
 					{data.message}
 				</div>
 			),
 			placement: 'bottomRight',
-		})
+		});
 	}
 
-    return (
-        <ConfigProvider
-		theme={{
-			algorithm: theme.darkAlgorithm,
-			token: {
-				colorPrimary: '#05d77e',
-				colorBgContainer: '#17191b',
-			},
-		}}
+	return (
+		<ConfigProvider
+			theme={{
+				algorithm: theme.darkAlgorithm,
+				token: {
+					colorPrimary: '#05d77e',
+					colorBgContainer: '#17191b',
+				},
+			}}
 		>
 			{notificationHolder}
 			{messageHolder}
@@ -70,38 +71,40 @@ export default function App() {
 				<Routes>
 					<Route path='/register' element={<RegisterPage />} />
 					<Route path='/login' element={<LoginPage />} />
-					<Route path='/*' element={
-							<MainPage 
-								notifications={allNotifications} 
+					<Route
+						path='/*'
+						element={
+							<MainPage
+								notifications={allNotifications}
 								notificationWs={notificationWs}
 							/>
 						}
 					>
 						<Route path='posts' element={<PostsPage />} />
 						<Route path='chats' element={<ChatPage />} />
-						<Route 
-							path='profile' 
+						<Route
+							path='profile'
 							element={
 								<ProfilePage
-									currentUserProfile={true} 
+									currentUserProfile={true}
 									updateNotifications={updateNotifications}
 								/>
-							} 
+							}
 						/>
 						<Route path='groups' element={<UserGroups />} />
-						<Route 
-							path='users/:userId' 
+						<Route
+							path='users/:userId'
 							element={
 								<ProfilePage
-									currentUserProfile={false} 
+									currentUserProfile={false}
 									notificationWs={notificationWs}
 								/>
-							} 
+							}
 						/>
-						<Route path='groups/:groupId' element={<GroupPage />}/>
+						<Route path='groups/:groupId' element={<GroupPage />} />
 					</Route>
 				</Routes>
 			</BrowserRouter>
 		</ConfigProvider>
-    )
+	);
 }

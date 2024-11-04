@@ -30,8 +30,8 @@ export default function PostsPage() {
 				addPostAfterCreate={addPostAfterCreate}
 			/>
 			<div
-				style={{ marginTop: '10px', width: '100%' }}
-				className='flex flex-col items-center'
+				style={{ marginTop: '10px', width: '550px' }}
+				className='flex flex-col items-center '
 			>
 				{posts.length == 0 ? (
 					<Empty description={<Typography.Text>Нет постов</Typography.Text>} />

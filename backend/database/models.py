@@ -98,7 +98,7 @@ class Comment(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     text: Mapped[str]
     images: Mapped[str] = mapped_column(ARRAY(String), default=[])
-    created_at: Mapped[datetime]
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now())
 
     replies: Mapped[list["Comment"]] = relationship(
         back_populates="parent", lazy="selectin", cascade="all, delete-orphan"

@@ -18,7 +18,6 @@ class CommentService(BaseService):
         self,
         post_id: UUID4,
         text: str,
-        created_at: datetime,
         author: User,
         images: list[UploadFile] | list[str],
         parent: int | None,
@@ -33,7 +32,6 @@ class CommentService(BaseService):
 
         return await self.repository.add_item(
             text=text,
-            created_at=created_at,
             author=author,
             images=images,
             parent=parent,

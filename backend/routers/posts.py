@@ -92,7 +92,6 @@ async def add_comment_to_post(
     user_service: Annotated[UserService, Depends(get_user_service)],
     comment_service: Annotated[CommentService, Depends(get_comment_service)],
     text: str = Form(),
-    created_at: datetime = Form(default=datetime.now()),
     images: list[UploadFile] = Form(default=[]),
     parent: int | None = Form(default=None),
     author: BaseUserModel = Depends(get_current_user_dependency),
@@ -100,7 +99,6 @@ async def add_comment_to_post(
     comment = await comment_service.add_comment(
         post_id=post_id,
         text=text,
-        created_at=created_at,
         author=await user_service.get_user(author.id),
         images=images,
         parent=parent,

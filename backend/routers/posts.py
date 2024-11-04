@@ -92,7 +92,7 @@ async def add_comment_to_post(
     user_service: Annotated[UserService, Depends(get_user_service)],
     comment_service: Annotated[CommentService, Depends(get_comment_service)],
     text: str = Form(),
-    images: list[UploadFile] = Form(default=[]),
+    images: list = Form(default=[""]),
     parent: int | None = Form(default=None),
     author: BaseUserModel = Depends(get_current_user_dependency),
 ) -> CommentModel:

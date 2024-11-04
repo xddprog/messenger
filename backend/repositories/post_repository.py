@@ -1,3 +1,5 @@
+from pydantic import UUID4
+from sqlalchemy import select
 from backend.database.models import Comment, Post, User
 from backend.repositories.base import SqlAlchemyRepository
 
@@ -45,3 +47,11 @@ class PostRepository(SqlAlchemyRepository):
 
         await self.session.delete(item)
         await self.session.commit()
+
+    async def get_user_posts(self, user_id: UUID4) -> list[Post]:
+        query = select(self.model).where(self.model.author_fk == user_id)
+
+        posts = await self.session.execute(query)
+        posts = posts.scalars().all()
+
+        return posts

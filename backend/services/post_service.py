@@ -70,3 +70,7 @@ class PostService(BaseService):
         comment = await self.repository.add_comment(post, comment)
 
         return await self.model_dump(comment, CommentModel)
+
+    async def get_user_posts(self, user_id: UUID4) -> list[PostModel]:
+        posts = await self.repository.get_user_posts(user_id)
+        return await self.dump_items(posts, PostModel)

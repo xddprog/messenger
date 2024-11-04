@@ -12,20 +12,18 @@ from backend.services.base_service import BaseService
 class CommentService(BaseService):
     repository: CommentRepository
 
-    # async def get_comment_images_url()
-
     async def add_comment(
         self,
         post_id: UUID4,
         text: str,
         author: User,
-        images: list[UploadFile] | list[str],
+        images: list,
         parent: int | None,
     ) -> Comment:
         if parent:
             parent = await self.repository.get_item(parent)
-
-        if images:
+        
+        if not isinstance(images[0], str):
             images = await self.s3_client.upload_many_files(
                 images, f"posts/{post_id}/comments/{author.id}/{uuid4()}"
             )

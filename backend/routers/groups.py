@@ -36,14 +36,14 @@ async def get_one_group(
 async def add_group(
     user_service: Annotated[UserService, Depends(get_user_service)],
     group_service: Annotated[GroupService, Depends(get_group_service)],
+    creator_id: Annotated[str, Depends(get_current_user_dependency)],
     id: UUID4 = Form(..., default_factory=lambda: str(uuid4())),
     title: str = Form(...),
     avatar: UploadFile | None = Form(default=None),
     cover: UploadFile | None = Form(default=None),
     description: str = Form(),
-    creator: BaseUserModel = Depends(get_current_user_dependency),
 ):
-    creator = await user_service.get_user(creator.id)
+    creator = await user_service.get_user(creator_id)
     return await group_service.create_group(
         title=title,
         description=description,
@@ -68,7 +68,7 @@ async def join_user_to_group(
     group_id: int,
     group_service: Annotated[GroupService, Depends(get_group_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
-    user: BaseUserModel = Depends(get_current_user_dependency),
+    user_id: Annotated[str, Depends(get_current_user_dependency)],
 ):
-    user = await user_service.get_user(user.id)
+    user = await user_service.get_user(user_id)
     return await group_service.join_user_to_group(group_id, user)

@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Request, Response
 
 from backend.dto.auth_dto import (
     LoginForm,
@@ -9,6 +9,9 @@ from backend.dto.auth_dto import (
 )
 from backend.dto.user_dto import BaseUserModel
 from backend.services import AuthService
+from backend.utils.clients.redis_client import RedisCache
+from backend.utils.config.config import load_redis_config
+from backend.utils.decorators.cache_decorators import CacheCitiesSearch
 from backend.utils.dependencies.dependencies import (
     get_auth_service,
     get_current_user_dependency,
@@ -19,8 +22,9 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 @router.get("/current_user")
 async def get_current_user(
-    current_user: BaseUserModel = Depends(get_current_user_dependency),
-) -> BaseUserModel:
+    request: Request,
+    current_user: str = Depends(get_current_user_dependency)
+) -> str:
     return current_user
 
 
@@ -57,6 +61,7 @@ async def register_user(
 
 
 @router.get("/cities")
+@CacheCitiesSearch()
 async def autocomplete_city(
     auth_service: Annotated[AuthService, Depends(get_auth_service)], city: str
 ) -> list[str]:

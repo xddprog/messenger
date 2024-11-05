@@ -28,12 +28,12 @@ router = APIRouter(
 async def create_post(
     post_service: Annotated[PostService, Depends(get_post_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
+    author_id: Annotated[str, Depends(get_current_user_dependency)],
     id: UUID4 = Form(default_factory=lambda: str(uuid4())),
     description: str = Form(...),
     images: list = Form(default=[""]),
-    author: BaseUserModel = Depends(get_current_user_dependency),
 ) -> PostModel:
-    author = await user_service.get_user(author.id)
+    author = await user_service.get_user(author_id)
     new_post = await post_service.create_post(
         post_id=id, description=description, images=images, author=author
     )
@@ -60,9 +60,9 @@ async def like_post(
     post_id: UUID4,
     post_service: Annotated[PostService, Depends(get_post_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
-    user: BaseUserModel = Depends(get_current_user_dependency),
+    user_id: Annotated[str, Depends(get_current_user_dependency)],
 ) -> PostModel:
-    user = await user_service.get_user(user.id)
+    user = await user_service.get_user(user_id)
     return await post_service.like_post(post_id, user)
 
 
@@ -90,16 +90,16 @@ async def add_comment_to_post(
     post_id: UUID4,
     post_service: Annotated[PostService, Depends(get_post_service)],
     user_service: Annotated[UserService, Depends(get_user_service)],
+    author: Annotated[str, Depends(get_current_user_dependency)],
     comment_service: Annotated[CommentService, Depends(get_comment_service)],
     text: str = Form(),
     images: list = Form(default=[""]),
     parent: int | None = Form(default=None),
-    author: BaseUserModel = Depends(get_current_user_dependency),
 ) -> CommentModel:
     comment = await comment_service.add_comment(
         post_id=post_id,
         text=text,
-        author=await user_service.get_user(author.id),
+        author=await user_service.get_user(author),
         images=images,
         parent=parent,
     )

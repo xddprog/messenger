@@ -59,7 +59,6 @@ async def handle_chat(
 
 
 async def lifespan(app: FastAPI):
-    app.state.redis_cache = await RedisCache(config=load_redis_config())()
     app.state.notifications_manager = NotificationsManager()
     app.state.chats_manager = ChatsManager()
     app.state.db_connection = await DatabaseConnection(load_database_config())()
@@ -91,7 +90,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 app.include_router(auth_router)
 app.include_router(users_router, dependencies=[])

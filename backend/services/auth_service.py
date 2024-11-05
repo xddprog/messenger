@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from time import perf_counter
 
 from fastapi.security import HTTPBearer
 from jwt import InvalidTokenError, encode, decode
@@ -80,12 +81,16 @@ class AuthService(BaseService):
             raise InvalidToken
 
     async def check_user_exist(self, email: str) -> User:
+        start = perf_counter()
         user = await self.get_user_by_email(email)
 
         if user is None:
             raise InvalidToken
 
-        return await self.model_dump(user, BaseUserModel)
+        end = perf_counter()
+        print(f"check_user_exist: {end - start:.10f} seconds")
+
+        return user
 
     async def register_user(self, form: RegisterForm) -> User:
         user = await self.get_user_by_email(form.email)

@@ -123,7 +123,6 @@ class UserService(BaseService):
     async def update_user_profile(
         self, user_id: str, form: BaseUserModel
     ) -> BaseUserModel:
-        user = await self.repository.get_item(user_id)
 
         if form.avatar:
             form.avatar = await self.s3_client.upload_one_file(

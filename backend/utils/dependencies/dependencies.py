@@ -1,6 +1,8 @@
-from typing import Annotated, AsyncGenerator
+from functools import wraps
+from time import perf_counter
+from typing import Annotated, Any, AsyncGenerator, Awaitable, Callable, TypeVar, Union
 
-from fastapi import Depends
+from fastapi import Depends, Request
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from starlette.requests import HTTPConnection
@@ -12,6 +14,8 @@ from backend.services import AuthService
 from backend.utils.clients.rabbit_client import RabbitClient
 from backend.utils.clients.redis_client import RedisCache
 from backend.utils.clients.s3_client import S3Client
+from backend.utils.config.config import load_redis_config
+from backend.utils.decorators.cache_decorators import CacheUser
 from backend.utils.websockets.notification_manager import NotificationsManager
 # from functools import wraps
 # from time import perf_counter
@@ -87,6 +91,25 @@ async def get_auth_service(
         s3_client=s3_client,
     )
 
+@CacheUser()
+async def get_current_user_dependency(
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
+    token=Depends(bearer),
+) -> str:
+    user = await auth_service.verify_token(token)
+    user = await auth_service.check_user_exist(user)
+    return user.id
+
+
+async def get_group_service(
+    session=Depends(get_session), s3_client=Depends(get_s3_client)
+):
+    return services.GroupService(
+        repository=repositories.GroupRepository(session=session),
+        s3_client=s3_client,
+    )
+
+
 
 async def get_comment_service(
     session=Depends(get_session), s3_client=Depends(get_s3_client)
@@ -97,17 +120,9 @@ async def get_comment_service(
     )
 
 
-async def get_current_user_dependency(
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    token: Annotated[HTTPBearer, Depends(bearer)],
-) -> BaseUserModel:
-    email = await auth_service.verify_token(token)
-    return await auth_service.check_user_exist(email)
-
-
 async def get_post_service(
     session=Depends(get_session), s3_client=Depends(get_s3_client)
-):
+):    
     return services.PostService(
         repository=repositories.PostRepository(session=session),
         s3_client=s3_client,

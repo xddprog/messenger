@@ -21,13 +21,13 @@ from backend.services.post_service import PostService
 from backend.utils.config.enums import NotificationType
 from backend.dto.chat_dto import BaseChatModel
 from backend.services import UserService, ChatService
+from backend.utils.decorators.cache_decorators import CacheUsersSearch
 from backend.utils.dependencies.dependencies import (
     get_current_user_dependency,
     get_group_service,
     get_notification_service,
     get_notifications_manager,
     get_post_service,
-    get_redis,
     get_user_service,
     get_chat_service,
 )
@@ -39,28 +39,20 @@ router = APIRouter(prefix="/api/user", tags=["users"])
 
 
 @router.get("/search")
+@CacheUsersSearch()
 async def search_users(
     username: str,
     user_service: Annotated[UserService, Depends(get_user_service)],
-    redis_cache: Annotated[RedisCache, Depends(get_redis)],
-    user: BaseUserModel = Depends(get_current_user_dependency),
+    user: Annotated[str, Depends(get_current_user_dependency)],
 ) -> list[BaseUserModel]:
-    users = await redis_cache.get_item(username)
-
-    if not users:
-        users = await user_service.search_users(username, user.id)
-        await redis_cache.set_item(
-            username, json.dumps([user.model_dump() for user in users])
-        )
-    else:
-        users = json.loads(users)
+    users = await user_service.search_users(username, user)
     return users
 
 
 @router.get("/groups")
 async def get_user_groups(
     group_service: Annotated[GroupService, Depends(get_group_service)],
-    user: BaseUserModel = Depends(get_current_user_dependency),
+    user: Annotated[str, Depends(get_current_user_dependency)],
     user_admined_groups: bool = False,
     user_id: str = None,
 ) -> list[BaseGroupModel]:
@@ -73,9 +65,9 @@ async def get_user_groups(
 async def get_user_chats(
     user_service: Annotated[UserService, Depends(get_user_service)],
     chats_service: Annotated[ChatService, Depends(get_chat_service)],
-    user: Annotated[BaseUserModel, Depends(get_current_user_dependency)],
+    user: Annotated[str, Depends(get_current_user_dependency)],
 ) -> list[BaseChatModel]:
-    chats = await user_service.get_user_chats(user.id)
+    chats = await user_service.get_user_chats(user)
     chats_models = [
         await chats_service.get_chat(chat_id, dump=True) for chat_id in chats
     ]
@@ -85,20 +77,20 @@ async def get_user_chats(
 @router.get("/posts")
 async def get_user_posts(
     post_service: Annotated[PostService, Depends(get_post_service)],
-    user: BaseUserModel = Depends(get_current_user_dependency),
+    user: Annotated[str, Depends(get_current_user_dependency)],
 ) -> list[PostModel]:
-    return await post_service.get_user_posts(user.id)
+    return await post_service.get_user_posts(user)
 
 
 @router.get("/notifications/unreaded")
 async def get_user_notifications(
     user_service: Annotated[UserService, Depends(get_user_service)],
-    user: BaseUserModel = Depends(get_current_user_dependency),
+    user: Annotated[str, Depends(get_current_user_dependency)],
     limit: int = 5,
     offset: int = 0,
 ) -> list[BaseNotificationModel]:
     return await user_service.get_user_unreaded_notifications(
-        user.id, limit, offset
+        user, limit, offset
     )
 
 
@@ -109,27 +101,27 @@ async def get_user(
     notification_service: Annotated[
         NotificationService, Depends(get_notification_service)
     ],
-    current_user: BaseUserModel = Depends(get_current_user_dependency),
+    user: BaseUserModel = Depends(get_current_user_dependency),
 ) -> dict:
     return {
         "current_user": await user_service.get_user(user_id, dump=True),
         "request_add_friend_is_send": await notification_service.check_request_add_friend(
-            current_user.id, user_id
+            user, user_id
         ),
         "request_add_friend_is_get": await notification_service.check_request_add_friend_is_get(
-            user_id, current_user.id
+            user_id, user
         ),
-        "is_friend": await user_service.check_friend(current_user.id, user_id),
+        "is_friend": await user_service.check_friend(user, user_id),
     }
 
 
 @router.get("/friends/all")
 async def get_current_user_friends(
     user_service: Annotated[UserService, Depends(get_user_service)],
-    user: BaseUserModel = Depends(get_current_user_dependency),
+    user: Annotated[str, Depends(get_current_user_dependency)],
     user_id: str | None = None,
 ) -> list[BaseUserModel]:
-    return await user_service.get_friends(user_id if user_id else user.id)
+    return await user_service.get_friends(user_id if user_id else user)
 
 
 @router.post("/friends/add/{friend_id}/request")
@@ -139,11 +131,12 @@ async def add_friend_request(
     notification_service: Annotated[
         NotificationService, Depends(get_notification_service)
     ],
-    user: BaseUserModel = Depends(get_current_user_dependency),
+    user_id: Annotated[str, Depends(get_current_user_dependency)],
 ) -> dict[str, str]:
     friend = await user_service.get_user(friend_id, check_exists=True)
+    user = await user_service.get_user(user_id)
     await notification_service.create_notification(
-        user=await user_service.get_user(user.id),
+        user=await user_service.get_user(user),
         notification_sender_id=friend_id,
         notification_sender_name=friend.username,
         message=f"{user.username} хочет добавить вас в друзья",
@@ -161,9 +154,9 @@ async def add_friend_accept(
     notification_service: Annotated[
         NotificationService, Depends(get_notification_service)
     ],
-    user: BaseUserModel = Depends(get_current_user_dependency),
+    user: Annotated[str, Depends(get_current_user_dependency)],
 ) -> dict[str, str]:
-    await user_service.add_friend(user.id, friend_id)
+    await user_service.add_friend(user, friend_id)
     return {"detail": "Пользователь добавлен в друзья"}
 
 
@@ -171,15 +164,16 @@ async def add_friend_accept(
 async def remove_friend(
     friend_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)],
-    user: BaseUserModel = Depends(get_current_user_dependency),
+    user: Annotated[str, Depends(get_current_user_dependency)],
 ) -> dict[str, str]:
-    await user_service.remove_friend(user.id, friend_id)
+    await user_service.remove_friend(user, friend_id)
     return {"detail": "Вы удалили пользователя из друзей"}
 
 
 @router.put("/")
 async def update_user_profile(
     user_service: Annotated[UserService, Depends(get_user_service)],
+    user: Annotated[str, Depends(get_current_user_dependency)],
     id: str | None = Form(default=None),
     username: str | None = Form(default=None),
     email: str | None = Form(default=None),
@@ -187,10 +181,9 @@ async def update_user_profile(
     city: str | None = Form(default=None),
     description: str | None = Form(default=None),
     birthday: datetime | None = Form(default=None),
-    user: BaseUserModel = Depends(get_current_user_dependency),
 ) -> BaseUserModel:
     return await user_service.update_user_profile(
-        user.id,
+        user,
         UpdateUserModel(
             id=id,
             username=username,
@@ -203,10 +196,10 @@ async def update_user_profile(
     )
 
 
-@router.websocket("/ws/notifications/{user_id}")
+@router.websocket("/ws/notifications")
 async def websocket_endpoint(
     websocket: WebSocket,
-    user_id: str,
+    user: Annotated[str, Depends(get_current_user_dependency)],
     manager: Annotated[
         NotificationsManager, Depends(get_notifications_manager)
     ],
@@ -215,11 +208,11 @@ async def websocket_endpoint(
         NotificationService, Depends(get_notification_service)
     ],
 ):
-    await manager.connect(user_id, websocket)
+    await manager.connect(user, websocket)
     try:
         while True:
             data = await websocket.receive_json()
-            current_user = await user_service.get_user(user_id, dump=True)
+            current_user = await user_service.get_user(user, dump=True)
 
             if data["type"] == NotificationType.ADD_FRIEND.value:
                 send_to_user = await user_service.get_user(data["friend_id"])
@@ -262,4 +255,4 @@ async def websocket_endpoint(
                 )
             await manager.send_notification(data["friend_id"], new_notification)
     except WebSocketDisconnect:
-        manager.disconnect(user_id)
+        manager.disconnect(user)

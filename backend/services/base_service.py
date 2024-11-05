@@ -7,7 +7,7 @@ from backend.utils.clients.s3_client import S3Client
 
 
 class BaseService:
-    def __init__(self, repository: BaseRepository, s3_client: S3Client):
+    def __init__(self, repository: BaseRepository, s3_client: S3Client | None = None):
         self.repository = repository
         self.s3_client: S3Client = s3_client
 

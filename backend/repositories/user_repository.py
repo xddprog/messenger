@@ -60,5 +60,5 @@ class UserRepository(SqlAlchemyRepository):
             user.images = [*user.images, update_values.get("avatar")]
 
         await self.session.commit()
-
+        await self.session.refresh(user)
         return user

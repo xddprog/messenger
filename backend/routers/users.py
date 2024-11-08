@@ -10,11 +10,12 @@ from fastapi import (
     WebSocket,
     WebSocketDisconnect,
 )
+from starlette.responses import JSONResponse
 
 from backend.dto.group_dto import BaseGroupModel
 from backend.dto.notification_dto import BaseNotificationModel
 from backend.dto.post_dto import PostModel
-from backend.dto.user_dto import BaseUserModel, UpdateUserModel
+from backend.dto.user_dto import BaseUserModel, GetUserDataModel, UpdateUserModel
 from backend.services.group_service import GroupService
 from backend.services.notification_service import NotificationService
 from backend.services.post_service import PostService
@@ -56,9 +57,10 @@ async def get_user_groups(
     user_admined_groups: bool = False,
     user_id: str = None,
 ) -> list[BaseGroupModel]:
+    
     if user_admined_groups:
         return await group_service.get_user_admined_groups(user.id)
-    return await group_service.get_user_groups(user_id if user_id else user.id)
+    return await group_service.get_user_groups(user_id if user_id else user)
 
 
 @router.get("/chats")
@@ -103,16 +105,16 @@ async def get_user(
     ],
     user: BaseUserModel = Depends(get_current_user_dependency),
 ) -> dict:
-    return {
-        "current_user": await user_service.get_user(user_id, dump=True),
-        "request_add_friend_is_send": await notification_service.check_request_add_friend(
+    return GetUserDataModel(
+        current_user=await user_service.get_user(user_id, dump=True),
+        request_add_friend_is_send=await notification_service.check_request_add_friend(
             user, user_id
         ),
-        "request_add_friend_is_get": await notification_service.check_request_add_friend_is_get(
+        request_add_friend_is_get=await notification_service.check_request_add_friend_is_get(
             user_id, user
         ),
-        "is_friend": await user_service.check_friend(user, user_id),
-    }
+        is_friend=await user_service.check_friend(user, user_id),
+    )
 
 
 @router.get("/friends/all")
@@ -124,36 +126,10 @@ async def get_current_user_friends(
     return await user_service.get_friends(user_id if user_id else user)
 
 
-@router.post("/friends/add/{friend_id}/request")
-async def add_friend_request(
-    friend_id: str,
-    user_service: Annotated[UserService, Depends(get_user_service)],
-    notification_service: Annotated[
-        NotificationService, Depends(get_notification_service)
-    ],
-    user_id: Annotated[str, Depends(get_current_user_dependency)],
-) -> dict[str, str]:
-    friend = await user_service.get_user(friend_id, check_exists=True)
-    user = await user_service.get_user(user_id)
-    await notification_service.create_notification(
-        user=await user_service.get_user(user),
-        notification_sender_id=friend_id,
-        notification_sender_name=friend.username,
-        message=f"{user.username} хочет добавить вас в друзья",
-        notification_type=NotificationType.ADD_FRIEND,
-    )
-    return {
-        "detail": f"Запрос на добавление в друзья отправлен пользователю {user.username}"
-    }
-
-
 @router.post("/friends/add/{friend_id}/accept")
 async def add_friend_accept(
     friend_id: str,
     user_service: Annotated[UserService, Depends(get_user_service)],
-    notification_service: Annotated[
-        NotificationService, Depends(get_notification_service)
-    ],
     user: Annotated[str, Depends(get_current_user_dependency)],
 ) -> dict[str, str]:
     await user_service.add_friend(user, friend_id)
@@ -183,8 +159,8 @@ async def update_user_profile(
     birthday: datetime | None = Form(default=None),
 ) -> BaseUserModel:
     return await user_service.update_user_profile(
-        user,
-        UpdateUserModel(
+        user_id=user,
+        form=UpdateUserModel(
             id=id,
             username=username,
             email=email,

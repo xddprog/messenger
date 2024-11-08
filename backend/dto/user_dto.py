@@ -1,6 +1,7 @@
 from datetime import datetime
 from fastapi import UploadFile
 from pydantic import BaseModel, field_validator
+from sqlalchemy.sql.functions import current_user
 
 
 class BaseUserModel(BaseModel):
@@ -35,3 +36,10 @@ class UpdateUserModel(BaseModel):
         if data:
             return datetime.strptime(data, "%Y-%m-%dT%H:%M:%SZ")
         return data
+
+
+class GetUserDataModel(BaseModel):
+    current_user: BaseUserModel
+    request_add_friend_is_send: bool
+    request_add_friend_is_get: bool
+    is_friend: bool

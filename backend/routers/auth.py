@@ -29,7 +29,7 @@ async def get_current_user(
     current_user: str = Depends(get_current_user_dependency),
 ) -> str:
     user = await user_service.get_user(current_user, dump=True)
-    return current_user
+    return user
 
 
 @router.post("/login", status_code=200)

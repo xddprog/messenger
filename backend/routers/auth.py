@@ -27,7 +27,7 @@ async def get_current_user(
     request: Request,
     user_service: Annotated[UserService, Depends(get_user_service)],
     current_user: str = Depends(get_current_user_dependency),
-) -> str:
+) -> BaseUserModel:
     user = await user_service.get_user(current_user, dump=True)
     return user
 

@@ -56,6 +56,8 @@ async def handle_chat(
                     )
                 except HTTPException as error:
                     await chat_manager.broadcast_error(chat_id, error)
+                except Exception as error:
+                    pass
 
 
 async def lifespan(app: FastAPI):

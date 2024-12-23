@@ -24,7 +24,7 @@ class UserService(BaseService):
 
     async def get_user(
         self, user_id: str, check_exists: bool = False, dump: bool = False
-    ) -> User:
+    ) -> User | BaseUserModel:
         user = await self.repository.get_item(user_id)
         if check_exists:
             await self.check_item(user, UserNotFound)
@@ -123,13 +123,13 @@ class UserService(BaseService):
     async def update_user_profile(
         self, user_id: str, form: BaseUserModel
     ) -> BaseUserModel:
-
         if form.avatar:
             form.avatar = await self.s3_client.upload_one_file(
                 file=form.avatar,
                 path=await self.get_profile_avatar_url(user_id),
             )
 
-        return await self.repository.update_item(
+        user = await self.repository.update_item(
             user_id, **form.model_dump(exclude_none=True)
         )
+        return await self.model_dump(user, BaseUserModel)

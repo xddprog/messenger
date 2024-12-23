@@ -3,41 +3,46 @@ import { useEffect, useState } from "react";
 import { getUserPosts } from "../../requests/api/users";
 import CreatePostModal from "../PostComponents/CreatePostModal";
 import Post from "../PostComponents/Post";
+import { getGroupPosts } from "../../requests/api/groups";
 
-function UserPosts({ currentUserProfile, userId }) {
-    const [userPosts, setUserPosts] = useState([]);
+function PostsList({ currentUserProfile, itemId, page }) {
+    const [posts, setPosts] = useState([]);
     const [createModalIsOpen, setCreateModalIsOpen] = useState(false);
 
     useEffect(() => {
-        getUserPosts(userId).then((res) => setUserPosts(res.data));
-    }, [userId])
+        if (page == 'group') {
+            getGroupPosts(itemId).then((res) => setPosts(res));
+        } else {
+            getUserPosts(itemId).then((res) => setPosts(res));
+        }
+    }, [itemId, page])
 
     function updatePost(postId) {
-        setUserPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
     }
 
     function addPostAfterCreate(post) {
-        setUserPosts((prev) => [post, ...prev]);
+        setPosts((prev) => [post, ...prev]);
     }
-
+    
     return (
         <div
             className='flex flex-col items-center w-full mt-4'
         >
-            {currentUserProfile && (
-                <CreatePostModal
-                    isOpen={createModalIsOpen}
-                    handleIsOpen={setCreateModalIsOpen}
-                    addPostAfterCreate={addPostAfterCreate}
-                />
-            )}
-            {userPosts.length == 0 ? (
+            <CreatePostModal
+                isOpen={createModalIsOpen}
+                handleIsOpen={setCreateModalIsOpen}
+                addPostAfterCreate={addPostAfterCreate}
+                itemId={itemId}
+                page={page}
+            />
+            {posts.length == 0 ? (
                 <Empty description={<Typography.Text>Нет постов</Typography.Text>} />
             ) : (
-                userPosts.map((post) => (
+                posts.map((post) => (
                     <Post
                         key={post.id}
-                        post={post}
+                        postProps={post}
                         updatePost={updatePost}
                         isCreator={currentUserProfile}
                     />
@@ -47,4 +52,4 @@ function UserPosts({ currentUserProfile, userId }) {
     );
 }
 
-export default UserPosts;
+export default PostsList;

@@ -22,13 +22,13 @@ function UserGroups() {
     ]
 
     useEffect(() => {
-        getUserGroups(false).then(res => setUserGroups(res.data))
+        getUserGroups(false).then(res => setUserGroups(res))
     }, [])
 
     async function switchGroupsTypes(event) {
         console.log(event.target.value)
         const userAdminedGroups = event.target.value == "adminedGroups" ? true : false
-        await getUserGroups(userAdminedGroups).then(res => setUserGroups(res.data))
+        await getUserGroups(userAdminedGroups).then(res => setUserGroups(res))
     }
 
     function addGroupAfterCreate(post) {

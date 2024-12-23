@@ -39,7 +39,6 @@ async def login_user(
 ) -> LoginResponse:
     user = await auth_service.authenticate_user(form)
     token = await auth_service.create_access_token(form.email)
-
     return LoginResponse(
         detail="Вы успешно вошли в аккаунт!", user=user, token=token
     )

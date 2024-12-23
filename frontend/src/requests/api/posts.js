@@ -12,7 +12,7 @@ export async function getAllPosts() {
 		.then((response) => response.data);
 }
 
-export async function createPost(values) {
+export async function createUserPost(values) {
 	return await axios
 		.post(`${BASE_URL}/create`, values, {
 			headers: {
@@ -45,4 +45,87 @@ export async function deletePost(postId) {
 			},
 		})
 		.then((response) => response.data);
+}
+
+
+export async function readPost(postId) {
+	return await axios
+		.patch(
+			`${BASE_URL}/${postId}/read`,
+			{},
+			{
+				headers: { Authorization: 'Bearer ' + localStorage.getItem('token') },
+			}
+		)
+		.then((response) => {
+			response.data;
+		});
+}
+
+
+export async function updatePost(postId, values) {
+	return await axios
+		.put(
+			`${BASE_URL}/${postId}`,
+			values,
+			{
+				headers: {
+					Authorization: 'Bearer ' + localStorage.getItem('token'),
+					'content-type': 'multipart/form-data',
+				},
+			}
+		)
+		.then((response) => response.data)
+}
+
+
+export default async function getPostComments(postId) {
+	return await axios
+		.get(`${BASE_URL}/${postId}/comments`, {
+			headers: {
+				Authorization: 'Bearer ' + localStorage.getItem('token'),
+			},
+		})
+		.then((response) => {
+			return response.data
+	})
+}
+
+
+export async function createComment(postId, values) {
+	return await axios
+		.post(`${BASE_URL}/${postId}/comments`, values, {
+			headers: {
+				Authorization: 'Bearer ' + localStorage.getItem('token'),
+				'content-type': 'multipart/form-data',
+			},
+		})
+		.then((response) => response.data)
+}
+
+
+export async function deleteComment(postId, commentId) {
+	return await axios
+		.delete(`${BASE_URL}/${postId}/comments/${commentId}`, {
+			headers: {
+				Authorization: 'Bearer ' + localStorage.getItem('token'),
+			},
+		})
+		.then((response) => {
+			return response.data
+	})
+}
+
+
+export async function updateComment(postId, commentId, values) {
+	return await axios
+		.put(`${BASE_URL}/${postId}/comments/${commentId}`, values, {
+			headers: {
+				Authorization: 'Bearer ' + localStorage.getItem('token'),
+				'content-type': 'multipart/form-data',
+			},
+		})
+		.then((response) => {
+			return response.data
+	})
 }

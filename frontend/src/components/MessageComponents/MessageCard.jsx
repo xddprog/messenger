@@ -1,10 +1,9 @@
-import { CopyOutlined, DeleteOutlined, EditOutlined, PushpinOutlined, RollbackOutlined, SendOutlined } from "@ant-design/icons";
-import { Avatar, Dropdown, Menu, Typography } from "antd";
+import { Avatar, Dropdown, Typography } from "antd";
 import { useEffect, useState } from "react";
 import DeleteMessageModal from "./DeleteMessageModal";
 import InputWithIEmoji from "../ui/inputs/InputWithIEmoji";
-import MessageImages from "./MessageImages";
 import MessageMenu from "./MessageMenu";
+import ImagesList from "../ui/list/ImagesList";
 
 function formatCreatedAt(value) {
     const date = new Date(value);
@@ -84,7 +83,7 @@ export default function MessageCard({ messageProp, handleDelete, ws }) {
                                     </Typography.Text>
                                 </div>
                             </div>
-                            <MessageImages images={message.images} />
+                            <ImagesList images={message.images} />
                             {!messageIsEdit ? (
                                 <div>
                                     <Typography.Paragraph style={{ margin: 0 }} className="pb-[10px] pl-[12px] pr-[10px] text-[14px]">

@@ -1,6 +1,6 @@
 from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from backend.database.models import Base
+from backend.database.models.base import Base
 from backend.utils.config.config import DatabaseConfig
 
 
@@ -18,5 +18,4 @@ class DatabaseConnection:
     async def __call__(self):
         async with self._engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
-
         return self

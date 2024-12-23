@@ -38,7 +38,6 @@ export function createMessage(message, updatedMessages) {
     }
 
     updatedMessages[date].push(message);
-
     return updatedMessages;
 }
 
@@ -53,6 +52,5 @@ export function readMessage(message, updatedMessages) {
             return stateMessage;
         });
     }
-
     return updatedMessages;
 }

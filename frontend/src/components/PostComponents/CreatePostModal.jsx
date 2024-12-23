@@ -1,14 +1,17 @@
 import { Button, Form, Modal, Typography } from 'antd';
 import { useState } from 'react';
-import { createPost } from '../../requests/api/posts.js';
+import { createUserPost } from '../../requests/api/posts.js';
 import InputWithIEmoji from '../ui/inputs/InputWithIEmoji.jsx';
 import UploadImages from '../ui/uploads/UploadImages.jsx';
+import { createGroupPost } from '../../requests/api/groups.js';
 
 
 export default function CreatePostModal({
 	isOpen,
 	handleIsOpen,
 	addPostAfterCreate,
+	page,
+	itemId
 }) {
 	const form = Form.useForm();
 	const [descriptionValue, setDescriptionValue] = useState('');
@@ -33,12 +36,13 @@ export default function CreatePostModal({
 			}
 
 			formData.append('description', descriptionValue);
-			await createPost(formData).then((res) => {
-				addPostAfterCreate(res)
-				closeModal()
-			});
-
-
+			if (page === 'group') {
+				await createGroupPost(itemId, formData).then(res => addPostAfterCreate(res))
+			} else {
+				await createUserPost(formData).then(res => addPostAfterCreate(res))
+			}
+			
+			closeModal();
 		} catch (error) {
 			console.error(error);
 		}

@@ -23,11 +23,9 @@ export default function App() {
 		getUserUnReadedNotifications().then(response => {
 			setAllNotifications(response.data)
 		})
+		const userId = localStorage.getItem("user_id")
+		const ws = new WebSocket(`ws://localhost:8000/api/user/${userId}/ws/notifications`);
 		
-		const ws = new WebSocket(
-			`ws://localhost:8000/api/user/ws/notifications/${localStorage.getItem('user_id')}`
-		)
-    
 		ws.onmessage = (event) => {
 			const data = JSON.parse(event.data)
 			notificationHandler(data)

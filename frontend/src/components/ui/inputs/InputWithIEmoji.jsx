@@ -23,7 +23,7 @@ export default function InputWithIEmoji({fieldValue, setFieldValue, minRows, ent
                 onKeyDown={enterHandler ? enterHandler: null}
             />
             <Popover content={<EmojiPicker onEmojiClick={addEmojiToFieldValue}/>}>
-                <SmileOutlined className="text-[#fff] cursor-pointer ml-[10px] text-[20px] hover:text-[#b9b9b9]"/>
+                <SmileOutlined className="cursor-pointer ml-[10px] text-[20px] hover:text-gray-300 text-gray-500"/>
             </Popover>
         </div>
     )

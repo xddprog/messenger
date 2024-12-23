@@ -17,38 +17,36 @@ from backend.utils.clients.s3_client import S3Client
 from backend.utils.config.config import load_redis_config
 from backend.utils.decorators.cache_decorators import CacheUser
 from backend.utils.websockets.notification_manager import NotificationsManager
-# from functools import wraps
-# from time import perf_counter
-# from typing import AsyncGenerator, Callable, TypeVar, Any, Awaitable, Union
+
 
 bearer = HTTPBearer(auto_error=False)
 
 
-# R = TypeVar("R")
+R = TypeVar("R")
 
-# def measure_execution_time(func: Callable[..., Union[Awaitable[R], AsyncGenerator[Any, None]]]) -> Callable[..., Union[Awaitable[R], AsyncGenerator[Any, None]]]:
-#     @wraps(func)
-#     async def wrapper(*args: Any, **kwargs: Any) -> Union[R, AsyncGenerator[Any, None]]:
-#         start_time = perf_counter()
+def measure_execution_time(func: Callable[..., Union[Awaitable[R], AsyncGenerator[Any, None]]]) -> Callable[..., Union[Awaitable[R], AsyncGenerator[Any, None]]]:
+    @wraps(func)
+    async def wrapper(*args: Any, **kwargs: Any) -> Union[R, AsyncGenerator[Any, None]]:
+        start_time = perf_counter()
 
-#         if func.__name__ == 'get_s3_client' or func.__name__ == 'get_session':
-#             async def generator_wrapper() -> AsyncGenerator[Any, None]:
+        if func.__name__ == 'get_s3_client' or func.__name__ == 'get_session':
+            async def generator_wrapper() -> AsyncGenerator[Any, None]:
 
-#                 async for value in func(*args, **kwargs):
-#                     yield value
+                async for value in func(*args, **kwargs):
+                    yield value
 
-#                 process_time = perf_counter() - start_time
-#                 print(f"Execution time of {func.__name__}: {process_time} seconds")
+                process_time = perf_counter() - start_time
+                print(f"Execution time of {func.__name__}: {process_time} seconds")
 
-#             return generator_wrapper()
+            return generator_wrapper()
 
-#         else:
-#             result = await func(*args, **kwargs)
-#             process_time = perf_counter() - start_time
-#             print(f"Execution time of {func.__name__}: {process_time:.4f} seconds")
-#             return result
+        else:
+            result = await func(*args, **kwargs)
+            process_time = perf_counter() - start_time
+            print(f"Execution time of {func.__name__}: {process_time:.4f} seconds")
+            return result
 
-#     return wrapper
+    return wrapper
 
 
 async def get_session(
@@ -94,7 +92,7 @@ async def get_auth_service(
 @CacheUser()
 async def get_current_user_dependency(
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    token=Depends(bearer),
+    token: Annotated[HTTPBearer, Depends(bearer)],
 ) -> str:
     user = await auth_service.verify_token(token)
     user = await auth_service.check_user_exist(user)
@@ -108,7 +106,6 @@ async def get_group_service(
         repository=repositories.GroupRepository(session=session),
         s3_client=s3_client,
     )
-
 
 
 async def get_comment_service(

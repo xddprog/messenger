@@ -2,13 +2,16 @@ import { Form, Modal, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import InputWithIEmoji from '../ui/inputs/InputWithIEmoji.jsx';
 import UploadImages from '../ui/uploads/UploadImages.jsx';
+import { updatePost } from '../../requests/api/posts.js';
 
 
 export default function EditPostModal({
+	postId,
 	postDescription,
 	postImages,
 	isOpen,
 	handleIsOpen,
+	setPostAfterEdit
 }) {
 	const form = Form.useForm();
 	const [descriptionValue, setDescriptionValue] = useState('');
@@ -16,11 +19,11 @@ export default function EditPostModal({
 
 	useEffect(() => {
 		setFileList(postImages.map((image) => ({ url: image })))
-	}, [])
+	}, [postImages])
 
 	useEffect(() => {
 		setDescriptionValue(postDescription)
-	}, [])
+	}, [postDescription])
 
 	function closeModal() {
 		setDescriptionValue('');
@@ -31,17 +34,21 @@ export default function EditPostModal({
 
 	async function submitEditPost() {
 		try {
-			const formData = new FormData();
-			if (fileList.length > 0) {
-				fileList.forEach((file) => {
-					formData.append('images', file.originFileObj);
-				});
-			} else {
-				formData.append('images', [null]);
-			}
-
+			const formData = new FormData()
 			formData.append('description', descriptionValue);
 
+			fileList.forEach((file) => {
+				if (file.url) {
+					formData.append('old_images', file.url);
+				} else {
+					formData.append('new_images', file.originFileObj);
+				}
+			});
+			for (let [key, value] of formData.entries()) {
+				console.log(key, value);
+			}
+			await updatePost(postId, formData).then(res => setPostAfterEdit(res));
+			handleIsOpen(false);
 		} catch (error) {
 			console.error(error);
 		}

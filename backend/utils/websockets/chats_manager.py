@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from fastapi.websockets import WebSocket
 from pydantic import UUID4, BaseModel
 
@@ -25,6 +26,7 @@ class ChatsManager:
         response_type: str,
         message: MessageModel | BaseModel,
     ):
+    
         for connection in self.active_connections[chat_id]:
             try:
                 await connection.send_json(
@@ -33,10 +35,9 @@ class ChatsManager:
             except RuntimeError:
                 self.disconnect(chat_id, connection)
 
-    async def broadcast_error(self, chat_id, error):
-        print(error.args)
+    async def broadcast_error(self, chat_id, error: HTTPException):
         for connection in self.active_connections[chat_id]:
-            await connection.send_json(error)
+            await connection.send_json({'detail': error.detail})
 
     async def send_notification(
         self, user_id: str, notification: BaseNotificationModel

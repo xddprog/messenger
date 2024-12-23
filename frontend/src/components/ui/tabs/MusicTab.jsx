@@ -1,4 +1,4 @@
-import Button from '../../ui/buttons/button';
+import Button from '../buttons/button';
 export default function MusicTab() {
 	return (
 		<div className='flex flex-col gap-3'>

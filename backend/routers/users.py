@@ -57,7 +57,6 @@ async def get_user_groups(
     user_admined_groups: bool = False,
     user_id: str = None,
 ) -> list[BaseGroupModel]:
-    
     if user_admined_groups:
         return await group_service.get_user_admined_groups(user.id)
     return await group_service.get_user_groups(user_id if user_id else user)
@@ -71,7 +70,8 @@ async def get_user_chats(
 ) -> list[BaseChatModel]:
     chats = await user_service.get_user_chats(user)
     chats_models = [
-        await chats_service.get_chat(chat_id, dump=True) for chat_id in chats
+        await chats_service.get_chat(chat_id, dump=True) 
+        for chat_id in chats
     ]
     return chats_models
 
@@ -80,8 +80,9 @@ async def get_user_chats(
 async def get_user_posts(
     post_service: Annotated[PostService, Depends(get_post_service)],
     user: Annotated[str, Depends(get_current_user_dependency)],
+    other_user_id: str = None,
 ) -> list[PostModel]:
-    return await post_service.get_user_posts(user)
+    return await post_service.get_user_posts(user if not other_user_id else other_user_id)
 
 
 @router.get("/notifications/unreaded")
@@ -104,7 +105,7 @@ async def get_user(
         NotificationService, Depends(get_notification_service)
     ],
     user: BaseUserModel = Depends(get_current_user_dependency),
-) -> dict:
+) -> GetUserDataModel:
     return GetUserDataModel(
         current_user=await user_service.get_user(user_id, dump=True),
         request_add_friend_is_send=await notification_service.check_request_add_friend(
@@ -172,17 +173,17 @@ async def update_user_profile(
     )
 
 
-@router.websocket("/ws/notifications")
+@router.websocket("/{user}/ws/notifications")
 async def websocket_endpoint(
     websocket: WebSocket,
-    user: Annotated[str, Depends(get_current_user_dependency)],
+    user: str,
     manager: Annotated[
         NotificationsManager, Depends(get_notifications_manager)
     ],
     user_service: Annotated[UserService, Depends(get_user_service)],
     notification_service: Annotated[
         NotificationService, Depends(get_notification_service)
-    ],
+    ]
 ):
     await manager.connect(user, websocket)
     try:

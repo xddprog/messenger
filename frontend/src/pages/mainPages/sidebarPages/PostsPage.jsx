@@ -37,7 +37,12 @@ export default function PostsPage() {
 					<Empty description={<Typography.Text>Нет постов</Typography.Text>} />
 				) : (
 					posts.map((post) => (
-						<Post key={post.id} post={post} updatePost={updatePost} />
+						<Post 
+							key={post.id} 
+							postProps={post} 
+							updatePost={updatePost} 
+							isCreator={localStorage.getItem("user_id") == post.author.id}
+						/>
 					))
 				)}
 			</div>

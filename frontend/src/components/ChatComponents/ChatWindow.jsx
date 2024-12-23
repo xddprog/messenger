@@ -17,7 +17,7 @@ export default function ChatWindow({ chat }) {
     const [ws, setWs] = useState(null)
     const [firstUnreadedMessageIndex, setFirstUnreadedMessageIndex] = useState(null)
     const unreadMessageRef = useRef(null);
-
+    
     useChatWebsocket(chat.id, setWs, setMessages, setFirstUnreadedMessageIndex);
     useChatScroll(messages, handleReadMessage, chat.id)
 
@@ -28,7 +28,6 @@ export default function ChatWindow({ chat }) {
     }, [firstUnreadedMessageIndex]);
 
     function sendMessage() {
-        console.log("send", messageValue)
         messageValue.trim() && ws.send(JSON.stringify({ message: messageValue, type: 'create' }))
         setMessageValue('')
     }
@@ -57,7 +56,7 @@ export default function ChatWindow({ chat }) {
                     className="absolute w-full -bottom-4 max-h-full overflow-x-scroll flex flex-col gap-3" 
                     id='chat-messages-parent'
                 >
-                    {Object.keys(messages).length == 0 ? (<Empty description="Нет сообщений" className="mb-[38%]" />) :
+                    {!messages || Object.keys(messages).length == 0 ? (<Empty description="Нет сообщений" className="mb-[38%]" />) :
                         Object.entries(messages).map(([date, messagesFromDate], index) => {
                             return (
                                 <div key={index}>
@@ -108,7 +107,7 @@ export default function ChatWindow({ chat }) {
                         <InputWithIEmoji minRows={1} fieldValue={messageValue} setFieldValue={setMessageValue} />
                     </div>
                     <SendOutlined
-                        className="text-[20px] text-white cursor-pointer hover:text-[#b9b9b9]"
+                        className="text-[20px] text-gray-500 cursor-pointer hover:text-gray-300"
                         onClick={sendMessage}
                     />
                 </div>

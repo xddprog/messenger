@@ -51,7 +51,6 @@ class SqlAlchemyRepository(BaseRepository):
 
     async def get_item(self, item_id: int | UUID4 | str) -> ModelType | None:
         item = await self.session.get(self.model, item_id)
-
         return item
 
     async def get_all_items(self) -> list[ModelType]:
@@ -91,10 +90,10 @@ class SqlAlchemyRepository(BaseRepository):
             .returning(self.model)
         )
 
-        item: Result = await self.session.execute(query)
+        item: Result = (await self.session.execute(query)).scalars().all()[0]
         await self.session.commit()
-
-        return item.scalars().all()[0]
+        await self.session.refresh(item)
+        return item
 
     async def get_model(self, **kwargs: int | str | UUID4) -> ModelType:
         return self.model(**kwargs)

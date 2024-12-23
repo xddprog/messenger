@@ -1,7 +1,7 @@
 import { Image } from 'antd';
 
 
-function MessageImages({ images }) {
+function ImagesList({ images }) {
     return (
         <>
             {images.length !== 0 && (
@@ -54,4 +54,4 @@ function MessageImages({ images }) {
     );
 }
 
-export default MessageImages;
+export default ImagesList;

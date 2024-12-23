@@ -6,7 +6,7 @@ from pydantic import UUID4
 from fastapi import APIRouter, Depends, UploadFile, Form
 
 from backend.dto.comment_dto import CommentModel
-from backend.dto.post_dto import PostModel
+from backend.dto.post_dto import PostModel, UpdatePostModel
 from backend.dto.user_dto import BaseUserModel
 from backend.services.comment_service import CommentService
 from backend.utils.dependencies.dependencies import (
@@ -24,6 +24,14 @@ router = APIRouter(
 )
 
 
+@router.patch('/{post_id}/read')
+async def read_post(
+    post_service: Annotated[PostService, Depends(get_post_service)],
+    post_id: UUID4
+) -> PostModel:
+    return await post_service.read_post(post_id)
+
+
 @router.post("/create", status_code=201)
 async def create_post(
     post_service: Annotated[PostService, Depends(get_post_service)],
@@ -33,11 +41,31 @@ async def create_post(
     description: str = Form(...),
     images: list = Form(default=[""]),
 ) -> PostModel:
-    author = await user_service.get_user(author_id)
     new_post = await post_service.create_post(
-        post_id=id, description=description, images=images, author=author
+        post_id=id, 
+        description=description, 
+        images=images, 
+        author=author_id
     )
     return new_post
+
+
+@router.put("/{post_id}")
+async def update_post(
+    post_id: UUID4,
+    user_id: Annotated[str, Depends(get_current_user_dependency)],
+    post_service: Annotated[PostService, Depends(get_post_service)],
+    description: str | None = Form(default=None),
+    new_images: list[UploadFile] | UploadFile | None = Form(default=None),
+    old_images: list[str] | str | None = Form(default=None),
+) -> PostModel:
+    return await post_service.update_post(
+        post_id,
+        user_id,
+        description=description,
+        new_images=new_images,
+        old_images=old_images,
+    )
 
 
 @router.get("/all")
@@ -85,7 +113,7 @@ async def get_post_comments(
     return await comment_service.get_post_comments(post_id)
 
 
-@router.post("{post_id}/comments/add")
+@router.post("/{post_id}/comments")
 async def add_comment_to_post(
     post_id: UUID4,
     post_service: Annotated[PostService, Depends(get_post_service)],
@@ -104,3 +132,27 @@ async def add_comment_to_post(
         parent=parent,
     )
     return await post_service.add_comment(post_id, comment)
+
+
+@router.delete("/{post_id}/comments/{comment_id}")
+async def delete_post_comment(
+    comment_id: int,
+    post_id: UUID4,
+    comment_service: Annotated[CommentService, Depends(get_comment_service)],
+    post_service: Annotated[PostService, Depends(get_post_service)]
+) -> None:
+    await post_service.check_post_exist(post_id)
+    await comment_service.delete_post_comment(comment_id)
+
+
+@router.put("/{post_id}/comments/{comment_id}")
+async def update_comment(
+    comment_id: int,
+    comment_service: Annotated[CommentService, Depends(get_comment_service)],
+    text: str | None = Form(default=None),
+    new_images: list[UploadFile] | None = Form(default=None),
+    deleted_images: list[UploadFile] | None = Form(default=None),
+):
+    return await comment_service.update_post_comment(
+        comment_id, text, new_images, deleted_images
+    )

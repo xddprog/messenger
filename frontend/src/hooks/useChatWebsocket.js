@@ -5,8 +5,6 @@ import { createMessage, deleteMessage, editMessage, readMessage } from "../reque
 
 export default function useChatWebsocket(chatId, setWs, setMessages, setFirstUnreadedMessageIndex) {
     useEffect(() => {
-        setMessages([]);
-
         const webSocket = new WebSocket(`ws://localhost:8000/api/chat/ws/${chatId}/${localStorage.getItem('user_id')}`);
         setWs(webSocket);
 
@@ -23,7 +21,7 @@ export default function useChatWebsocket(chatId, setWs, setMessages, setFirstUnr
                     return deleteMessage(parsedData.message, prevMessages);
                 } else if (parsedData.response_type === 'create') {
                     if (parsedData.message.user.id == localStorage.getItem('user_id')) {
-                        setFirstUnreadedMessageIndex(prev => prev + 1000000)
+                        setFirstUnreadedMessageIndex(Number.MAX_VALUE)
                     } else {
                         setFirstUnreadedMessageIndex(prev => prev + 1)
                     }

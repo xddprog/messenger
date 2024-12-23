@@ -1,3 +1,4 @@
+from fastapi import UploadFile
 from pydantic import UUID4, BaseModel
 
 from backend.dto.user_dto import BaseUserModel
@@ -15,3 +16,15 @@ class BaseGroupModel(BaseModel):
 class GroupModel(BaseGroupModel):
     creator: BaseUserModel
     admins: list[BaseUserModel]
+
+
+class GroupInfoModel(BaseModel):
+    group: GroupModel
+    is_subscriber: bool
+    is_admin: bool
+
+
+class UpdateGroupForm(BaseModel):
+    title: str | None
+    description: str | None
+    avatar: UploadFile | None

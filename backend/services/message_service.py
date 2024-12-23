@@ -55,10 +55,9 @@ class MessageService(BaseService):
         check_user: bool = True,
     ) -> Message:
         message = await self.repository.get_item(message_id)
-
         if not message:
             raise error
-        elif message.chat_fk != chat_id:
+        elif str(message.chat_fk) != chat_id:
             raise error
         elif check_user and message.user_fk != user_id:
             raise error
@@ -129,7 +128,7 @@ class MessageService(BaseService):
         self, user: User, chat_id: UUID4, message_id: UUID4
     ) -> None:
         message = await self.check_item(
-            message_id, chat_id, user.id, MessageNotFound, check_user=False
+            message_id, chat_id, user, MessageNotFound, check_user=False
         )
         if user in message.users_who_readed:
             raise UserAlreadyreadMessage()

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from fastapi import UploadFile
 from pydantic import UUID4, BaseModel, field_validator
 
 from backend.dto.group_dto import GroupModel
@@ -15,7 +16,7 @@ class AuthorModel(BaseModel):
 class PostModel(BaseModel):
     id: UUID4
     author: AuthorModel
-    description: str
+    description: str | None = None
     images: list[str] | None = None
     likes: list[BaseUserModel] | None = None
     created_at: datetime | str
@@ -36,6 +37,11 @@ class PostModel(BaseModel):
             "сентября",
             "октября",
             "ноября",
-            "декабря",
+            "декабря", 
         ]
-        return f"{value.day} {months[value.month - 1]}, {str(value.hour).zfill(2)}:{value.minute}"
+        return f"{value.day} {months[value.month - 1]}, {str(value.hour).zfill(2)}:{str(value.minute).zfill(2)}"
+
+class UpdatePostModel(BaseModel):
+    description: str
+    new_images: list[str] 
+    old_images: list[UploadFile]

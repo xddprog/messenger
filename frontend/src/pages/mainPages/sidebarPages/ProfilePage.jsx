@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import FriendList from '../../../components/UserComponents/FriendList.jsx';
-import UserPosts from '../../../components/UserComponents/UserPosts.jsx';
 import UserProfileInfo from '../../../components/UserComponents/UserProfileInfo.jsx';
-import FollowingList from '../../../components/UserComponents/following/FollowingList.jsx';
-import Navigation from '../../../components/UserComponents/navigation/Navigation.jsx';
+import FollowingList from '../../../components/ui/following/FollowingList.jsx';
+import Navigation from '../../../components/ui/navigation/Navigation.jsx';
 import { getCurrentUser } from '../../../requests/api/auth.js';
 import { getOtherUser } from '../../../requests/api/users.js';
+import PostsList from '../../../components/UserComponents/PostsList.jsx';
 
 export default function ProfilePage({ currentUserProfile, notificationWs }) {
 	const [user, setUser] = useState([]);
@@ -16,7 +16,6 @@ export default function ProfilePage({ currentUserProfile, notificationWs }) {
 	const [isFriend, setIsFriend] = useState(false)
 
 	useEffect(() => {
-		
 		if (currentUserProfile) {
 			getCurrentUser().then((res) => setUser(res.data));
 		} else {
@@ -31,29 +30,34 @@ export default function ProfilePage({ currentUserProfile, notificationWs }) {
 
 	return (
 		<>
-			<UserProfileInfo 
-				user={user} 
-				currentUserProfile={currentUserProfile} 
-				notificationWs={notificationWs} 
+			<UserProfileInfo
+				user={user}
+				currentUserProfile={currentUserProfile}
+				notificationWs={notificationWs}
 				requestAddFriendIsSend={requestAddFriendIsSend}
 				requestAddFriendIsGet={requestAddFriendIsGet}
 				setRequestAddFriendIsSend={setRequestAddFriendIsSend}
 				setRequestAddFriendIsGet={setRequestAddFriendIsGet}
 				isFriend={isFriend}
 				setIsFriend={setIsFriend}
+				setUser={setUser}
 			/>
 			<div className='grid grid-cols-[60%,40%] gap-1'>
 				<div className=''>
-					<Navigation user={user} currentUserProfile={currentUserProfile} />
-					<UserPosts currentUserProfile={currentUserProfile} userId={userId} />
+					<Navigation images={user.images} currentUserProfile={currentUserProfile} />
+					<PostsList 
+						currentUserProfile={currentUserProfile} 
+						itemId={userId} 
+						page={'user'} 
+					/>
 				</div>
 				<div className=''>
-					<FriendList 
-						currentUserProfile={currentUserProfile} 
+					<FriendList
+						currentUserProfile={currentUserProfile}
 						userId={userId}
 						notificationWs={notificationWs}
 					/>
-					<FollowingList currentUserProfile={currentUserProfile} userId={userId} />
+					<FollowingList userId={userId}/>
 				</div>
 			</div>
 		</>

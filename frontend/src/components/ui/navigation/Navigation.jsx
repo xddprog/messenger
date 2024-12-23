@@ -4,7 +4,7 @@ import PhotosTab from '../tabs/PhotosTab';
 import MusicTab from '../tabs/MusicTab';
 import AlbumsTab from '../tabs/AlbumsTab';
 
-export default function Navigation({user, currentUserProfile}) {
+export default function Navigation({images, currentUserProfile}) {
 	const [activeTab, setActiveTab] = useState('photos');
 
 	const tabs = [
@@ -24,6 +24,7 @@ export default function Navigation({user, currentUserProfile}) {
 			icon: <IoIosAlbums />,
 		},
 	];
+
 	const handleTabClick = (tabId) => {
 		setActiveTab(tabId === activeTab ? null : tabId);
 	};
@@ -31,7 +32,7 @@ export default function Navigation({user, currentUserProfile}) {
 	const renderActiveTab = () => {
 		switch (activeTab) {
 			case 'photos':
-				return <PhotosTab images={user.images} currentUserProfile={currentUserProfile} />;
+				return <PhotosTab images={images} currentUser={currentUserProfile} />;
 			case 'music':
 				return <MusicTab />;
 			case 'albums':

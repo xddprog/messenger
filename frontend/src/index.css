@@ -46,3 +46,13 @@ a:hover {
 	background-color: #383838;
 	color: #ffffff;
 }
+
+
+.custom-modal .ant-modal-content {
+	background-color: transparent !important;
+	box-shadow: none !important; /* Убираем тень, если необходимо */
+  }
+
+.custom-card .ant-card-body {
+	padding: 10px 0px 10px 24px !important;
+}

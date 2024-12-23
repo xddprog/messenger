@@ -1,4 +1,4 @@
-import Button from '../../ui/buttons/button';
+import Button from '../buttons/button';
 
 export default function AlbumsTab() {
 	return (

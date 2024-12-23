@@ -8,14 +8,10 @@ class PostRepository(SqlAlchemyRepository):
     model = Post
 
     async def add_item(self, **kwargs) -> Post:
-        author = kwargs.pop("author")
-
         post = self.model(**kwargs)
-        author.posts.append(post)
-
+        self.session.add(post)
         await self.session.commit()
         await self.session.refresh(post)
-
         return post
 
     async def like_post(self, post: Post, user: User) -> Post:
@@ -49,7 +45,10 @@ class PostRepository(SqlAlchemyRepository):
         await self.session.commit()
 
     async def get_user_posts(self, user_id: UUID4) -> list[Post]:
-        query = select(self.model).where(self.model.author_fk == user_id)
+        query = select(self.model).where(
+            self.model.author_fk == user_id, 
+            self.model.group_fk == None
+        )
 
         posts = await self.session.execute(query)
         posts = posts.scalars().all()

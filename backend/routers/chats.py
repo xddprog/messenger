@@ -52,11 +52,11 @@ async def get_chat_messages(
     return await message_service.get_messages_from_chat(chat_id, offset)
 
 
-@router.websocket("/ws/{chat_id}")
+@router.websocket("/ws/{chat_id}/{client_id}")
 async def websocket_endpoint(
     websocket: WebSocket,
     chat_id: UUID4,
-    client_id: Annotated[str, Depends(get_current_user_dependency)],
+    client_id: str,
     manager: Annotated[ChatsManager, Depends(get_chats_manager)],
     rabbit_client: Annotated[RabbitClient, Depends(get_rabbit_client)],
 ):
@@ -71,4 +71,4 @@ async def websocket_endpoint(
                 json.dumps(data),
             )
     except WebSocketDisconnect:
-        manager.disconnect(chat_id, websocket)
+        manager.disconnect(str(chat_id), websocket)

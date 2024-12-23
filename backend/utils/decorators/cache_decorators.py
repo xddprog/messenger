@@ -2,24 +2,25 @@ from functools import wraps
 import json
 from typing import Callable
 from backend.services.auth_service import AuthService
-from backend.services.user_service import UserService
 from backend.utils.clients.redis_client import RedisCache
 
 
 class CacheUser(RedisCache):
-    def __call__(self, func: Callable):
+    def __call__(self, func: Callable, is_reset: bool = False):
         @wraps(func)
         async def wrapper(*args, **kwargs) -> str:
             auth_service: AuthService = kwargs.get("auth_service")
-            email = await auth_service.verify_token(
-                kwargs.get("token")
-            )
+            email = await auth_service.verify_token(kwargs.get("token"))
             user = await self.get_item(email)
-            if user:
+            
+            if is_reset and user:
+                await self.delete_item(email)
+                return user
+            elif user:
                 return user.decode()
             
             result = await func(*args, **kwargs)
-            await self.set_item(email, (await auth_service.get_user_by_email(email)).id)
+            await self.set_item(email, result)
             return result
 
         return wrapper

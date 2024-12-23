@@ -38,14 +38,11 @@ class CommentService(BaseService):
     async def get_post_comments(self, post_id: UUID4) -> list[CommentModel]:
         comments = await self.repository.get_post_comments(post_id)
         comments = [comment for comment in comments if comment.parent is None]
-
         return await self.dump_items(comments, CommentModel)
 
     async def delete_post_comment(self, comment_id: int) -> None:
         comment = await self.repository.get_item(comment_id)
-
         await self.check_item(comment, CommentNotFound)
-
         return await self.repository.delete_item(comment)
 
     async def update_post_comment(
@@ -56,7 +53,6 @@ class CommentService(BaseService):
         deleted_images: list[UploadFile] | None,
     ) -> CommentModel:
         comment = await self.repository.get_item(comment_id)
-
         await self.check_item(comment, CommentNotFound)
 
         if new_images:
@@ -64,7 +60,6 @@ class CommentService(BaseService):
                 new_images,
                 f"posts/{comment.post_fk}/comments/{comment.author.id}/{uuid4()}",
             )
-
         if deleted_images:
             await self.s3_client.delete_many_files(deleted_images)
 
@@ -74,5 +69,4 @@ class CommentService(BaseService):
             images=new_images,
             deleted_images=deleted_images,
         )
-
         return await self.model_dump(comment, CommentModel)

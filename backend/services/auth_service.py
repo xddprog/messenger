@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from functools import wraps
 from time import perf_counter
 
 from fastapi.security import HTTPBearer
@@ -48,9 +49,11 @@ class AuthService(BaseService):
 
         if not user:
             raise UserAlreadyNotRegister
+        time = perf_counter()
         if not await self.verify_password(form.password, user.password):
             raise InvalidLoginData
 
+        print(f"authenticate_user: {perf_counter() - time:.10f} seconds")
         return await self.model_dump(user, BaseUserModel)
 
     async def create_access_token(self, email: str) -> str:
@@ -81,14 +84,10 @@ class AuthService(BaseService):
             raise InvalidToken
 
     async def check_user_exist(self, email: str) -> User:
-        start = perf_counter()
         user = await self.get_user_by_email(email)
 
         if user is None:
             raise InvalidToken
-
-        end = perf_counter()
-        print(f"check_user_exist: {end - start:.10f} seconds")
 
         return user
 

@@ -25,11 +25,11 @@ export async function getUserPosts(userId) {
 					Authorization: 'Bearer ' + localStorage.getItem('token'),
 				},
 				params: {
-					user_id: userId ? userId : null
+					other_user_id: userId ? userId : null
 				}
 			}
 		)
-		.then((response) => response);
+		.then((response) => response.data);
 }
 
 export async function searchUser(value) {
@@ -73,7 +73,7 @@ export async function getUserGroups(userAdminedGroups, userId) {
 				}
 			}
 		)
-		.then((response) => response);
+		.then((response) => response.data);
 }
 
 export async function getUserFriends(userId) {

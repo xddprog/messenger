@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 
 export default function useChatScroll(messages, handleReadMessage, chatId) {
@@ -8,8 +8,8 @@ export default function useChatScroll(messages, handleReadMessage, chatId) {
             if (!container) return;
 
             const containerRect = container.getBoundingClientRect();
-    
-            Object.entries(messages).forEach(([date, messagesFromDate]) => {
+
+            messages && Object.entries(messages).forEach(([date, messagesFromDate]) => {
                 messagesFromDate.forEach((message) => {
                     const messageElement = document.getElementById(`message-${message.id}`);
                     if (!messageElement) return;
@@ -38,5 +38,5 @@ export default function useChatScroll(messages, handleReadMessage, chatId) {
         container?.addEventListener('scroll', checkMessagesVisibility);
     
         return () => container?.removeEventListener('scroll', checkMessagesVisibility);
-    }, [messages, handleReadMessage, chatId]);
+    }, [chatId]);
 }

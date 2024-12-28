@@ -56,7 +56,7 @@ class GroupService(BaseService):
         description: str,
         avatar: UploadFile | None,
         cover: UploadFile | None,
-        creator: User,
+        creator: str,
     ) -> BaseGroupModel:
         if avatar:
             avatar = await self.s3_client.upload_one_file(
@@ -85,12 +85,11 @@ class GroupService(BaseService):
         await self.repository.delete_item(group)
 
     async def join_user_to_group(
-        self, group_id: str, user: User
+        self, group_id: str, user_id: str
     ) -> bool:
         group = await self.repository.get_item(group_id)
         await self.check_item(group, GroupNotFound)
-        is_sub = await self.repository.join_user_to_group(group, user)
-        return is_sub
+        return await self.repository.join_user_to_group(group_id, user_id)
 
     async def get_subscribers(self, group_id: str) -> list[BaseGroupModel]:
         group = await self.repository.get_item(group_id)
@@ -109,16 +108,15 @@ class GroupService(BaseService):
 
         if form.avatar:
             avatar = await self.s3_client.upload_one_file(
-                file=avatar, path=await self.create_group_avatar_url(group_id)
+                file=avatar, 
+                path=await self.create_group_avatar_url(group_id)
             )
 
         group = await self.repository.update_item(
-            group_id, **form.model_dump(exclude_none=True)
+            group_id, 
+            **form.model_dump(exclude_none=True)
         )
         return await self.model_dump(group, GroupModel)
-    
-    async def create_post(self, group_id: str):
-        pass
 
     async def get_group_posts(self, group_id: str) -> list[PostModel]:
         posts = await self.repository.get_group_posts(group_id)

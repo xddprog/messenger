@@ -82,7 +82,9 @@ async def get_user_posts(
     user: Annotated[str, Depends(get_current_user_dependency)],
     other_user_id: str = None,
 ) -> list[PostModel]:
-    return await post_service.get_user_posts(user if not other_user_id else other_user_id)
+    return await post_service.get_user_posts(
+        user if not other_user_id else other_user_id
+    )
 
 
 @router.get("/notifications/unreaded")

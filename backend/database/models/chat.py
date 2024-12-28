@@ -48,7 +48,6 @@ class Chat(Base):
         uselist=False,
         lazy="selectin",
     )
-
     users: Mapped[list["User"]] = relationship(
         back_populates="chats",
         secondary="user_chats",

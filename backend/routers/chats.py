@@ -31,16 +31,13 @@ router = APIRouter(
 @router.post("/", status_code=201)
 async def create_chat(
     chat_service: Annotated[ChatService, Depends(get_chat_service)],
-    user_service: Annotated[UserService, Depends(get_user_service)],
     user_id: Annotated[str, Depends(get_current_user_dependency)],
     id: UUID4 = Form(default_factory=lambda: str(uuid4())),
     users: list[str] = Form(default=[]),
     avatar: UploadFile | None = Form(default=None),
     title: str = Form(),
 ) -> BaseChatModel:
-    users = [await user_service.get_user(user_id) for user_id in users]
-    creator = await user_service.get_user(user_id)
-    return await chat_service.create_chat(id, title, users, avatar, creator)
+    return await chat_service.create_chat(id, title, users, avatar, user_id)
 
 
 @router.get("/{chat_id}/messages/{offset}")

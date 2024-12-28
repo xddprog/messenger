@@ -23,30 +23,51 @@ class GroupRepository(SqlAlchemyRepository):
         groups = await self.session.execute(query)
         return groups.scalars().all()
 
-    async def add_item(self, **kwargs: int | str | UUID4) -> type[Group]:
-        creator: User = kwargs.pop("creator")
+    async def add_item(
+        self,
+        group_id: str,
+        title: str,
+        description: str,
+        avatar: str | None,
+        cover: str | None,
+        creator: str,
+    ) -> Group:
 
-        group = self.model(**kwargs)
-        group.users.append(creator)
-        group.admins.append(creator)
-        group.creator = creator
-        group.images = [kwargs.get('avatar')]
+        group = self.model(
+            id=group_id,
+            title=title,
+            description=description,
+            avatar=avatar,
+            cover=cover,
+            creator_fk=creator
+        )
 
         self.session.add(group)
-
+        self.session.add(UserAdminedGroups(user_fk=creator, group_fk=group_id))
+        
         await self.session.commit()
         await self.session.refresh(group)
         return group
 
-    async def join_user_to_group(self, group: Group, user: User) -> Group:
-        await self.session.refresh(group)
+    async def join_user_to_group(self, group_id: str, user_id: str) -> Group:
         is_sub = None
+        user_in_group_query = select(UserGroups).where(
+            user_fk=user_id, group_id=group_id
+        )
+        user_in_group = (
+            await self.session.execute(user_in_group_query)
+        ).scalar_one_or_none()
 
-        if user in group.users:
-            group.users.remove(user)
+        if user_in_group:
+            await self.session.delete(user_in_group)
             is_sub = False
         else:
-            group.users.append(user)
+            self.session.add(
+                UserAdminedGroups(
+                    user_fk=user_id, 
+                    group_id=group_id
+                )
+            )
             is_sub = True
         await self.session.commit()
         return is_sub

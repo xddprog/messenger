@@ -8,9 +8,6 @@ from backend.repositories.base import SqlAlchemyRepository
 class CommentRepository(SqlAlchemyRepository):
     model = Comment
 
-    async def add_item(self, **kwargs):
-        return Comment(**kwargs)
-
     async def get_post_comments(self, post_id: UUID4) -> list[Comment]:
         query = (
             select(self.model)
@@ -25,12 +22,13 @@ class CommentRepository(SqlAlchemyRepository):
 
     async def update_item(
         self,
+        comment: Comment,
         comment_id: int,
         text: str,
         images: list[str] | None,
         deleted_images: list[str] | None,
     ):
-        comment = await self.session.get(self.model, comment_id)
+        await self.session.refresh(comment)
 
         if text:
             comment.text = text
@@ -45,5 +43,4 @@ class CommentRepository(SqlAlchemyRepository):
 
         await self.session.commit()
         await self.session.refresh(comment)
-
         return comment

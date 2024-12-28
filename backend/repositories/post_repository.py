@@ -1,6 +1,7 @@
 from pydantic import UUID4
 from sqlalchemy import select
 from backend.database.models import Comment, Post, User
+from backend.database.models.user import UserLikedPosts
 from backend.repositories.base import SqlAlchemyRepository
 
 
@@ -14,29 +15,23 @@ class PostRepository(SqlAlchemyRepository):
         await self.session.refresh(post)
         return post
 
-    async def like_post(self, post: Post, user: User) -> Post:
-        await self.session.refresh(post)
-
-        if user in post.likes:
-            post.likes.remove(user)
+    async def like_post(self, post_id: UUID4, user_id: str) -> Post:
+        is_liked_query = select(UserLikedPosts).where(
+            post_fk=post_id, user_fk=user_id
+        )
+        liked_post = (await self.session.execute(is_liked_query)).scalar_one_or_none()
+        if liked_post:
+            await self.session.delete(liked_post)
         else:
-            post.likes.append(user)
+            self.session.add(
+                UserLikedPosts(
+                    user_fk=user_id,
+                    post_fk=post_id
+                )
+            )
 
         await self.session.commit()
-        await self.session.refresh(post)
-
-        return post
-
-    async def add_comment(self, post: Post, comment: Comment) -> Post:
-        await self.session.refresh(post)
-
-        post.comments.append(comment)
-
-        await self.session.commit()
-        await self.session.refresh(comment)
-
-        return comment
-
+        
     async def delete_item(self, item: Post) -> None:
         for comment in item.comments:
             await self.session.delete(comment)

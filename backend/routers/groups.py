@@ -47,7 +47,6 @@ async def get_group_subscribers(
 
 @router.post("/create", status_code=201)
 async def add_group(
-    user_service: Annotated[UserService, Depends(get_user_service)],
     group_service: Annotated[GroupService, Depends(get_group_service)],
     creator_id: Annotated[str, Depends(get_current_user_dependency)],
     group_id: UUID4 = Form(..., default_factory=lambda: str(uuid4())),
@@ -56,14 +55,13 @@ async def add_group(
     cover: UploadFile | None = Form(default=None),
     description: str = Form(),
 ):
-    creator = await user_service.get_user(creator_id)
     return await group_service.create_group(
         title=title,
         description=description,
         group_id=group_id,
         avatar=avatar,
         cover=cover,
-        creator=creator,
+        creator=creator_id,
     )
 
 
@@ -83,8 +81,7 @@ async def join_user_to_group(
     user_service: Annotated[UserService, Depends(get_user_service)],
     user_id: Annotated[str, Depends(get_current_user_dependency)],
 ):
-    user = await user_service.get_user(user_id)
-    return await group_service.join_user_to_group(group_id, user)
+    return await group_service.join_user_to_group(group_id, user_id)
 
 
 @router.put('/{group_id}')

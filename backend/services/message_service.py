@@ -43,7 +43,6 @@ class MessageService(BaseService):
                         file=upload_file, path=f"{path}/{uuid4()}"
                     )
                 )
-
         return converted_images
 
     async def check_item(
@@ -63,15 +62,10 @@ class MessageService(BaseService):
             raise error
         return message
 
-    async def get_model(self, message: Message):
-        new_message = await self.repository.get_model(message=message)
-        return await self.model_dump(new_message, MessageModel)
-
     def fix_base64_string(self, b64_string):
         missing_padding = len(b64_string) % 4
         if missing_padding:
             b64_string += "=" * (4 - missing_padding)
-
         return b64_string
 
     async def create_message(
@@ -81,11 +75,12 @@ class MessageService(BaseService):
             images = await self.convert_message_images(
                 images, f"{chat_id}/messages/{user_id}"
             )
-
         new_message = await self.repository.add_item(
-            message=message, user_id=user_id, chat_id=chat_id, images=images
+            message=message, 
+            user_id=user_id, 
+            chat_id=chat_id, 
+            images=images
         )
-        
         return await self.model_dump(new_message, MessageModel)
 
     async def get_messages_from_chat(
@@ -100,7 +95,10 @@ class MessageService(BaseService):
         self, chat_id: UUID4, user_id: str, message_id: int
     ) -> None:
         message = await self.check_item(
-            message_id, chat_id, user_id, MessageNotFound
+            message_id, 
+            chat_id, 
+            user_id,
+            MessageNotFound
         )
         await self.repository.delete_item(message)
         return await self.model_dump(message, DeleteMessageModel)
@@ -121,19 +119,26 @@ class MessageService(BaseService):
         edited_message = await self.repository.update_item(
             message_id,
             message=message,
+            is_edited=True
         )
         return await self.model_dump(edited_message, MessageModel)
 
     async def read_message(
-        self, user: User, chat_id: UUID4, message_id: UUID4
+        self, user_id: str, chat_id: UUID4, message_id: UUID4
     ) -> None:
         message = await self.check_item(
-            message_id, chat_id, user, MessageNotFound, check_user=False
+            message_id, 
+            chat_id, 
+            user_id, 
+            MessageNotFound, 
+            check_user=False
         )
-        if user in message.users_who_readed:
+        
+        is_read = await self.repository.check_user_is_read_message(user_id, message_id)
+        if is_read:
             raise UserAlreadyreadMessage()
 
-        await self.repository.read_message(message, user)
+        await self.repository.read_message(message_id, user_id)
         message = await self.repository.get_item(message_id)
         return await self.model_dump(message, MessageModel)
 

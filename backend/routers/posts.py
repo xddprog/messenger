@@ -35,7 +35,6 @@ async def read_post(
 @router.post("/create", status_code=201)
 async def create_post(
     post_service: Annotated[PostService, Depends(get_post_service)],
-    user_service: Annotated[UserService, Depends(get_user_service)],
     author_id: Annotated[str, Depends(get_current_user_dependency)],
     id: UUID4 = Form(default_factory=lambda: str(uuid4())),
     description: str = Form(...),
@@ -87,11 +86,9 @@ async def get_one_post(
 async def like_post(
     post_id: UUID4,
     post_service: Annotated[PostService, Depends(get_post_service)],
-    user_service: Annotated[UserService, Depends(get_user_service)],
     user_id: Annotated[str, Depends(get_current_user_dependency)],
 ) -> PostModel:
-    user = await user_service.get_user(user_id)
-    return await post_service.like_post(post_id, user)
+    return await post_service.like_post(post_id, user_id)
 
 
 @router.delete("/{post_id}")
@@ -124,14 +121,14 @@ async def add_comment_to_post(
     images: list = Form(default=[""]),
     parent: int | None = Form(default=None),
 ) -> CommentModel:
-    comment = await comment_service.add_comment(
+    await post_service.check_post_exist(post_id)
+    return await comment_service.add_comment(
         post_id=post_id,
         text=text,
         author=await user_service.get_user(author),
         images=images,
         parent=parent,
     )
-    return await post_service.add_comment(post_id, comment)
 
 
 @router.delete("/{post_id}/comments/{comment_id}")

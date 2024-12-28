@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from backend.database.models import Notification, User
+from backend.database.models.user import UserNotifications
 from backend.repositories.base import SqlAlchemyRepository
 from backend.utils.config.enums import NotificationType
 
@@ -24,16 +25,22 @@ class NotificationRepository(SqlAlchemyRepository):
 
         return notification
 
-    async def add_item(self, **kwargs) -> Notification:
-        user: User = kwargs.pop("user")
-
+    async def add_item(self, user_id: str, **kwargs) -> Notification:
         notification = self.model(**kwargs)
 
-        user.notifications.append(notification)
         self.session.add(notification)
+
         await self.session.commit()
         await self.session.refresh(notification)
 
+        self.session.add(
+            UserNotifications(
+                user_fk=user_id, 
+                notification_fk=notification.id
+            )
+        )
+
+        await self.session.commit()
         return notification
 
     async def check_request_add_friend_is_send(

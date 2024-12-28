@@ -65,17 +65,17 @@ async def lifespan(app: FastAPI):
     app.state.chats_manager = ChatsManager()
     app.state.db_connection = await DatabaseConnection(load_database_config())()
     app.state.s3_client = await S3Client(load_s3_storage_config())()
-    app.state.rabbit_client = await RabbitClient(load_rabbitmq_config())()
-    asyncio.create_task(
-        handle_chat(
-            app.state.rabbit_client,
-            app.state.chats_manager,
-            await get_message_service(
-                await app.state.db_connection.get_session(),
-                app.state.s3_client,
-            ),
-        )
-    )
+    # app.state.rabbit_client = await RabbitClient(load_rabbitmq_config())()
+    # asyncio.create_task(
+    #     handle_chat(
+    #         app.state.rabbit_client,
+    #         app.state.chats_manager,
+    #         await get_message_service(
+    #             await app.state.db_connection.get_session(),
+    #             app.state.s3_client,
+    #         ),
+    #     )
+    # )
     yield
     await app.state.rabbit_client.close()
 

@@ -67,6 +67,7 @@ class PostService(BaseService):
             all_images.extend(new_images)
         elif new_images:
             all_images.append(new_images)
+
         post = await self.repository.get_item(post_id)
         await self.check_item(post, PostNotFound)
         post = await self.repository.update_item(
@@ -88,7 +89,7 @@ class PostService(BaseService):
     async def like_post(self, post_id: UUID4, user: User) -> PostModel:
         post = await self.repository.get_item(post_id)
         await self.check_item(post, PostNotFound)
-        await self.repository.like_post(post, user)
+        await self.repository.like_post(post_id, user)
         return await self.model_dump(post, PostModel)
 
     async def delete_post(self, post_id: UUID4) -> None:
@@ -99,14 +100,6 @@ class PostService(BaseService):
     async def check_post_exist(self, post_id: UUID4) -> None:
         post = await self.repository.get_item(post_id)
         await self.check_item(post, PostNotFound)
-
-    async def add_comment(
-        self, post_id: UUID4, comment: Comment
-    ) -> CommentModel:
-        post = await self.repository.get_item(post_id)
-        await self.check_item(post, PostNotFound)
-        comment = await self.repository.add_comment(post, comment)
-        return await self.model_dump(comment, CommentModel)
 
     async def get_user_posts(self, user_id: UUID4) -> list[PostModel]:
         posts = await self.repository.get_user_posts(user_id)

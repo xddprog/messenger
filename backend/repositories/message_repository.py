@@ -1,9 +1,11 @@
 from datetime import datetime
+from os import read
 from pydantic import UUID4
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 
 from backend.database.models import Message, User, Chat
+from backend.database.models.user import UsersReadedMessages
 from backend.repositories.base import SqlAlchemyRepository
 
 
@@ -20,35 +22,6 @@ class MessageRepository(SqlAlchemyRepository):
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-    async def add_item(
-        self, message: str, user_id: str, chat_id: str, images: list[str]
-    ) -> Message:
-        message = Message(
-            message=message,
-            user_fk=user_id,
-            chat_fk=chat_id,
-            created_at=datetime.now(),
-            images=images,
-        )
-
-        self.session.add(message)
-        await self.session.commit()
-        await self.session.refresh(message)
-        return message
-
-    async def update_item(
-        self, message_id: int, message: str | None
-    ) -> Message:
-        getted_message = await self.session.get(Message, message_id)
-
-        getted_message.is_edited = True
-        getted_message.message = message
-
-        await self.session.commit()
-        await self.session.refresh(getted_message)
-
-        return getted_message
-
     async def get_messages_from_chat(
         self, chat_id: UUID4, offset: int
     ) -> list[Message]:
@@ -63,6 +36,14 @@ class MessageRepository(SqlAlchemyRepository):
         messages = await self.session.execute(query)
         return messages.scalars().all()
 
-    async def read_message(self, message: Message, user_id: UUID4) -> None:
-        message.users_who_readed.append(await self.session.get(User, user_id))
+    async def read_message(self, message_id: int, user_id: str) -> None:
+        UsersReadedMessages(user_fk=user_id, message_fk=message_id)
         await self.session.commit()
+
+    async def check_user_is_read_message(self, user_id: str, message_id: str) -> bool:
+        query = select(UsersReadedMessages).where(
+            UsersReadedMessages.user_fk == user_id, 
+            UsersReadedMessages.message_fk == message_id
+        )
+        readed_message = await self.session.execute(query)
+        return readed_message.scalar_one_or_none()

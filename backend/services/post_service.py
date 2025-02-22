@@ -90,7 +90,6 @@ class PostService(BaseService):
         post = await self.repository.get_item(post_id)
         await self.check_item(post, PostNotFound)
         await self.repository.like_post(post_id, user)
-        return await self.model_dump(post, PostModel)
 
     async def delete_post(self, post_id: UUID4) -> None:
         post = await self.repository.get_item(post_id)

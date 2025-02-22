@@ -28,12 +28,13 @@ class ChatService(BaseService):
         avatar: UploadFile,
         creator_fk: User,
     ) -> BaseChatModel:
-        avatar = await self.s3_client.upload_one_file(
-            file=avatar, path=await self.create_image_url(chat_id, uuid4())
-        )
+        if avatar:
+            avatar = await self.s3_client.upload_one_file(
+                file=avatar, path=await self.create_image_url(chat_id, uuid4())
+            )
         users.append(creator_fk)
         new_chat = await self.repository.add_item(
-            id=chat_id,
+            chat_id=chat_id,
             users=users,
             title=title,
             avatar=avatar,

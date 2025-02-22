@@ -20,12 +20,12 @@ export default function ChatWindow({ chat }) {
     
     useChatWebsocket(chat.id, setWs, setMessages, setFirstUnreadedMessageIndex);
     useChatScroll(messages, handleReadMessage, chat.id)
-
+    
     useEffect(() => {
         if (unreadMessageRef.current) {
             unreadMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-    }, [firstUnreadedMessageIndex]);
+    }, []);
 
     function sendMessage() {
         messageValue.trim() && ws.send(JSON.stringify({ message: messageValue, type: 'create' }))

@@ -11,15 +11,14 @@ from backend.dto.user_dto import BaseUserModel
 from backend.services import AuthService
 from backend.services.user_service import UserService
 from backend.utils.clients.redis_client import RedisCache
-from backend.utils.config.config import load_redis_config
 from backend.utils.decorators.cache_decorators import CacheCitiesSearch
-from backend.utils.dependencies.dependencies import (
+from backend.versions.dependencies import (
     get_auth_service,
     get_current_user_dependency,
     get_user_service,
 )
 
-router = APIRouter(prefix="/api/auth", tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.get("/current_user")

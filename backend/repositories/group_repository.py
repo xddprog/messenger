@@ -44,6 +44,7 @@ class GroupRepository(SqlAlchemyRepository):
 
         self.session.add(group)
         self.session.add(UserAdminedGroups(user_fk=creator, group_fk=group_id))
+        self.session.add(UserGroups(user_fk=creator, group_fk=group_id))
         
         await self.session.commit()
         await self.session.refresh(group)
@@ -52,7 +53,8 @@ class GroupRepository(SqlAlchemyRepository):
     async def join_user_to_group(self, group_id: str, user_id: str) -> Group:
         is_sub = None
         user_in_group_query = select(UserGroups).where(
-            user_fk=user_id, group_id=group_id
+            UserGroups.user_fk == user_id, 
+            UserGroups.group_fk == group_id
         )
         user_in_group = (
             await self.session.execute(user_in_group_query)
@@ -63,9 +65,9 @@ class GroupRepository(SqlAlchemyRepository):
             is_sub = False
         else:
             self.session.add(
-                UserAdminedGroups(
+                UserGroups(
                     user_fk=user_id, 
-                    group_id=group_id
+                    group_fk=group_id
                 )
             )
             is_sub = True

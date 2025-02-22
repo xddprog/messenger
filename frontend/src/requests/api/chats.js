@@ -2,7 +2,7 @@ import axios from "axios";
 import { API_URL} from "../settings.js";
 
 
-const BASE_URL = `${API_URL}/api/chat`
+const BASE_URL = `${API_URL}/chat`
 
 
 export async function getChatMessages(chatId) {

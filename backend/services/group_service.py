@@ -70,7 +70,7 @@ class GroupService(BaseService):
             )
 
         new_group = await self.repository.add_item(
-            id=group_id,
+            group_id=group_id,
             title=title,
             description=description,
             avatar=avatar,

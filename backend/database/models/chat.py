@@ -5,6 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.database.models.base import Base
 from backend.database.models.user import User
+from backend.utils.config.constants import BASE_CHAT_AVATAR_URL
 
 
 class Message(Base):
@@ -42,7 +43,7 @@ class Chat(Base):
 
     id: Mapped[UUID4] = mapped_column(primary_key=True)
     title: Mapped[str]
-    avatar: Mapped[str]
+    avatar: Mapped[str] = mapped_column(default=BASE_CHAT_AVATAR_URL)
     creator: Mapped["User"] = relationship(
         back_populates="created_chats",
         uselist=False,

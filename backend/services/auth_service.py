@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
-from functools import wraps
 from time import perf_counter
 
+from aiohttp import ClientSession
 from fastapi.security import HTTPBearer
 from jwt import InvalidTokenError, encode, decode
 from passlib.context import CryptContext
@@ -11,23 +11,18 @@ from backend.dto.auth_dto import LoginForm, RegisterForm
 from backend.dto.user_dto import BaseUserModel
 from backend.database.models import User
 from backend.services.base_service import BaseService
-from backend.utils.config.config import (
-    load_here_geocoding_api_key,
-    load_jwt_config,
-)
 from backend.errors.auth_errors import (
     InvalidLoginData,
     InvalidToken,
     UserAlreadyNotRegister,
     UserAlreadyRegister,
 )
+from backend.utils.config.config import HERE_GEOCODING_API_KEY, JWT_CONFIG
 
 
 class AuthService(BaseService):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-
-        self.config = load_jwt_config()
         self.context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     async def get_user_by_email(self, email: str) -> User | None:
@@ -58,11 +53,11 @@ class AuthService(BaseService):
 
     async def create_access_token(self, email: str) -> str:
         expire = datetime.now() + timedelta(
-            minutes=self.config.access_token_time
+            minutes=JWT_CONFIG.jwt_access_token_time
         )
         data = {"sub": email, "exp": expire}
         token = encode(
-            data, self.config.jwt_secret, algorithm=self.config.algorithm
+            data, JWT_CONFIG.jwt_secret, algorithm=JWT_CONFIG.jwt_algorithm
         )
 
         return token
@@ -71,8 +66,8 @@ class AuthService(BaseService):
         try:
             payload = decode(
                 token.credentials,
-                self.config.jwt_secret,
-                algorithms=[self.config.algorithm],
+                JWT_CONFIG.jwt_secret,
+                algorithms=[JWT_CONFIG.jwt_algorithm],
             )
             email = payload.get("sub")
 
@@ -102,15 +97,18 @@ class AuthService(BaseService):
 
         return await self.model_dump(new_user, BaseUserModel)
 
-    async def search_cities(self, city: str) -> list[str]:
+    async def   search_cities(self, city: str) -> list[str]:
         url = "https://autocomplete.search.hereapi.com/v1/autocomplete"
         params = {
-            "apiKey": await load_here_geocoding_api_key(),
+            "apiKey": HERE_GEOCODING_API_KEY,
             "q": city,
             "types": "city",
             "lang": "ru-RU",
             "limit": 20,
         }
-        response = get(url, params).json()
+        async with ClientSession() as session:
+            async with session.get(url, params=params) as response:
+                response.raise_for_status()
+                response = await response.json()
 
         return [city["address"]["label"] for city in response.get("items")]

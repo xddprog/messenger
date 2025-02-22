@@ -1,3 +1,4 @@
+from copyreg import add_extension
 from sqlalchemy import select
 from backend.database.models import Notification, User
 from backend.database.models.user import UserNotifications
@@ -41,6 +42,7 @@ class NotificationRepository(SqlAlchemyRepository):
         )
 
         await self.session.commit()
+        await self.session.refresh(notification)
         return notification
 
     async def check_request_add_friend_is_send(

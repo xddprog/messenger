@@ -15,18 +15,14 @@ class NotificationService(BaseService):
             is_read=True, notification_id=notification_id
         )
 
-    async def check_request_add_friend(
-        self, current_user_id, user_id: str
-    ) -> bool:
+    async def check_request_add_friend(self, current_user_id, user_id: str) -> bool:
         return bool(
             await self.repository.check_request_add_friend_is_send(
                 current_user_id, user_id
             )
         )
 
-    async def check_request_add_friend_is_get(
-        self, current_user_id, user_id: str
-    ) -> bool:
+    async def check_request_add_friend_is_get(self, current_user_id, user_id: str) -> bool:
         return bool(
             await self.repository.check_request_add_friend_is_get(
                 current_user_id, user_id

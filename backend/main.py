@@ -7,26 +7,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.services.message_service import MessageService
 from backend.utils.clients.rabbit_client import RabbitClient
-from backend.utils.dependencies.dependencies import (
-    get_current_user_dependency,
-    get_message_service,
-    get_session,
-)
-from backend.utils.config.config import (
-    load_database_config,
-    load_rabbitmq_config,
-    load_redis_config,
-    load_s3_storage_config,
-)
 from backend.database.connection import DatabaseConnection
-from backend.routers import (
-    auth_router,
-    posts_router,
-    users_router,
-    chats_router,
-    comment_router,
-    group_router,
-)
+from backend.versions.dependencies import get_message_service
+from backend.versions.v1.routers import v1_router
 from backend.utils.clients.redis_client import RedisCache
 from backend.utils.clients.s3_client import S3Client
 from backend.utils.websockets.chats_manager import ChatsManager
@@ -47,6 +30,7 @@ async def handle_chat(
                 chat_id = data.get("chat_id")
                 client_id = data.get("client_id")
                 message_id = data.get("message_id")
+                print(data)
                 try:
                     message = await message_service.handle_message_in_websocket(
                         type_, chat_id, client_id, message_id, data
@@ -63,25 +47,24 @@ async def handle_chat(
 async def lifespan(app: FastAPI):
     app.state.notifications_manager = NotificationsManager()
     app.state.chats_manager = ChatsManager()
-    app.state.db_connection = await DatabaseConnection(load_database_config())()
-    app.state.s3_client = await S3Client(load_s3_storage_config())()
-    # app.state.rabbit_client = await RabbitClient(load_rabbitmq_config())()
-    # asyncio.create_task(
-    #     handle_chat(
-    #         app.state.rabbit_client,
-    #         app.state.chats_manager,
-    #         await get_message_service(
-    #             await app.state.db_connection.get_session(),
-    #             app.state.s3_client,
-    #         ),
-    #     )
-    # )
+    app.state.db_connection = await DatabaseConnection()()
+    app.state.s3_client = await S3Client()()
+    app.state.rabbit_client = await RabbitClient()()
+    asyncio.create_task(
+        handle_chat(
+            app.state.rabbit_client,
+            app.state.chats_manager,
+            await get_message_service(
+                await app.state.db_connection.get_session(),
+                app.state.s3_client,
+            ),
+        )
+    )
     yield
     await app.state.rabbit_client.close()
 
 
 app = FastAPI(lifespan=lifespan)
-PROTECTED = Depends(get_current_user_dependency)
 
 
 origins = ["http://localhost:5173"]
@@ -92,13 +75,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-app.include_router(auth_router)
-app.include_router(users_router, dependencies=[])
-app.include_router(chats_router, dependencies=[])
-app.include_router(posts_router, dependencies=[PROTECTED])
-app.include_router(comment_router, dependencies=[PROTECTED])
-app.include_router(group_router, dependencies=[PROTECTED])
+app.include_router(v1_router)
 
 
 @app.exception_handler(RequestValidationError)

@@ -17,14 +17,14 @@ export default function App() {
 	const [notification, notificationHolder] = useNotification()
 	const [notificationWs, setNotificationWs] = useState(null)
 	const [allNotifications, setAllNotifications] = useState([])
-	const [message, messageHolder] = useMessage()
+	const [, messageHolder] = useMessage()
 
 	useEffect(() => {
 		getUserUnReadedNotifications().then(response => {
 			setAllNotifications(response.data)
 		})
 		const userId = localStorage.getItem("user_id")
-		const ws = new WebSocket(`ws://localhost:8000/api/user/${userId}/ws/notifications`);
+		const ws = new WebSocket(`ws://localhost:8000/api/v1/user/${userId}/notifications`);
 		
 		ws.onmessage = (event) => {
 			const data = JSON.parse(event.data)
@@ -34,6 +34,7 @@ export default function App() {
 
 		setNotificationWs(ws)
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	function updateNotifications(notification) {
@@ -54,13 +55,13 @@ export default function App() {
 
     return (
         <ConfigProvider
-		theme={{
-			algorithm: theme.darkAlgorithm,
-			token: {
-				colorPrimary: '#05d77e',
-				colorBgContainer: '#17191b',
-			},
-		}}
+			theme={{
+				algorithm: theme.darkAlgorithm,
+				token: {
+					colorPrimary: '#05d77e',
+					colorBgContainer: '#17191b',
+				},
+			}}
 		>
 			{notificationHolder}
 			{messageHolder}

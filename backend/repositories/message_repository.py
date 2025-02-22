@@ -37,7 +37,7 @@ class MessageRepository(SqlAlchemyRepository):
         return messages.scalars().all()
 
     async def read_message(self, message_id: int, user_id: str) -> None:
-        UsersReadedMessages(user_fk=user_id, message_fk=message_id)
+        await self.session.add(UsersReadedMessages(user_fk=user_id, message_fk=message_id))
         await self.session.commit()
 
     async def check_user_is_read_message(self, user_id: str, message_id: str) -> bool:

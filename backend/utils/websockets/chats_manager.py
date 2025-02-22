@@ -26,7 +26,7 @@ class ChatsManager:
         response_type: str,
         message: MessageModel | BaseModel,
     ):
-    
+        print(self.active_connections[chat_id])
         for connection in self.active_connections[chat_id]:
             try:
                 await connection.send_json(

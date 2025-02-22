@@ -9,12 +9,10 @@ from starlette.requests import HTTPConnection
 
 import backend.services as services
 import backend.repositories as repositories
-from backend.dto.user_dto import BaseUserModel
 from backend.services import AuthService
 from backend.utils.clients.rabbit_client import RabbitClient
 from backend.utils.clients.redis_client import RedisCache
 from backend.utils.clients.s3_client import S3Client
-from backend.utils.config.config import load_redis_config
 from backend.utils.decorators.cache_decorators import CacheUser
 from backend.utils.websockets.notification_manager import NotificationsManager
 

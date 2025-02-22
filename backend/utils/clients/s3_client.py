@@ -3,22 +3,21 @@ from uuid import uuid4
 from fastapi import UploadFile
 from aiobotocore.session import AioSession
 
-from backend.utils.config.config import S3StorageConfig
+from backend.utils.config.config import S3_STORAGE_CONFIG
 
 
 class S3Client:
-    def __init__(self, config: S3StorageConfig):
-        self.config = config
+    def __init__(self):
         self.client = None
 
     async def get_client(self):
         session = AioSession()
         async with session.create_client(
             "s3",
-            aws_access_key_id=self.config.access_key_id,
-            aws_secret_access_key=self.config.secret_access_key,
-            endpoint_url=self.config.endpoint_url,
-            region_name=self.config.region,
+            aws_access_key_id=S3_STORAGE_CONFIG.aws_access_key_id,
+            aws_secret_access_key=S3_STORAGE_CONFIG.aws_secret_access_key,
+            endpoint_url=S3_STORAGE_CONFIG.aws_endpoint_url,
+            region_name=S3_STORAGE_CONFIG.aws_region,
         ) as client:
             return client
 
@@ -27,14 +26,13 @@ class S3Client:
         path = f'{path}/{file_id}.{file.content_type.split("/")[1]}'
 
         await self.client.put_object(
-            Bucket=self.config.bucket_name, Key=path, Body=file.file
+            Bucket=S3_STORAGE_CONFIG.aws_bucket_name, Key=path, Body=file.file
         )
-
-        return f"{self.config.endpoint_url}/{self.config.bucket_name}/{path}"
+        return f"{S3_STORAGE_CONFIG.aws_endpoint_url}/{S3_STORAGE_CONFIG.aws_bucket_name}/{path}"
 
     async def delete_one_file(self, path: str):
         await self.client.delete_object(
-            Bucket=self.config.bucket_name, Key=path
+            Bucket=S3_STORAGE_CONFIG.aws_bucket_name, Key=path
         )
 
     async def upload_many_files(
@@ -47,5 +45,4 @@ class S3Client:
 
     async def __call__(self):
         self.client = await self.get_client()
-
         return self

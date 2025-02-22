@@ -11,19 +11,18 @@ from backend.dto.message_dto import MessageModel
 from backend.dto.user_dto import BaseUserModel
 from backend.services import ChatService, MessageService, UserService
 from backend.utils.clients.rabbit_client import RabbitClient
-from backend.utils.dependencies.dependencies import (
+from backend.versions.dependencies import (
     get_chat_service,
     get_chats_manager,
     get_current_user_dependency,
     get_message_service,
     get_rabbit_client,
-    get_user_service,
 )
 from backend.utils.websockets.chats_manager import ChatsManager
 
 
 router = APIRouter(
-    prefix="/api/chat",
+    prefix="/chat",
     tags=["chats"],
 )
 
@@ -49,7 +48,7 @@ async def get_chat_messages(
     return await message_service.get_messages_from_chat(chat_id, offset)
 
 
-@router.websocket("/ws/{chat_id}/{client_id}")
+@router.websocket("/{chat_id}/{client_id}")
 async def websocket_endpoint(
     websocket: WebSocket,
     chat_id: UUID4,
@@ -61,11 +60,8 @@ async def websocket_endpoint(
     try:
         while True:
             data = await websocket.receive_text()
-            data = json.loads(data)
+            data: dict[str, str] = json.loads(data)
             data.update({"client_id": client_id, "chat_id": str(chat_id)})
-            await rabbit_client.send_message(
-                "chats",
-                json.dumps(data),
-            )
+            await rabbit_client.send_message("chats", json.dumps(data))
     except WebSocketDisconnect:
         manager.disconnect(str(chat_id), websocket)

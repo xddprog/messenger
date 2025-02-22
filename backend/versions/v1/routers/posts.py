@@ -9,7 +9,7 @@ from backend.dto.comment_dto import CommentModel
 from backend.dto.post_dto import PostModel, UpdatePostModel
 from backend.dto.user_dto import BaseUserModel
 from backend.services.comment_service import CommentService
-from backend.utils.dependencies.dependencies import (
+from backend.versions.dependencies import (
     get_comment_service,
     get_current_user_dependency,
     get_post_service,
@@ -19,7 +19,7 @@ from backend.services import PostService, UserService
 
 
 router = APIRouter(
-    prefix="/api/posts",
+    prefix="/posts",
     tags=["posts"],
 )
 
@@ -87,8 +87,8 @@ async def like_post(
     post_id: UUID4,
     post_service: Annotated[PostService, Depends(get_post_service)],
     user_id: Annotated[str, Depends(get_current_user_dependency)],
-) -> PostModel:
-    return await post_service.like_post(post_id, user_id)
+):
+    await post_service.like_post(post_id, user_id)
 
 
 @router.delete("/{post_id}")

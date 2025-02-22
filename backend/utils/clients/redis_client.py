@@ -3,14 +3,12 @@ from typing import Any, Callable
 
 from redis import Redis
 
-from backend.services.auth_service import AuthService
-from backend.utils.config.config import RedisConfig, load_redis_config
+from backend.utils.config.config import REDIS_CONFIG
 
 
 class RedisCache:
     def __init__(self) -> None:
-        self.config = load_redis_config()
-        self.redis: Redis = Redis(host=self.config.host, port=self.config.port)
+        self.redis: Redis = Redis(host=REDIS_CONFIG.redis_host, port=REDIS_CONFIG.redis_port)
         self.redis.flushdb()
 
     async def set_item(self, key: str, value: Any) -> None:

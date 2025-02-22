@@ -9,7 +9,7 @@ from backend.dto.user_dto import BaseUserModel
 from backend.services.group_service import GroupService
 from backend.services.post_service import PostService
 from backend.services.user_service import UserService
-from backend.utils.dependencies.dependencies import (
+from backend.versions.dependencies import (
     get_current_user_dependency,
     get_group_service,
     get_post_service,
@@ -17,7 +17,7 @@ from backend.utils.dependencies.dependencies import (
 )
 
 
-router = APIRouter(prefix="/api/groups", tags=["groups"])
+router = APIRouter(prefix="/groups", tags=["groups"])
 
 
 @router.get("/all")

@@ -17,7 +17,7 @@ class PostRepository(SqlAlchemyRepository):
 
     async def like_post(self, post_id: UUID4, user_id: str) -> Post:
         is_liked_query = select(UserLikedPosts).where(
-            post_fk=post_id, user_fk=user_id
+            UserLikedPosts.post_fk == post_id, UserLikedPosts.user_fk == user_id
         )
         liked_post = (await self.session.execute(is_liked_query)).scalar_one_or_none()
         if liked_post:

@@ -23,7 +23,7 @@ from backend.utils.config.enums import NotificationType
 from backend.dto.chat_dto import BaseChatModel
 from backend.services import UserService, ChatService
 from backend.utils.decorators.cache_decorators import CacheUsersSearch
-from backend.utils.dependencies.dependencies import (
+from backend.versions.dependencies import (
     get_current_user_dependency,
     get_group_service,
     get_notification_service,
@@ -36,7 +36,7 @@ from backend.utils.clients.redis_client import RedisCache
 from backend.utils.websockets.notification_manager import NotificationsManager
 
 
-router = APIRouter(prefix="/api/user", tags=["users"])
+router = APIRouter(prefix="/user", tags=["users"])
 
 
 @router.get("/search")
@@ -175,17 +175,13 @@ async def update_user_profile(
     )
 
 
-@router.websocket("/{user}/ws/notifications")
+@router.websocket("/{user}/notifications")
 async def websocket_endpoint(
     websocket: WebSocket,
     user: str,
-    manager: Annotated[
-        NotificationsManager, Depends(get_notifications_manager)
-    ],
+    manager: Annotated[NotificationsManager, Depends(get_notifications_manager)],
     user_service: Annotated[UserService, Depends(get_user_service)],
-    notification_service: Annotated[
-        NotificationService, Depends(get_notification_service)
-    ]
+    notification_service: Annotated[NotificationService, Depends(get_notification_service)]
 ):
     await manager.connect(user, websocket)
     try:
@@ -194,9 +190,8 @@ async def websocket_endpoint(
             current_user = await user_service.get_user(user, dump=True)
 
             if data["type"] == NotificationType.ADD_FRIEND.value:
-                send_to_user = await user_service.get_user(data["friend_id"])
                 new_notification = await notification_service.create_notification(
-                    user=send_to_user,
+                    user_id=data["friend_id"],
                     notification_sender_id=data["notification_sender_id"],
                     notification_sender_name=data["notification_sender_name"],
                     message=f"{data['notification_sender_name']} хочет добавить вас в друзья",
@@ -209,9 +204,8 @@ async def websocket_endpoint(
                     data["notification_sender_id"],
                     NotificationType.ADD_FRIEND.value,
                 )
-                send_to_user = await user_service.get_user(data["friend_id"])
                 new_notification = await notification_service.create_notification(
-                    user=send_to_user,
+                    user_id=data["friend_id"],
                     notification_sender_id=data["notification_sender_id"],
                     notification_sender_name=data["notification_sender_name"],
                     message=f"{data['notification_sender_name']} принял ваш запрос на добавление в друзья",

@@ -5,7 +5,7 @@ import { createMessage, deleteMessage, editMessage, readMessage } from "../reque
 
 export default function useChatWebsocket(chatId, setWs, setMessages, setFirstUnreadedMessageIndex) {
     useEffect(() => {
-        const webSocket = new WebSocket(`ws://localhost:8000/api/chat/ws/${chatId}/${localStorage.getItem('user_id')}`);
+        const webSocket = new WebSocket(`ws://localhost:8000/api/v1/chat/${chatId}/${localStorage.getItem('user_id')}`);
         setWs(webSocket);
 
         getChatMessages(chatId).then(response => {
@@ -38,5 +38,5 @@ export default function useChatWebsocket(chatId, setWs, setMessages, setFirstUnr
             webSocket.close();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chatId]);
+    }, [chatId, messages]);
 }

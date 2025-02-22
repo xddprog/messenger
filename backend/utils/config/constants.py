@@ -3,3 +3,5 @@ BASE_USER_COVER_URL = "https://storage.yandexcloud.net/mago-storage/base_files/b
 
 BASE_GROUP_AVATAR_URL = "https://storage.yandexcloud.net/mago-storage/base_files/base-group-avatar.jpg"
 BASE_GROUP_COVER_URL = "https://storage.yandexcloud.net/mago-storage/base_files/base-group-cover.jpg"
+
+BASE_CHAT_AVATAR_URL = "test"

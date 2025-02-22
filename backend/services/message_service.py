@@ -77,8 +77,8 @@ class MessageService(BaseService):
             )
         new_message = await self.repository.add_item(
             message=message, 
-            user_id=user_id, 
-            chat_id=chat_id, 
+            user_fk=user_id, 
+            chat_fk=chat_id, 
             images=images
         )
         return await self.model_dump(new_message, MessageModel)

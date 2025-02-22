@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { API_URL } from "../settings.js";
 
-const BASE_URL = `${API_URL}/api/user`;
+const BASE_URL = `${API_URL}/user`;
 
 export async function getUserChats() {
 	return await axios

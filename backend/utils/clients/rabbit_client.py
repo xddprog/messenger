@@ -3,12 +3,11 @@ from typing import Any
 import aio_pika
 from aio_pika.abc import AbstractQueue
 from fastapi import HTTPException
-from backend.utils.config.config import RabbitMQConfig
+from backend.utils.config.config import RABBITMQ_CONFIG, RabbitMQConfig
 
 
 class RabbitClient:
-    def __init__(self, config: RabbitMQConfig):
-        self.config = config
+    def __init__(self):
         self.connection: aio_pika.Connection = None
         self.channel: aio_pika.Channel = None
 
@@ -22,8 +21,8 @@ class RabbitClient:
 
     async def __call__(self) -> Any:
         self.connection = await aio_pika.connect_robust(
-            host=self.config.host,
-            port=self.config.port,
+            host=RABBITMQ_CONFIG.rabbit_host,
+            port=RABBITMQ_CONFIG.rabbit_port,
         )
         self.channel = await self.connection.channel()
         return self

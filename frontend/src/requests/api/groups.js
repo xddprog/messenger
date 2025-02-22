@@ -2,7 +2,7 @@ import axios from "axios";
 import { API_URL } from "../settings.js";
 
 
-const BASE_URL = `${API_URL}/api/groups`;
+const BASE_URL = `${API_URL}/groups`;
 
 
 export async function createGroup(values) {

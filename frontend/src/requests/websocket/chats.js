@@ -30,7 +30,6 @@ export function editMessage(message, updatedMessages) {
 }
 
 export function createMessage(message, updatedMessages) {
-    console.log("create")
     const date = new Date(message.created_at).toISOString().split('T')[0];
 
     if (!updatedMessages[date]) {

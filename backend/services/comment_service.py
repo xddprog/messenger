@@ -30,9 +30,9 @@ class CommentService(BaseService):
 
         new_comment = await self.repository.add_item(
             text=text,
-            author_fk=author,
+            author_fk=author.id,
             images=images,
-            parent_id=parent,
+            parent_id=parent.id,
             post_fk=post_id,
         )
         return await self.model_dump(new_comment, CommentModel)

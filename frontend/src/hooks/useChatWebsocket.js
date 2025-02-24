@@ -38,5 +38,5 @@ export default function useChatWebsocket(chatId, setWs, setMessages, setFirstUnr
             webSocket.close();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chatId, messages]);
+    }, [chatId]);
 }

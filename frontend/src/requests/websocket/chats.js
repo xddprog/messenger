@@ -29,17 +29,15 @@ export function editMessage(message, updatedMessages) {
     return updatedMessages;
 }
 
-export function createMessage(message, updatedMessages) {
-    const date = new Date(message.created_at).toISOString().split('T')[0];
-
+export function createMessage(newMessage, prevMessages) {
+    const updatedMessages = { ...prevMessages };
+    const date = new Date(newMessage.created_at).toISOString().split('T')[0];
     if (!updatedMessages[date]) {
         updatedMessages[date] = [];
     }
-
-    updatedMessages[date].push(message);
+    updatedMessages[date] = [...updatedMessages[date], newMessage];
     return updatedMessages;
-}
-
+  }
 export function readMessage(message, updatedMessages) {
     const date = new Date(message.created_at).toISOString().split('T')[0];
     

@@ -30,7 +30,6 @@ async def handle_chat(
                 chat_id = data.get("chat_id")
                 client_id = data.get("client_id")
                 message_id = data.get("message_id")
-                print(data)
                 try:
                     message = await message_service.handle_message_in_websocket(
                         type_, chat_id, client_id, message_id, data

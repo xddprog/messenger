@@ -51,7 +51,10 @@ export default function CreateChatModal({ isOpen, handleIsOpen, addChatAfterCrea
 
     return (
         <div className="flex items-center">
-            <RiChatNewLine className="text-[#424242] min-w-[20px] min-h-[20px] p-0 m-0 ml-5 hover:text-[#b9b9b9] cursor-pointer" onClick={openModal} />
+            <RiChatNewLine 
+                className="text-[#424242] min-w-[20px] min-h-[20px] p-0 m-0 ml-5 hover:text-[#b9b9b9] cursor-pointer" 
+                onClick={openModal} 
+            />
             <Modal
                 centered
                 open={isOpen}

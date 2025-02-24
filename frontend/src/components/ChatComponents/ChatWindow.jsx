@@ -8,11 +8,13 @@ import ChatHeader from "./ChatHeader";
 import MessageCard from "../MessageComponents/MessageCard";
 import useChatWebsocket from "../../hooks/useChatWebsocket";
 import useChatScroll from "../../hooks/useChatScroll";
+import ChatInfo from "./ChatInfo";
 
 
 export default function ChatWindow({ chat }) {
     const [messageValue, setMessageValue] = useState('');
     const [messages, setMessages] = useState([]);
+    const [chatInfoIsOpen, setChatInfoIsOpen] = useState(false)
     const [sendImagesModalIsOpen, setSendImagesModalIsOpen] = useState(false);
     const [ws, setWs] = useState(null)
     const [firstUnreadedMessageIndex, setFirstUnreadedMessageIndex] = useState(null)
@@ -48,8 +50,8 @@ export default function ChatWindow({ chat }) {
 
     return (
         <div className="flex flex-col justify-between items-center h-full">
-            <div className="w-full r">
-                <ChatHeader chat={chat} />
+            <div className="w-full">
+                <ChatHeader chat={chat} setChatInfoIsOpen={setChatInfoIsOpen} />
             </div>
             <div className="w-full h-full ml-[5%] relative">
                 <div 
@@ -112,6 +114,7 @@ export default function ChatWindow({ chat }) {
                     />
                 </div>
             </div>
+            
         </div>
     )
 }

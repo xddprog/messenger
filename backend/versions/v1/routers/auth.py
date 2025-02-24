@@ -1,5 +1,8 @@
+from functools import wraps
+import logging
 from typing import Annotated
 from fastapi import APIRouter, Depends, Request, Response
+from pydantic import BaseModel
 
 from backend.dto.auth_dto import (
     LoginForm,
@@ -17,6 +20,7 @@ from backend.versions.dependencies import (
     get_current_user_dependency,
     get_user_service,
 )
+
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
